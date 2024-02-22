@@ -70,6 +70,7 @@ export default {
 
         const fold = (id) => {
             store.dispatch('tree/deselectNodeAndChildren', id)
+            foldState.value = true
 
         }
         
