@@ -34,14 +34,16 @@ const mutations = {
 const actions = {
     getCoordinateCollection({ state, commit, dispatch, rootState }) {
         const dataset = rootState.tree.dataset
-        const level_id_list = [...new Set(rootState.tree.selectionTree.map(node => node.level))]
+        const level_id_list = rootState.tree.level_id_list
         const timeRange = rootState.tree.timeRange
-        axios.post('/api/coordinateCollection', { "dataset": dataset, "level_id_list": level_id_list, "timeRange": timeRange }).then((response) => {
-            // console.log("check MDS result")
-            // console.log(response.data.coordinateCollection)
-            commit('UPDATE_COORDINATE_COLLECTION', response.data.coordinateCollection)
-            dispatch('updatePlotScale')
-        })
+        if(timeRange.length != 0){
+            axios.post('/api/coordinateCollection', { "dataset": dataset, "level_id_list": level_id_list, "timeRange": timeRange }).then((response) => {
+                // console.log("check MDS result")
+                // console.log(response.data.coordinateCollection)
+                commit('UPDATE_COORDINATE_COLLECTION', response.data.coordinateCollection)
+                dispatch('updatePlotScale')
+            })
+        }
         console.log("CoordinateCollection is",state.coordinateCollection)
           // step 1: use updated result of MDS coordinates to update computed scales(for each level)
         

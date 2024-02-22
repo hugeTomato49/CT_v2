@@ -49,9 +49,7 @@ export default {
         const columnPercentage = computed(()=>store.getters['size/columnPercentage'])
         const rowNum = computed(()=>store.getters['size/rowNum'])
 
-        const level_id_list = computed(() => [
-        ...new Set(selectionTree.value.map((node) => node.level)),
-        ])
+        const level_id_list = computed(() => store.getters["tree/level_id_list"])
 
         const groupedIdCollection = (level_id)=> {
          

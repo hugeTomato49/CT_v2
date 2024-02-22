@@ -23,10 +23,11 @@
             </div>
           </div>
           <div
-            class="h-full px-0.5px bg-stone-100"
+            class="h-full px-0.5px bg-stone-100 cursor-pointer flex flex-row justify-center items-center"
             :style="{ width: 20 + 'px' }"
+            @click="addColumn"
           >
-            <div class="h-full w-full"></div>
+            <font-awesome-icon :icon="['fas', 'plus']" style="color: #e2e3e4" />
           </div>
         </div>
       </div>
@@ -154,9 +155,7 @@ export default {
     const selectionTree = computed(() => store.getters["tree/selectionTree"]);
     const originalTree = computed(() => store.getters["tree/originalTree"]);
     const levels = computed(() => store.getters["tree/levels"]);
-    const level_id_list = computed(() => [
-      ...new Set(selectionTree.value.map((node) => node.level)),
-    ]);
+    const level_id_list = computed(() => store.getters["tree/level_id_list"]);
     const level_name_list = computed(() =>
       level_id_list.value.map((id) => levels.value[id - 1])
     );
@@ -178,13 +177,17 @@ export default {
         originalTree.value,
         coordinateCollection.value,
         plot_X_Scale.value,
-        plot_Y_Scale.value,
+        plot_Y_Scale.value
       );
     };
 
     const handleMouseOut = () => {
       // bezierPaths.value = [];
       resetNodes();
+    };
+
+    const addColumn = () => {
+      store.dispatch("tree/addLevelToLevelIdList");
     };
 
     onMounted(() => {
@@ -215,6 +218,7 @@ export default {
       bezierPaths,
       handleMouseOut,
       handleMouseOver,
+      addColumn,
     };
   },
 };

@@ -10,6 +10,7 @@ const state = {
     seriesCollection: [],
     dataset: 'PV',
     levels: ['Transformer', 'Converter', 'Line'],
+    level_id_list: [],
     timeRange: [],
     colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC"]
     
@@ -32,6 +33,9 @@ const mutations = {
     },
     UPDATE_TIME_RANGE(state, payload){
       state.timeRange = payload
+    },
+    UPDATE_LEVEL_ID_LIST(state, payload) {
+      state.level_id_list = payload
     }
 
 }
@@ -131,6 +135,9 @@ const actions = {
           }
         })
         commit('UPDATE_SELECTION_TREE', currentSelectionTree)
+        if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
+          dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
+        }
         const node_list = []
         currentSelectionTree.forEach(node => {
           node_list.push(node.id)
@@ -143,12 +150,26 @@ const actions = {
             !nodesToRemove.some(n => n.id === node.id)
         )
         commit('UPDATE_SELECTION_TREE', currentSelectionTree)
+        if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
+          dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
+        }
         const node_list = []
         currentSelectionTree.forEach(node => {
           node_list.push(node.id)
         })
         dispatch('getSeriesCollection', node_list)
     },
+    updateLevelIdList({commit, dispatch}, level_id_list) {
+      commit('UPDATE_LEVEL_ID_LIST', level_id_list)
+      dispatch('scatterPlot/getCoordinateCollection',null, {root:true})
+    },
+    addLevelToLevelIdList({state, dispatch}){
+      const max = Math.max(...state.level_id_list)
+      state.level_id_list.push(max + 1) 
+      dispatch('updateLevelIdList', state.level_id_list)
+      
+    }
+    
 }
 
 const getters = {
@@ -157,8 +178,10 @@ const getters = {
     seriesCollection: state => state.seriesCollection,
     dateset: state => state.dataset,
     levels: state => state.levels,
+    level_id_list: state => state.level_id_list,
     timeRange: state => state.timeRange.PV_Tree,
-    colorBar: state => state.colorBar
+    colorBar: state => state.colorBar,
+    
 
 
 }
