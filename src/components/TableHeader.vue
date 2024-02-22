@@ -17,8 +17,11 @@
           >
             <div class="text-md font-serif text-center text-white title">{{ level_name }}</div>
           </div>
-          <div class="h-full px-0.5px bg-stone-100" :style="{ width: 20 + 'px' }">
-            <div class="h-full w-full"></div>
+          <div 
+          class="h-full px-0.5px bg-stone-100 cursor-pointer flex flex-row justify-center items-center" 
+          :style="{ width: 20 + 'px' }"
+          @click="addColumn">
+            <font-awesome-icon :icon="['fas', 'plus']" style="color: #e2e3e4;" />
           </div>
         </div> 
       </div>
@@ -124,9 +127,7 @@ export default {
     });
     const selectionTree = computed(() => store.getters["tree/selectionTree"]);
     const levels = computed(() => store.getters["tree/levels"]);
-    const level_id_list = computed(() => [
-      ...new Set(selectionTree.value.map((node) => node.level)),
-    ]);
+    const level_id_list = computed(() => store.getters["tree/level_id_list"])
     const level_name_list = computed(() =>
       level_id_list.value.map((id) => levels.value[id - 1])
     );
@@ -137,6 +138,10 @@ export default {
       }
       return 0; 
     });
+
+    const addColumn = () => {
+      store.dispatch("tree/addLevelToLevelIdList")
+    }
 
     onMounted(() => {
       headerContainer.value = document.querySelector("#headerContainer");
@@ -162,7 +167,8 @@ export default {
       coordinateCollection,
       circlesData,
       dynamicWidth,
-      columnPercentage
+      columnPercentage,
+      addColumn,
     };
   },
 };
