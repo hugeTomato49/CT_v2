@@ -25,7 +25,7 @@ def mds_to2d(json_data, mode='similarity'):
     distance_matrix = np.linalg.norm(tmpData[:, np.newaxis] - tmpData, axis=-1)
 
     # 使用MDS进行降维
-    mds = MDS(n_components=2, dissimilarity='precomputed')
+    mds = MDS(n_components=2, dissimilarity='precomputed', random_state=666)
     data_to2d = mds.fit_transform(distance_matrix)
 
     result_list = []
