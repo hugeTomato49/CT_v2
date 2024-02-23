@@ -1,5 +1,9 @@
 <template>
-<div class="w-full p-0.5" :style="{ height: rowHeight + 'px' }" @click=foldState?unfold(id):fold(id)>
+<div 
+class="w-full p-0.5" 
+:style="{ height: rowHeight + 'px' }" 
+@click=foldState?unfold(node_id):fold(node_id)
+>
     <div class="w-full h-full" id="cardContainer">
         <svg class="w-full h-full bg-stone-100">
             <g ref="brushRef"></g>
@@ -12,13 +16,7 @@
             </path>
         </svg>
     </div>
-
-
 </div>
-
-
-
-
 </template>
 
 <script>
@@ -28,7 +26,7 @@ import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
 export default {
     name: 'TSCard',
-    props: ['seriesData', 'level', 'id'],
+    props: ['seriesData', 'level', 'node_id'],
     setup(props) {
         const store = useStore()
         const colorBar = computed(()=>store.getters["tree/colorBar"])

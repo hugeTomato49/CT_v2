@@ -58,7 +58,7 @@ export const resetNodes = () => {
     // 选择所有circle元素，恢复默认透明度和半径
     document.querySelectorAll('.node').forEach(circle => {
         circle.style.fillOpacity = '0.5'; // 恢复默认透明度为50%
-        circle.style.r = '5'; // 恢复默认半径
+        circle.style.r = '7'; // 恢复默认半径
     });
 };
 

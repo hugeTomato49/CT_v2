@@ -13,24 +13,22 @@
                     <TSCard
                     v-for = "(id,index) in groupedIdCollection(level_id)"
                     :key = "id"
+                    :id="'card' + id"
                     :seriesData = findSeriesData(id)
                     :level = "level_id"
-                    :id = "id"
+                    :node_id = "id"
                     />
                 </div>
                 <div class="w-20px h-full"></div>
             </div>
         </div>
-
- 
-    
-
 </template>
 
 <script>
 import { computed, ref, watchEffect, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import TSCard from './TSCard.vue'
+
 
 
 
@@ -50,6 +48,11 @@ export default {
         const rowNum = computed(()=>store.getters['size/rowNum'])
 
         const level_id_list = computed(() => store.getters["tree/level_id_list"])
+
+
+        // above are form vuex, which we further moderate inside the component to achieve:
+        //(1) not interfere with the state of vuex
+        //(2) further change the data to suit various interactions
 
         const groupedIdCollection = (level_id)=> {
          
