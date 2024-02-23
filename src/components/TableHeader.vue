@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full">
     <div class="w-full h-full rounded-md flex flex-col" id="headerContainer">
-      <div class="flex flex-row h-1/8 w-full justify-center">
+      <div class="flex flex-row h-1/8 w-full">
         <div
           v-for="(level_name, index) in level_name_list"
           :key="level_name"
@@ -11,14 +11,14 @@
           }"
         >
           <div
-            class="h-full flex flex-row items-center justify-center"
+            class="h-full flex flex-row items-center"
             :style="{
               width:
                 headerContainer?.offsetWidth * columnPercentage - 20 + 'px',
               backgroundColor: colorBar[index],
             }"
           >
-            <div class="text-md font-serif text-center text-white title">
+            <div class="ml-2 text-md font-serif text-center text-white title">
               {{ level_name }}
             </div>
           </div>
@@ -33,7 +33,7 @@
       </div>
       <div class="w-full h-7/8 py-1">
         <div
-          class="w-full h-full flex flex-row justify-center"
+          class="w-full h-full flex flex-row"
           id="plotContainer"
         >
           <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
