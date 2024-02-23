@@ -2,12 +2,12 @@
 @Description: scaling the data to 2d with the mode applied
 @Author: Nemo
 @Date: 2024-02-14 16:26:37
-@LastEditTime: 2024-02-16 19:26:56
+@LastEditTime: 2024-02-23 18:43:47
 @LastEditors: Nemo
 '''
 import numpy as np
 from sklearn.manifold import MDS
-from backend.compute.jsonTransfer import TSjson_exp
+from jsonTransfer import TSjson_exp
 
 def mds_to2d(json_data, mode='similarity'):
     '''
@@ -32,7 +32,7 @@ def mds_to2d(json_data, mode='similarity'):
     distance_matrix = np.linalg.norm(tmpData[:, np.newaxis] - tmpData, axis=-1)
 
     # 使用MDS进行降维
-    mds = MDS(n_components=2, dissimilarity='precomputed')
+    mds = MDS(n_components=2, dissimilarity='precomputed', random_state=666)
     data_to2d = mds.fit_transform(distance_matrix)
 
     result_list = []
