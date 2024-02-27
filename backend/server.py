@@ -3,6 +3,7 @@ import os
 import json  
 from compute.filter import filterDataByTimeRange
 from compute.dr import mds_to2d
+from compute.cluster import cluster_dbscan
 
 app = Flask(__name__)
 

@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full">
     <div class="w-full h-full rounded-md flex flex-col" id="headerContainer">
-      <div class="flex flex-row h-1/8 w-full justify-center">
+      <div class="flex flex-row h-1/8 w-full">
         <div
           v-for="(level_name, index) in level_name_list"
           :key="level_name"
@@ -11,14 +11,14 @@
           }"
         >
           <div
-            class="h-full flex flex-row items-center justify-center"
+            class="h-full flex flex-row items-center"
             :style="{
               width:
                 headerContainer?.offsetWidth * columnPercentage - 20 + 'px',
               backgroundColor: colorBar[index],
             }"
           >
-            <div class="text-md font-serif text-center text-white title">
+            <div class="ml-2 text-md font-serif text-center text-white title">
               {{ level_name }}
             </div>
           </div>
@@ -33,7 +33,7 @@
       </div>
       <div class="w-full h-7/8 py-1">
         <div
-          class="w-full h-full flex flex-row justify-center"
+          class="w-full h-full flex flex-row"
           id="plotContainer"
         >
           <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
@@ -60,7 +60,7 @@
                 ></rect>
                 <circle
                   v-for="circle in circlesData[level_id_list[index]] ?? []"
-                  class="node"
+                  class="node cursor-pointer"
                   :id="'node' + circle.key"
                   :key="circle.key"
                   :cx="circle.cx"
@@ -70,6 +70,7 @@
                   :fill-opacity="0.5"
                   @mouseover="() => handleMouseOver(circle.key)"
                   @mouseout="handleMouseOut"
+                  @click="handleNodeClick(circle.key)"
                 ></circle>
               </g>
               <!-- <path
@@ -130,7 +131,7 @@ export default {
       // 填充数据
       Object.entries(coordinateCollection.value).forEach(
         ([level_id, coordinates]) => {
-          const radius = levelRadiusMap[level_id] || 5; // 提供默认半径
+          const radius =  7; // 提供默认半径
           const xScaleObj = plot_X_Scale.value.find(
             (scale) => scale.level_id === level_id
           );
@@ -186,6 +187,10 @@ export default {
       resetNodes();
     };
 
+    const handleNodeClick = (id) => {
+      store.dispatch('tree/selectNodeAndChildren', id)
+    }
+
     const addColumn = () => {
       store.dispatch("tree/addLevelToLevelIdList");
     };
@@ -193,14 +198,8 @@ export default {
     onMounted(() => {
       headerContainer.value = document.querySelector("#headerContainer");
       plotContainer.value = document.querySelector("#plotContainer");
-      store.dispatch(
-        "scatterPlot/updatePlotWidth",
-        headerContainer.value.offsetWidth * columnPercentage.value - 20
-      );
-      store.dispatch(
-        "scatterPlot/updatePlotHeight",
-        plotContainer.value.offsetHeight
-      );
+      store.dispatch("scatterPlot/updatePlotWidth",headerContainer.value.offsetWidth * columnPercentage.value - 20);
+      store.dispatch("scatterPlot/updatePlotHeight",plotContainer.value.offsetHeight);
     });
 
     return {
@@ -216,6 +215,7 @@ export default {
       dynamicWidth,
       columnPercentage,
       bezierPaths,
+      handleNodeClick,
       handleMouseOut,
       handleMouseOver,
       addColumn,
