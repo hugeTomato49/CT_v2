@@ -146,10 +146,10 @@ export default {
         ([level_id, coordinates]) => {
           const radius =  7; // 提供默认半径
           const xScaleObj = plot_X_Scale.value.find(
-            (scale) => scale.level_id === level_id
+            (scale) => scale.level_id == level_id
           );
           const yScaleObj = plot_Y_Scale.value.find(
-            (scale) => scale.level_id === level_id
+            (scale) => scale.level_id == level_id
           );
           if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
 
@@ -186,13 +186,13 @@ export default {
     });
     const handleMouseOver = (id) => {
       highlightNodes(id, originalTree.value);
-      bezierPaths.value = calculatePlotLinks(
-        id,
-        originalTree.value,
-        coordinateCollection.value,
-        plot_X_Scale.value,
-        plot_Y_Scale.value
-      );
+      // bezierPaths.value = calculatePlotLinks(
+      //   id,
+      //   originalTree.value,
+      //   coordinateCollection.value,
+      //   plot_X_Scale.value,
+      //   plot_Y_Scale.value
+      // );
     };
 
     const handleMouseOut = () => {

@@ -1,7 +1,8 @@
 import axios from "axios"
-import { cloneDeep } from 'lodash'
+import { cloneDeep, update } from 'lodash'
 import { transformData, filterDataByTimeRange } from "../computation/basicComputation"
-import { updateSelectionFromOriginal } from "../update/updateTree"
+import { updateSelectionFromOriginal, addLevels, updateSeriesCollection } from "../update/updateTree"
+import { addPlotScale, addYScale } from "../update/updateScale"
 
 
 
@@ -13,7 +14,9 @@ const state = {
     levels: ['Transformer', 'Converter', 'Line'],
     level_id_list: [],
     timeRange: [],
-    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC","#B3D1EC", "#B3D1EC","#B3D1EC"]
+    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC","#B3D1EC", "#B3D1EC","#B3D1EC"],
+    groupState: false
+
     
 
 }
@@ -28,8 +31,8 @@ const mutations = {
         state.selectionTree = payload
     },
     UPDATE_SERIES_COLLECTION(state, payload){
-        console.log("CHECK Series Collection")
-        console.log(payload)
+        // console.log("CHECK Series Collection")
+        // console.log(payload)
         state.seriesCollection = payload
     },
     UPDATE_TIME_RANGE(state, payload){
@@ -37,6 +40,9 @@ const mutations = {
     },
     UPDATE_LEVEL_ID_LIST(state, payload) {
       state.level_id_list = payload
+    },
+    UPDATE_LEVELS(state, payload) {
+      state.levels = payload
     }
 
 }
@@ -57,7 +63,9 @@ const actions = {
       }
       const node_list = []
       currentSelectionTree.forEach(node => {
-        node_list.push(node.id)
+        if(!node?.attribute??"".includes("group")){
+          node_list.push(node.id)
+        }
       })
       dispatch('getSeriesCollection', node_list)
     },
@@ -164,20 +172,21 @@ const actions = {
       state.level_id_list.push(max + 1) 
       dispatch('updateLevelIdList', state.level_id_list)
     },
-    addLayer({state, commit, dispatch, rootState}, obj){
+    addLayer({state, commit, rootState}, obj){
+      state.groupState = true
       axios.post('/api/addLayer',obj).then((response) => {
         console.log("check newOriginalTree")
         console.log(response.data.newOriginalTree)
-        
-
-
-
-
-        
-        
+        commit('UPDATE_ORIGINAL_TREE', response.data.newOriginalTree) // originalTree
+        commit('UPDATE_SELECTION_TREE', updateSelectionFromOriginal(state.selectionTree, state.originalTree, obj.level_id)) // selectionTree
+        commit('UPDATE_LEVEL_ID_LIST', [...new Set(state.selectionTree.map(node => node.level))].sort((a, b) => a - b)) // level_id_list
+        commit('UPDATE_LEVELS', addLevels(state.levels, obj.level_id)) // levels
+        commit('UPDATE_SERIES_COLLECTION', updateSeriesCollection(state.seriesCollection, obj.level_id)) // seriesCollection
+        commit('size/UPDATE_Y_SCALE', addYScale(rootState.size.yScale, obj.level_id), { root: true }) // yScale
+        commit('scatterPlot/UPDATE_COORDINATE_COLLECTION', response.data.newCoordinateCollection, { root: true }) // coordinateCollection
+        commit('scatterPlot/UPDATE_PLOT_X_SCALE', addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id).plotX, { root: true }) //plot_x_scale
+        commit('scatterPlot/UPDATE_PLOT_Y_SCALE', addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id).plotY, { root: true }) //plot_y_scale
       })
-
-
     }
     
 }
@@ -191,6 +200,7 @@ const getters = {
     level_id_list: state => state.level_id_list,
     timeRange: state => state.timeRange.PV_Tree,
     colorBar: state => state.colorBar,
+    groupState: state => state.groupState
     
 
 
