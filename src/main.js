@@ -7,9 +7,9 @@ import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faNetworkWired, faRoute, faLayerGroup, faCircle, faAngleRight, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faNetworkWired, faRoute, faLayerGroup, faCircle, faAngleRight, faPlus, faObjectUngroup } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faNetworkWired, faRoute, faLayerGroup, faCircle, faAngleRight, faPlus)
+library.add(faNetworkWired, faRoute, faLayerGroup, faCircle, faAngleRight, faPlus, faObjectUngroup)
 
 const app = createApp(App)
 app
