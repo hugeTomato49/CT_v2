@@ -162,7 +162,15 @@ const actions = {
       const max = Math.max(...state.level_id_list)
       state.level_id_list.push(max + 1) 
       dispatch('updateLevelIdList', state.level_id_list)
-      
+    },
+    createLayers({state, commit, dispatch, rootState}, obj){
+      axios.post('/api/addLayer',obj).then((response) => {
+
+        
+        
+      })
+
+
     }
     
 }
