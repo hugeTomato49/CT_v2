@@ -3,12 +3,13 @@ import os
 import json  
 from compute.filter import filterDataByTimeRange
 from compute.dr import mds_to2d
-from compute.cluster import cluster_dbscan
+from compute.groupTree import constructGT, getGroupedPoints
 
 app = Flask(__name__)
 
 PV_data_folder_path = "data/PV"
 PV_tree_file_name = "PV_Tree.json"
+collection_json_path = './tmp/origin_coordinateCollection.json'
 
 @app.route('/PVTree', methods=['GET'])
 def getPVTree():
@@ -68,8 +69,14 @@ def getCoordinateCollection():
     timeRange = data.get("timeRange",[])
     # print("CHECK")
     # print(timeRange)
-    
+
     if dataset == "PV":
+        if os.path.isfile(collection_json_path):
+            with open(collection_json_path, 'r') as file:
+                collection_dict = json.load(file)
+            
+            return collection_dict
+
         file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
         if os.path.exists(file_path):
             with open(file_path, 'r') as file:
@@ -100,10 +107,39 @@ def getCoordinateCollection():
             result = mds_to2d(object)
             collection[level_id] = result
         
-        # print(collection)
-        return {"coordinateCollection":collection}
-    
-    
+        collection_dict = {"coordinateCollection":collection}
+        os.makedirs("./tmp", exist_ok=True)
+        with open(collection_json_path, 'w') as json_file:
+            json.dump(collection_dict, json_file)
+
+        return collection_dict
+
+@app.route('/addLayer', methods=["POST"])
+def getGroupedCoordinateCollection():
+    data = request.get_json()
+    dataset = data.get("dataset","")
+    level = data.get("level_id",[])
+    if dataset == 'PV':
+        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+        if os.path.exists(Tree_path):
+            with open(Tree_path, 'r') as file:
+                pv_tree_data = json.load(file) 
+        max_level = max(pv_tree_data, key=lambda x: x["level"])['level']
+
+        # if exist the original collection: get level's points;
+        # else run the mds on the original Tree
+        with open(collection_json_path, 'r') as file:
+            origin_collection = json.load(file) 
+        # print(origin_collection)
+        tmp_result = origin_collection["coordinateCollection"][str(level)]
+
+        grouped_Tree_Path = constructGT(Tree_path, tmp_result, level, n=5)
+        grouped_Points = getGroupedPoints(grouped_Tree_Path, tmp_result, level)
+        for i in range(max_level+1, level, -1):
+            origin_collection["coordinateCollection"][str(i)] = origin_collection["coordinateCollection"][str(i-1)]
+        origin_collection["coordinateCollection"][str(level)] = grouped_Points
+        
+        return origin_collection
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)

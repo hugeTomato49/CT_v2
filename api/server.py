@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from cluster import cluster_kmeans
-from pearson import pearson_cal
+from api.TSrelationCal import pearson_cal
 
 app = Flask(__name__)
 

@@ -2,7 +2,7 @@
 @Description: 
 @Author: 
 @Date: 2024-02-26 15:39:05
-@LastEditTime: 2024-02-27 21:39:39
+@LastEditTime: 2024-02-28 14:46:43
 @LastEditors: Nemo
 '''
 import os
@@ -11,17 +11,14 @@ from dr import mds_to2d
 from filter import filterDataByTimeRange
 from cluster import cluster_dbscan, cluster_kmeans_2d 
 
-folder_path = "./data/PV"
-Tree_path = os.path.join(folder_path, "PV_Tree.json")
-
-def constructGT(Tree_path, points, n=5):
+def constructGT(Tree_path, points, level=3, n=5):
     if os.path.exists(Tree_path):
         with open(Tree_path, 'r') as file:
             pv_tree_data = json.load(file)
     num_nodes = len(pv_tree_data)
     clusters = cluster_kmeans_2d(points, n)
     for node in pv_tree_data:
-        if node['level'] == 2:
+        if node['level'] == level-1:
             groups_id_list = []
             groups_list = []
             clusters_id_list = []
@@ -40,7 +37,7 @@ def constructGT(Tree_path, points, n=5):
                     group["node_name"] = node['node_name']+'-G'+str(len(groups_list)+1)
                     group["parent_id"] = node['id']
                     group["children_id"] = [child_id]
-                    group["level"] = 3
+                    group["level"] = level
                     group["attribute"] = "group"+str(cluster_id)
 
                     groups_list.append(group)
@@ -48,17 +45,40 @@ def constructGT(Tree_path, points, n=5):
                     clusters_id_list.append(cluster_id)
                     
                     child_node["parent_id"] = num_nodes
-                    child_node["level"] = 4
+                    child_node["level"] = level+1
                 else:
                     # rather than init a group, add the node to the exist group
                     index = clusters_id_list.index(cluster_id)
                     groups_list[index]['children_id'].append(child_id)
                     
                     child_node["parent_id"] = groups_list[index]['id']
-                    child_node["level"] = 4
+                    child_node["level"] = level+1
             
             node['children_id'] = groups_id_list
             pv_tree_data.extend(groups_list)
-    new_Tree_path = Tree_path[:-5]+'_new.json'
-    with open(new_Tree_path, 'w') as json_file:
+    grouped_Tree_path = Tree_path[:-5]+'_grouped.json'
+    with open(grouped_Tree_path, 'w') as json_file:
         json.dump(pv_tree_data, json_file)
+    return grouped_Tree_path
+
+def getGroupedPoints(grouped_Tree_path, children_Points, level=3):
+    with open(grouped_Tree_path, 'r') as file:
+        pv_tree_data = json.load(file)
+    
+    grouped_points = []
+
+    for node in pv_tree_data:
+        if node['level'] == level:
+            childpoints_list = []
+            for child_id in node['children_id']:
+                for data in children_Points:
+                    if data['id'] == child_id:
+                        childpoints_list.append([data['x'], data['y']])
+                        break
+            center = [sum(x) / len(childpoints_list) for x in zip(*childpoints_list)]
+            group_point = {}
+            group_point['id'] = node['id']
+            group_point['x'] = center[0]
+            group_point['y'] = center[1]
+            grouped_points.append(group_point)
+    return grouped_points

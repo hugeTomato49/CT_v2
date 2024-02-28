@@ -2,7 +2,7 @@
 @Description: a file define the pearson correlation coefficient function.
 @Author: Nemo
 @Date: 2024-01-31 15:19:43
-@LastEditTime: 2024-02-23 18:42:46
+@LastEditTime: 2024-02-28 11:14:00
 @LastEditors: Nemo
 '''
 import pandas as pd
@@ -37,3 +37,11 @@ def pearson_cal(json_data):
 
         print("Data Error _01")
         return ''
+    
+def Eucdis_cal(TS1, TS2):
+    _, TS1_datalist = TSjson_exp(TS1)
+    TS1_datalist = TS1_datalist[:, 1]
+    _, TS2_datalist = TSjson_exp(TS2)
+    TS2_datalist = TS2_datalist[:, 1]
+    Eucdis = np.linalg.norm(TS1_datalist - TS2_datalist)
+    return Eucdis
