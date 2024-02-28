@@ -1,6 +1,7 @@
 import axios from "axios"
 import { cloneDeep } from 'lodash'
 import { transformData, filterDataByTimeRange } from "../computation/basicComputation"
+import { updateSelectionFromOriginal } from "../update/updateTree"
 
 
 
@@ -12,7 +13,7 @@ const state = {
     levels: ['Transformer', 'Converter', 'Line'],
     level_id_list: [],
     timeRange: [],
-    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC","#B3D1EC", "#B3D1EC"]
+    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC","#B3D1EC", "#B3D1EC","#B3D1EC"]
     
 
 }
@@ -163,8 +164,14 @@ const actions = {
       state.level_id_list.push(max + 1) 
       dispatch('updateLevelIdList', state.level_id_list)
     },
-    createLayers({state, commit, dispatch, rootState}, obj){
+    addLayer({state, commit, dispatch, rootState}, obj){
       axios.post('/api/addLayer',obj).then((response) => {
+        console.log("check newOriginalTree")
+        console.log(response.data.newOriginalTree)
+        
+
+
+
 
         
         

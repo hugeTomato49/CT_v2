@@ -85,7 +85,7 @@ export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection
         const end = findNodeCoordinates(childId, coordinateCollection, xScale, yScale);
 
         if (start && end) {
-            console.log("paths is", paths)
+            // console.log("paths is", paths)
             const pathD = generateBezierPath(start, end);
             paths.push(pathD);
         }
@@ -138,7 +138,7 @@ function findNodeCoordinates(nodeId, coordinateCollection, x_Scale, y_Scale) {
             );
             const node = coordinates.find(node => node.id === nodeId);
             if (node) {
-                console.log("link node is", node)
+                // console.log("link node is", node)
                 coordinate = { x: xScaleObj.xScale(node.x), y: yScaleObj.yScale(node.y) };
             }
         }
