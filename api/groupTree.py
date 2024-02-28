@@ -9,7 +9,7 @@ import os
 import json
 from dr import mds_to2d 
 from filter import filterDataByTimeRange
-from cluster import cluster_dbscan, cluster_kmeans_2d 
+from cluster import cluster_dbscan, cluster_kmeans_2d
 
 def constructGT(Tree_path, points, level=3, n=5):
     if os.path.exists(Tree_path):
