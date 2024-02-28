@@ -1,8 +1,6 @@
 node_modules
-api/data
+/api
 backend/data
-api/*.json
-api/*.ipynb
 api/tmp
 __pycache__/
 /dist

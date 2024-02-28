@@ -2,7 +2,7 @@
 @Description: a file define the cluster function.
 @Author: Nemo
 @Date: 2024-01-31 15:19:43
-@LastEditTime: 2024-02-16 19:50:26
+@LastEditTime: 2024-02-28 16:44:11
 @LastEditors: Nemo
 '''
 import json
@@ -75,9 +75,9 @@ def cluster_dbscan(data_list, eps=0.4, min_samples=2):
             result_dict[str(j)].append(keys[i])
         else:
             result_dict.update({str(j):[keys[i]]})
-    json_string = json.dumps(result_dict)
+    # json_string = json.dumps(result_dict)
     
-    return json_string
+    return result_dict
 
 def cluster_kmeans_2d(data_list, n):
     keys = []
