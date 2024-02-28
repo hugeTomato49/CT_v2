@@ -8,7 +8,7 @@ const state = {
     cardWidth: 0,
     xScale: d3.scaleTime(),
     yScale: [],
-    columnPercentage: 0.2,
+    columnPercentage: 0.25,
     rowNum: 18
 
 }

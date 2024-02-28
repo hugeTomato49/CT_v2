@@ -12,7 +12,7 @@ const state = {
     levels: ['Transformer', 'Converter', 'Line'],
     level_id_list: [],
     timeRange: [],
-    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC"]
+    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC","#B3D1EC", "#B3D1EC"]
     
 
 }
@@ -49,6 +49,17 @@ const actions = {
             dispatch('addToSelectionTree',cloneDeep(state.originalTree.slice(0,1)))
         })
     },
+    updateSelectionTree({state, commit, dispatch}, currentSelectionTree){
+      commit('UPDATE_SELECTION_TREE', currentSelectionTree)
+      if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
+        dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
+      }
+      const node_list = []
+      currentSelectionTree.forEach(node => {
+        node_list.push(node.id)
+      })
+      dispatch('getSeriesCollection', node_list)
+    },
     getSeriesCollection({state, commit, dispatch}, node_list){
       axios.post('/api/SeriesCollection',{"nodeList":node_list, "dataset":state.dataset}).then((response) => {
         const newSeriesCollection = response.data.seriesCollection.map(node => {
@@ -66,7 +77,6 @@ const actions = {
       commit('UPDATE_TIME_RANGE', newTimeRange)
       dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
       dispatch('scatterPlot/getCoordinateCollection',null, {root:true})
-
     },
     filterSeriesCollectionByTimeRange({state, commit, dispatch}, newTimeRange){
 
@@ -134,30 +144,15 @@ const actions = {
             currentSelectionTree.push(node);
           }
         })
-        commit('UPDATE_SELECTION_TREE', currentSelectionTree)
-        if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
-          dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
-        }
-        const node_list = []
-        currentSelectionTree.forEach(node => {
-          node_list.push(node.id)
-        })
-        dispatch('getSeriesCollection', node_list)
+        dispatch('updateSelectionTree', currentSelectionTree)
+
       },
-    removeFromSelectionTree({state, commit, dispatch}, nodesToRemove) {
+    removeFromSelectionTree({state, dispatch}, nodesToRemove) {
         let currentSelectionTree = state.selectionTree
         currentSelectionTree = currentSelectionTree.filter(node =>
             !nodesToRemove.some(n => n.id === node.id)
         )
-        commit('UPDATE_SELECTION_TREE', currentSelectionTree)
-        if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
-          dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
-        }
-        const node_list = []
-        currentSelectionTree.forEach(node => {
-          node_list.push(node.id)
-        })
-        dispatch('getSeriesCollection', node_list)
+        dispatch('updateSelectionTree',currentSelectionTree)
     },
     updateLevelIdList({commit, dispatch}, level_id_list) {
       commit('UPDATE_LEVEL_ID_LIST', level_id_list)

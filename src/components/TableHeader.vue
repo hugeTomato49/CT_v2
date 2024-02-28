@@ -11,7 +11,7 @@
           }"
         >
           <div
-            class="h-full flex flex-row items-center"
+            class="h-full flex flex-row items-center justify-center"
             :style="{
               width:
                 headerContainer?.offsetWidth * columnPercentage - 20 + 'px',
