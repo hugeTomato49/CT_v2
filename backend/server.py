@@ -126,6 +126,7 @@ def getGroupedCoordinateCollection():
         if os.path.exists(Tree_path):
             with open(Tree_path, 'r') as file:
                 pv_tree_data = json.load(file) 
+                print(pv_tree_data)
         max_level = max(pv_tree_data, key=lambda x: x["level"])['level']
 
         # if exist the original collection: get level's points;
@@ -143,6 +144,8 @@ def getGroupedCoordinateCollection():
         for i in range(level-1, 0, -1):
             collection[i] = origin_collection["coordinateCollection"][str(i)]
         grouped_result = {"newOriginalTree":grouped_Tree, "newCoordinateCollection":collection}
+       
+
         
         return grouped_result
 

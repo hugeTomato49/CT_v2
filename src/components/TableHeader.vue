@@ -210,6 +210,8 @@ export default {
 
     const createLayers = (level_id) => {
       const obj = {"dataset": dataset.value, "level_id": level_id}
+      console.log("check dataset")
+      console.log(dataset.value)
       store.dispatch("tree/addLayer", obj)
     }
 
