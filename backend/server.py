@@ -96,14 +96,14 @@ def getCoordinateCollection():
                     data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_folder_path, data_file_name)
                     with open(data_file_path, 'r') as file:
                         object[node["id"]] = filterDataByTimeRange(json.load(file)["data"], timeRange)
-                         
+                        
             result = mds_to2d(object)
             collection[level_id] = result
         
         # print(collection)
         return {"coordinateCollection":collection}
     
-   
+    
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)
