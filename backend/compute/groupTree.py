@@ -2,7 +2,7 @@
 @Description: 
 @Author: 
 @Date: 2024-02-26 15:39:05
-@LastEditTime: 2024-02-28 14:46:43
+@LastEditTime: 2024-02-28 15:53:51
 @LastEditors: Nemo
 '''
 import os
@@ -59,11 +59,11 @@ def constructGT(Tree_path, points, level=3, n=5):
     grouped_Tree_path = Tree_path[:-5]+'_grouped.json'
     with open(grouped_Tree_path, 'w') as json_file:
         json.dump(pv_tree_data, json_file)
-    return grouped_Tree_path
+    return pv_tree_data
 
-def getGroupedPoints(grouped_Tree_path, children_Points, level=3):
-    with open(grouped_Tree_path, 'r') as file:
-        pv_tree_data = json.load(file)
+def getGroupedPoints(pv_tree_data, children_Points, level=3):
+    # with open(grouped_Tree_path, 'r') as file:
+    #     pv_tree_data = json.load(file)
     
     grouped_points = []
 
