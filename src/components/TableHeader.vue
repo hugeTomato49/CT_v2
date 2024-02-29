@@ -72,14 +72,14 @@
                   @mouseout="handleMouseOut"
                 ></circle>
               </g>
-              <!-- <path
-                v-for="(path, index) in bezierPaths"
-                :key="index"
+              <path
+                v-for="path in bezierPaths"
+                :key=path
                 :d="path"
-                stroke="black"
+                stroke="yellow"
                 stroke-width="2"
                 fill="none"
-              /> -->
+              />
             </svg>
           </div>
         </div>
@@ -177,12 +177,13 @@ export default {
         originalTree.value,
         coordinateCollection.value,
         plot_X_Scale.value,
-        plot_Y_Scale.value
+        plot_Y_Scale.value,
+        headerContainer.value.offsetWidth *columnPercentage.value
       );
     };
 
     const handleMouseOut = () => {
-      // bezierPaths.value = [];
+      bezierPaths.value = [];
       resetNodes();
     };
 

@@ -50,6 +50,8 @@ export const highlightNodes = (id, originalTree) => {
             circle.style.fillOpacity = '1'; // 完全不透明
             // circle.setAttribute('r', '10'); // 假设高亮时半径变为10
             circle.style.r = '10'; // 恢复默认半径
+            circle.setAttribute('stroke', 'rgb(216, 216, 216)'); // 设置描边颜色为灰色
+            circle.setAttribute('stroke-width', '2'); // 设置描边宽度
         }
     });
 };
@@ -59,11 +61,12 @@ export const resetNodes = () => {
     document.querySelectorAll('.node').forEach(circle => {
         circle.style.fillOpacity = '0.5'; // 恢复默认透明度为50%
         circle.style.r = '5'; // 恢复默认半径
+        circle.setAttribute('stroke', 'none'); 
     });
 };
 
 
-export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection, xScale, yScale) => {
+export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection, xScale, yScale, offset) => {
     //     return [
     //         {
     //         "start_id": 1,
@@ -81,8 +84,8 @@ export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection
     console.log('related node id is', relatedNodeIds)
     relatedNodeIds.forEach(childId => {
         // 假设 findNodeCoordinates 可以从 coordinateCollection 获取节点坐标
-        const start = findNodeCoordinates(hoveredId, coordinateCollection, xScale, yScale);
-        const end = findNodeCoordinates(childId, coordinateCollection, xScale, yScale);
+        const start = findNodeCoordinates(hoveredId, coordinateCollection, xScale, yScale, offset);
+        const end = findNodeCoordinates(childId, coordinateCollection, xScale, yScale, offset);
 
         if (start && end) {
             console.log("paths is", paths)
@@ -93,7 +96,7 @@ export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection
     return paths;
 }
 const findAllRelatedNodeIds = (nodeId, tree) => {
-    let ids = [nodeId]; // 初始化包含当前节点ID的数组
+    let ids = []; // 初始化包含当前节点ID的数组
 
     const findChildrenIds = (id, nodes) => {
         const node = nodes.find(node => node.id === id);
@@ -126,7 +129,7 @@ function generateBezierPath(start, end) {
     const controlY = start.y - 20; // 控制点上移，使曲线向上弯曲
     return `M ${start.x},${start.y} Q ${controlX},${controlY} ${end.x},${end.y}`;
 }
-function findNodeCoordinates(nodeId, coordinateCollection, x_Scale, y_Scale) {
+function findNodeCoordinates(nodeId, coordinateCollection, x_Scale, y_Scale, offset) {
     let coordinate = null
     Object.entries(coordinateCollection).forEach(
         ([level_id, coordinates]) => {
@@ -139,7 +142,7 @@ function findNodeCoordinates(nodeId, coordinateCollection, x_Scale, y_Scale) {
             const node = coordinates.find(node => node.id === nodeId);
             if (node) {
                 console.log("link node is", node)
-                coordinate = { x: xScaleObj.xScale(node.x), y: yScaleObj.yScale(node.y) };
+                coordinate = { x: xScaleObj.xScale(node.x) + offset * (level_id - 1), y: yScaleObj.yScale(node.y) };
             }
         }
     );
