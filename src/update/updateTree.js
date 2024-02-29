@@ -37,8 +37,8 @@ export const updateSelectionFromOriginal = (oldSelectionTree, newOriginalTree, l
         }
     });
 
-    console.log("check SSSS")
-    console.log(newSelectionTree)
+    // console.log("check SSSS")
+    // console.log(newSelectionTree)
 
     return newSelectionTree;
 }

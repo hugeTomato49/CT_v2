@@ -78,24 +78,6 @@ export default {
             }    
         }
 
-        const getAverageSeriesData = (id) => {
-            const id_list = selectionTree.value.find(node => node.id == id).children_id
-            const series_list = seriesCollection.value.filter(node => id_list.includes(node.id)).map(node => node.seriesData)
-            const average_series = series_list[0].map((item, index) => {
-                let totalValue = 0;
-                series_list.forEach(dataset => {
-                    totalValue += dataset[index].value
-                });
-                const averageValue = totalValue / series_list.length
-                return {
-                    Time: item.Time,
-                    value: averageValue
-                }
-            })
-
-            return average_series
-        }
-
 
 
         onMounted(()=>{
@@ -113,7 +95,7 @@ export default {
             tableContainer,
             groupedIdCollection,
             groupedNodeFlag,
-            getAverageSeriesData
+
         }
 
 

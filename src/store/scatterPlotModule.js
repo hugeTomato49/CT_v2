@@ -26,8 +26,8 @@ const mutations = {
     },
     UPDATE_COORDINATE_COLLECTION(state, payload) {
         state.coordinateCollection = payload
-        console.log("Check CC")
-        console.log(payload)
+        // console.log("Check CC")
+        // console.log(payload)
     },
 }
 
@@ -38,14 +38,11 @@ const actions = {
         const timeRange = rootState.tree.timeRange
         if(timeRange.length != 0){
             axios.post('/api/coordinateCollection', { "dataset": dataset, "level_id_list": level_id_list, "timeRange": timeRange }).then((response) => {
-                // console.log("check MDS result")
-                // console.log(response.data.coordinateCollection)
                 commit('UPDATE_COORDINATE_COLLECTION', response.data.coordinateCollection)
                 dispatch('updatePlotScale')
             })
         }
-        console.log("CoordinateCollection is",state.coordinateCollection)
-          // step 1: use updated result of MDS coordinates to update computed scales(for each level)
+
         
     },
     updatePlotScale({ state, commit }) {
@@ -77,7 +74,7 @@ const actions = {
             // 将计算出的比例尺存储在相应的数组中
             plot_X_Scale.push({ level_id: level_id, xScale: xScale });
             plot_Y_Scale.push({ level_id: level_id, yScale: yScale });
-            console.log("width is", plotWidth)
+            // console.log("width is", plotWidth)
             // console.log("yScale is", plot_Y_Scale)
             
         });

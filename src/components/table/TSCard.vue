@@ -30,6 +30,7 @@ export default {
     props: ['seriesData', 'level', 'node_id', 'groupedNode'],
     setup(props) {
         const store = useStore()
+        const selectionTree = computed(() => store.getters["tree/selectionTree"])
         const colorBar = computed(()=>store.getters["tree/colorBar"])
         const rowHeight = computed(()=>store.getters['size/rowHeight'])
         const cardHeight = computed(()=>store.getters['size/cardHeight'])
@@ -57,7 +58,7 @@ export default {
             if (selection) {
                 const newTimeRange = selection.map(xScale.value.invert)
                 store.dispatch('tree/updateTimeRange', newTimeRange)
-                console.log('Selected Time Range:', newTimeRange)
+                // console.log('Selected Time Range:', newTimeRange)
                 d3.select(brushRef.value).call(brushRef.value.brush.move, null)
             }
         }
@@ -70,7 +71,6 @@ export default {
         const fold = (id) => {
             store.dispatch('tree/deselectNodeAndChildren', id)
             foldState.value = true
-
         }
         
         onMounted(()=>{
