@@ -11,9 +11,7 @@ export const addPlotScale = (Plot_X_Scale, Plot_Y_Scale, level_id) => {
 
     const plotX = cloneDeep(Plot_X_Scale)
     const plotY = cloneDeep(Plot_Y_Scale)
-    console.log("ORIGINAL SCALE!!!")
-    console.log(plotX)
-    console.log(plotY)
+
     const xScale = plotX.find(scale => scale.level_id == level_id)
     const yScale = plotY.find(scale => scale.level_id == level_id)
 
@@ -23,9 +21,7 @@ export const addPlotScale = (Plot_X_Scale, Plot_Y_Scale, level_id) => {
     xScale.level_id = (level_id + 1).toString()
     yScale.level_id = (level_id + 1).toString()
 
-    console.log("SCALE!!!")
-    console.log(plotX)
-    console.log(plotY)
+
 
     return {plotX, plotY}
 

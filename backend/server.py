@@ -10,6 +10,7 @@ app = Flask(__name__)
 
 PV_data_folder_path = "data/PV"
 PV_tree_file_name = "PV_Tree.json"
+PV_tree_grouped_file_name = "PV_Tree_grouped.json"
 collection_json_path = os.path.join(os.path.dirname(__file__), 'tmp/origin_coordinateCollection.json')
 
 @app.route('/PVTree', methods=['GET'])
@@ -37,16 +38,21 @@ def getSeriesCollection():
     if dataset == 'PV':
         # read the tree structure to get file_name
         file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+        file_grouped_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_grouped_file_name)
         if os.path.exists(file_path):
             with open(file_path, 'r') as file:
                 pv_tree_data = json.load(file) 
+        
+        if os.path.exists(file_grouped_path):
+            with open(file_grouped_path, 'r') as file:
+                pv_tree_grouped_data = json.load(file) 
 
         for id in nodeList:
             object = {}
             object["id"] = id
 
             matching_dict = next((item for item in pv_tree_data if item["id"] == id), None)
-            matching_node = next((item for item in selectionTree if item["id"] == id), None)
+            matching_node = next((item for item in pv_tree_grouped_data if item["id"] == id), None)
             if matching_dict is not None:
                 object["node_name"] = matching_dict["node_name"]
                 object["level"] = matching_node["level"]
@@ -68,9 +74,13 @@ def getSeriesCollection():
                 children_id = matching_node["children_id"]
                 seriesData_list = []
                 for child_id in children_id:
-                    matching_item = next((item for item in collection if item["id"] == child_id), None)
-                    seriesData_list.append(matching_item["seriesData"])
-                
+                    child_matching_node = next((item for item in pv_tree_grouped_data if item["id"] == child_id), None)
+                    data_file_name = child_matching_node["node_name"] + ".json"
+                    data_folder_path = list(child_matching_node["node_name"].split("-"))[-2]
+                    data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_folder_path, data_file_name)
+                    with open(data_file_path, 'r') as file:
+                        seriesData_list.append(json.load(file)["data"])
+
                 object['seriesData'] = getAverageSeriesData(seriesData_list)
                 object['seriesData_copy'] = object['seriesData']
  

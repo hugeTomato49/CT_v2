@@ -78,7 +78,7 @@ export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection
     const paths = [];
     const hoveredNode = findNodeById(hoveredId, coordinateCollection);
     const relatedNodeIds = findAllRelatedNodeIds(hoveredId, originalTree);
-    console.log('related node id is', relatedNodeIds)
+    // console.log('related node id is', relatedNodeIds)
     relatedNodeIds.forEach(childId => {
         // 假设 findNodeCoordinates 可以从 coordinateCollection 获取节点坐标
         const start = findNodeCoordinates(hoveredId, coordinateCollection, xScale, yScale);
@@ -113,7 +113,7 @@ function findNodeById(id, coordinateCollection) {
     Object.entries(coordinateCollection).forEach(
         ([level_id, coordinates]) => {
             const temp = coordinates.find(node => node.id === id);
-            console.log("node is", node)
+            // console.log("node is", node)
             if (temp) {
                 node = temp
             };

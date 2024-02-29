@@ -170,8 +170,8 @@ const actions = {
     addLayer({state, dispatch, commit, rootState}, obj){
       state.groupState = true
       axios.post('/api/addLayer',obj).then((response) => {
-        console.log("check newOriginalTree")
-        console.log(response.data.newOriginalTree)
+        // console.log("check newOriginalTree")
+        // console.log(response.data.newOriginalTree)
         commit('UPDATE_ORIGINAL_TREE', response.data.newOriginalTree) // originalTree
         dispatch('updateSelectionTree', updateSelectionFromOriginal(state.selectionTree, state.originalTree, obj.level_id)) // selectionTree & seriesCollection
         commit('UPDATE_LEVEL_ID_LIST', [...new Set(state.selectionTree.map(node => node.level))].sort((a, b) => a - b)) // level_id_list
