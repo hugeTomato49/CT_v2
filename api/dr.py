@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.manifold import MDS
-from compute.jsonTransfer import TSjson_exp
+from jsonTransfer import TSjson_exp
 
 def mds_to2d(json_data, mode='similarity'):
     '''

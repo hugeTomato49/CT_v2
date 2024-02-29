@@ -73,8 +73,8 @@ export const PLOT_Scale = (data, width, height) => {
     // 提取所有点的 x 和 y 值
     let xValues = data.map(coord => coord.x);   
     let yValues = data.map(coord => coord.y);
-    console.log("data is", data )
-    console.log("xValues is", xValues )
+    // console.log("data is", data )
+    // console.log("xValues is", xValues )
 
     // 计算 x 和 y 值的最大和最小值
     let xMin = Math.min(...xValues), xMax = Math.max(...xValues);
@@ -83,11 +83,11 @@ export const PLOT_Scale = (data, width, height) => {
     // 找到 x 和 y 值绝对值最大的数
     let maxX = Math.max(Math.abs(xMin), Math.abs(xMax));
     let maxY = Math.max(Math.abs(yMin), Math.abs(yMax));
-    console.log("maxX is", maxX )
+    // console.log("maxX is", maxX )
 
     // 使用绝对值最大的数来创建比例尺，确保比例尺能覆盖所有数据点
-    const xScale = d3.scaleLinear().domain([-maxX, maxX]).range([8, width-8]);
-    const yScale = d3.scaleLinear().domain([-maxY, maxY]).range([height-8, 8]);
+    const xScale = d3.scaleLinear().domain([-maxX, maxX]).range([10, width-10]);
+    const yScale = d3.scaleLinear().domain([-maxY, maxY]).range([height-10, 10]);
     // console.log("width is", width)
 
     return { xScale, yScale };

@@ -49,9 +49,10 @@ export const highlightNodes = (id, originalTree) => {
         if (circle) {
             circle.style.fillOpacity = '1'; // 完全不透明
             // circle.setAttribute('r', '10'); // 假设高亮时半径变为10
-            circle.style.r = '10'; // 恢复默认半径
-            circle.setAttribute('stroke', 'rgb(216, 216, 216)'); // 设置描边颜色为灰色
-            circle.setAttribute('stroke-width', '2'); // 设置描边宽度
+            circle.style.r = '13'; // 恢复默认半径
+            circle.setAttribute('stroke', 'rgb(226, 226, 226)'); // 设置描边颜色为灰色
+            circle.setAttribute('stroke-width', '6'); // 设置描边宽度
+            
         }
     });
 };
@@ -87,8 +88,8 @@ export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection
         const start = findNodeCoordinates(hoveredId, coordinateCollection, xScale, yScale, offset);
         const end = findNodeCoordinates(childId, coordinateCollection, xScale, yScale, offset);
 
-        if (start && end) {
-            console.log("paths is", paths)
+        if (start && end && childId !== hoveredId) {
+            // console.log("paths is", paths)
             const pathD = generateBezierPath(start, end);
             paths.push(pathD);
         }
@@ -96,14 +97,14 @@ export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection
     return paths;
 }
 const findAllRelatedNodeIds = (nodeId, tree) => {
-    let ids = []; // 初始化包含当前节点ID的数组
+    let ids = [nodeId]; // 初始化包含当前节点ID的数组
 
     const findChildrenIds = (id, nodes) => {
         const node = nodes.find(node => node.id === id);
         if (node && node.children_id) {
             node.children_id.forEach(childId => {
                 ids.push(childId); // 添加子节点ID到数组
-                findChildrenIds(childId, nodes); // 递归查找更深层的子节点
+                // findChildrenIds(childId, nodes); // 递归查找更深层的子节点
             });
         }
     };
@@ -125,9 +126,12 @@ function findNodeById(id, coordinateCollection) {
     return node;
 }
 function generateBezierPath(start, end) {
-    const controlX = (start.x + end.x) / 2;
-    const controlY = start.y - 20; // 控制点上移，使曲线向上弯曲
-    return `M ${start.x},${start.y} Q ${controlX},${controlY} ${end.x},${end.y}`;
+    const control1X = start.x + (end.x - start.x) / 3;
+    const control1Y = start.y - 20; // 第一个控制点向上弯曲
+    const control2X = start.x + 2 * (end.x - start.x) / 3;
+    const control2Y = end.y - 20; // 第二个控制点也向上弯曲，保持曲线的平滑性
+
+    return `M ${start.x},${start.y} C ${control1X},${control1Y} ${control2X},${control2Y} ${end.x},${end.y}`;
 }
 function findNodeCoordinates(nodeId, coordinateCollection, x_Scale, y_Scale, offset) {
     let coordinate = null

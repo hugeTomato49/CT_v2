@@ -2,12 +2,12 @@
 @Description: a file define the cluster function.
 @Author: Nemo
 @Date: 2024-01-31 15:19:43
-@LastEditTime: 2024-02-27 21:24:22
+@LastEditTime: 2024-02-28 16:44:11
 @LastEditors: Nemo
 '''
 import json
 import numpy as np
-from jsonTransfer import TSjson_exp
+from compute.jsonTransfer import TSjson_exp
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
 

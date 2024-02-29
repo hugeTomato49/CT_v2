@@ -1,6 +1,8 @@
 import axios from "axios"
-import { cloneDeep } from 'lodash'
+import { cloneDeep, update } from 'lodash'
 import { transformData, filterDataByTimeRange } from "../computation/basicComputation"
+import { updateSelectionFromOriginal, addLevels, updateSeriesCollection } from "../update/updateTree"
+import { addPlotScale, addYScale } from "../update/updateScale"
 
 
 
@@ -12,7 +14,9 @@ const state = {
     levels: ['Transformer', 'Converter', 'Line'],
     level_id_list: [],
     timeRange: [],
-    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC"]
+    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC","#B3D1EC", "#B3D1EC","#B3D1EC"],
+    groupState: false
+
     
 
 }
@@ -27,8 +31,8 @@ const mutations = {
         state.selectionTree = payload
     },
     UPDATE_SERIES_COLLECTION(state, payload){
-        console.log("CHECK Series Collection")
-        console.log(payload)
+        // console.log("CHECK Series Collection")
+        // console.log(payload)
         state.seriesCollection = payload
     },
     UPDATE_TIME_RANGE(state, payload){
@@ -36,6 +40,9 @@ const mutations = {
     },
     UPDATE_LEVEL_ID_LIST(state, payload) {
       state.level_id_list = payload
+    },
+    UPDATE_LEVELS(state, payload) {
+      state.levels = payload
     }
 
 }
@@ -48,6 +55,19 @@ const actions = {
             // console.log(response.data.PV_Tree)
             dispatch('addToSelectionTree',cloneDeep(state.originalTree.slice(0,1)))
         })
+    },
+    updateSelectionTree({state, commit, dispatch}, currentSelectionTree){
+      commit('UPDATE_SELECTION_TREE', currentSelectionTree)
+      if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
+        dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
+      }
+      const node_list = []
+      currentSelectionTree.forEach(node => {
+        if(!node?.attribute??"".includes("group")){
+          node_list.push(node.id)
+        }
+      })
+      dispatch('getSeriesCollection', node_list)
     },
     getSeriesCollection({state, commit, dispatch}, node_list){
       axios.post('/api/SeriesCollection',{"nodeList":node_list, "dataset":state.dataset}).then((response) => {
@@ -66,7 +86,6 @@ const actions = {
       commit('UPDATE_TIME_RANGE', newTimeRange)
       dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
       dispatch('scatterPlot/getCoordinateCollection',null, {root:true})
-
     },
     filterSeriesCollectionByTimeRange({state, commit, dispatch}, newTimeRange){
 
@@ -134,30 +153,15 @@ const actions = {
             currentSelectionTree.push(node);
           }
         })
-        commit('UPDATE_SELECTION_TREE', currentSelectionTree)
-        if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
-          dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
-        }
-        const node_list = []
-        currentSelectionTree.forEach(node => {
-          node_list.push(node.id)
-        })
-        dispatch('getSeriesCollection', node_list)
+        dispatch('updateSelectionTree', currentSelectionTree)
+
       },
-    removeFromSelectionTree({state, commit, dispatch}, nodesToRemove) {
+    removeFromSelectionTree({state, dispatch}, nodesToRemove) {
         let currentSelectionTree = state.selectionTree
         currentSelectionTree = currentSelectionTree.filter(node =>
             !nodesToRemove.some(n => n.id === node.id)
         )
-        commit('UPDATE_SELECTION_TREE', currentSelectionTree)
-        if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
-          dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
-        }
-        const node_list = []
-        currentSelectionTree.forEach(node => {
-          node_list.push(node.id)
-        })
-        dispatch('getSeriesCollection', node_list)
+        dispatch('updateSelectionTree',currentSelectionTree)
     },
     updateLevelIdList({commit, dispatch}, level_id_list) {
       commit('UPDATE_LEVEL_ID_LIST', level_id_list)
@@ -167,7 +171,23 @@ const actions = {
       const max = Math.max(...state.level_id_list)
       state.level_id_list.push(max + 1) 
       dispatch('updateLevelIdList', state.level_id_list)
-      
+    },
+    addLayer({state, commit, rootState}, obj){
+      state.groupState = true
+      axios.post('/api/addLayer',obj).then((response) => {
+        console.log("check newOriginalTree")
+        console.log(response.data.newOriginalTree)
+        commit('UPDATE_ORIGINAL_TREE', response.data.newOriginalTree) // originalTree
+        commit('UPDATE_SELECTION_TREE', updateSelectionFromOriginal(state.selectionTree, state.originalTree, obj.level_id)) // selectionTree
+        commit('UPDATE_LEVEL_ID_LIST', [...new Set(state.selectionTree.map(node => node.level))].sort((a, b) => a - b)) // level_id_list
+        commit('UPDATE_LEVELS', addLevels(state.levels, obj.level_id)) // levels
+        commit('UPDATE_SERIES_COLLECTION', updateSeriesCollection(state.seriesCollection, obj.level_id)) // seriesCollection
+        commit('size/UPDATE_Y_SCALE', addYScale(rootState.size.yScale, obj.level_id), { root: true }) // yScale
+        commit('scatterPlot/UPDATE_COORDINATE_COLLECTION', response.data.newCoordinateCollection, { root: true }) // coordinateCollection
+        const {plotX, plotY} = addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id)
+        commit('scatterPlot/UPDATE_PLOT_X_SCALE', plotX, { root: true }) //plot_x_scale
+        commit('scatterPlot/UPDATE_PLOT_Y_SCALE', plotY, { root: true }) //plot_y_scale
+      })
     }
     
 }
@@ -176,11 +196,12 @@ const getters = {
     originalTree: state => state.originalTree,
     selectionTree: state => state.selectionTree,
     seriesCollection: state => state.seriesCollection,
-    dateset: state => state.dataset,
+    dataset: state => state.dataset,
     levels: state => state.levels,
     level_id_list: state => state.level_id_list,
     timeRange: state => state.timeRange.PV_Tree,
     colorBar: state => state.colorBar,
+    groupState: state => state.groupState
     
 
 
