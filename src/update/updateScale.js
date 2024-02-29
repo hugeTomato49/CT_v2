@@ -20,8 +20,8 @@ export const addPlotScale = (Plot_X_Scale, Plot_Y_Scale, level_id) => {
     plotX.splice(level_id-1, 0, cloneDeep(xScale))
     plotY.splice(level_id-1, 0, cloneDeep(yScale))
     
-    xScale.level_id = level_id + 1
-    yScale.level_id = level_id + 1
+    xScale.level_id = (level_id + 1).toString()
+    yScale.level_id = (level_id + 1).toString()
 
     console.log("SCALE!!!")
     console.log(plotX)

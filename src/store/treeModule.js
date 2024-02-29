@@ -184,8 +184,9 @@ const actions = {
         commit('UPDATE_SERIES_COLLECTION', updateSeriesCollection(state.seriesCollection, obj.level_id)) // seriesCollection
         commit('size/UPDATE_Y_SCALE', addYScale(rootState.size.yScale, obj.level_id), { root: true }) // yScale
         commit('scatterPlot/UPDATE_COORDINATE_COLLECTION', response.data.newCoordinateCollection, { root: true }) // coordinateCollection
-        commit('scatterPlot/UPDATE_PLOT_X_SCALE', addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id).plotX, { root: true }) //plot_x_scale
-        commit('scatterPlot/UPDATE_PLOT_Y_SCALE', addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id).plotY, { root: true }) //plot_y_scale
+        const {plotX, plotY} = addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id)
+        commit('scatterPlot/UPDATE_PLOT_X_SCALE', plotX, { root: true }) //plot_x_scale
+        commit('scatterPlot/UPDATE_PLOT_Y_SCALE', plotY, { root: true }) //plot_y_scale
       })
     }
     
