@@ -6,7 +6,7 @@
             class="flex flex-row h-full "
             >
                 <div 
-                class="h-full  flex flex-col border-1 rounded-md"
+                class="h-full flex flex-col border-1 rounded-md overflow overflow-scroll"
                 :style="{
                 width: tableContainer?.offsetWidth * columnPercentage - 20 + 'px'
                 }">
@@ -14,9 +14,10 @@
                     v-for = "(id,index) in groupedIdCollection(level_id)"
                     :key = "id"
                     :id="'card' + id"
-                    :seriesData = groupedNodeFlag(id)?getAverageSeriesData(id):findSeriesData(id)
+                    :seriesData = findSeriesData(id)
                     :level = "level_id"
                     :node_id = "id"
+                    :groupedNode = groupedNodeFlag(id)
                     />
                 </div>
                 <div class="w-20px h-full"></div>
