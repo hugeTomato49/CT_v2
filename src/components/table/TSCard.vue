@@ -1,23 +1,24 @@
 <template>
-<div 
-class="w-full p-0.5" 
-:style="{ height: rowHeight + 'px' }" 
-@click=foldState?unfold(node_id):fold(node_id)
->
-    <div class="w-full h-full" id="cardContainer">
-        <svg class="w-full h-full bg-stone-100">
-            <g ref="brushRef"></g>
-            <path
-            :stroke=colorBar[level-1]
-            fill="none"
-            stroke-width="2"
-            :d="generatePath(seriesData,xScale,yScale)"
-            >
-            </path>
-        </svg>
+    <div 
+    class="w-full p-0.8" 
+    :style="{ height: rowHeight + 'px' }" 
+    @click="foldState ? unfold(node_id) : fold(node_id)"
+    >
+        <div :class="['w-full h-full card', { 'hover-effect': !foldState }]" id="cardContainer">
+            <svg class="w-full h-full bg-stone-100">
+                <g ref="brushRef"></g>
+                <path
+                :stroke="colorBar[level-1]"
+                fill="none"
+                stroke-width="2"
+                :d="generatePath(seriesData,xScale,yScale)"
+                >
+                </path>
+            </svg>
+        </div>
     </div>
-</div>
 </template>
+    
 
 <script>
 import { useStore } from 'vuex';
@@ -90,9 +91,6 @@ export default {
             fold,
             unfold
         }
-
-        
-
     }
 }
 
@@ -104,5 +102,15 @@ export default {
     opacity: 0.3;
 }
 
+.hover-effect {
+    box-shadow: 0 5px 4px -2.5px rgba(39, 39, 38, 0.3);
+}
+
+.card :hover {
+    box-shadow: 0 5px 4px -2.5px rgba(161, 187, 205, 0.6);
+}
+
+
 </style>
+
 

@@ -6,7 +6,7 @@
             class="flex flex-row h-full "
             >
                 <div 
-                class="h-full  flex flex-col border-1 rounded-md"
+                class="h-full flex flex-col border-1 rounded-md overflow overflow-scroll"
                 :style="{
                 width: tableContainer?.offsetWidth * columnPercentage - 20 + 'px'
                 }">
