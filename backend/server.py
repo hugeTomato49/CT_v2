@@ -4,6 +4,7 @@ import json
 from compute.filter import filterDataByTimeRange
 from compute.dr import mds_to2d
 from compute.groupTree import constructGT, getGroupedPoints
+from compute.basic import getAverageSeriesData
 
 app = Flask(__name__)
 
@@ -25,9 +26,13 @@ def getPVTree():
 @app.route('/SeriesCollection', methods=['POST'])
 def getSeriesCollection():
     data = request.get_json()
-    nodeList = data.get('nodeList', [])
+    selectionTree = data.get('selectionTree', [])
     dataset = data.get('dataset', None)
     collection = []
+    nodeList = []
+
+    for item in selectionTree:
+        nodeList.append(item["id"])
     
     if dataset == 'PV':
         # read the tree structure to get file_name
@@ -41,22 +46,34 @@ def getSeriesCollection():
             object["id"] = id
 
             matching_dict = next((item for item in pv_tree_data if item["id"] == id), None)
-            object["node_name"] = matching_dict["node_name"]
-            object["level"] = matching_dict["level"]
-            data_file_name = matching_dict["node_name"] + ".json"
-            if id == 1:
-                data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_file_name)
-                with open(data_file_path, 'r') as file:
-                    object['seriesData'] = json.load(file)["data"]
-                    object['seriesData_copy'] = object['seriesData']
+            matching_node = next((item for item in selectionTree if item["id"] == id), None)
+            if matching_dict is not None:
+                object["node_name"] = matching_dict["node_name"]
+                object["level"] = matching_node["level"]
+                data_file_name = matching_dict["node_name"] + ".json"
+                if id == 1:
+                    data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_file_name)
+                    with open(data_file_path, 'r') as file:
+                        object['seriesData'] = json.load(file)["data"]
+                        object['seriesData_copy'] = object['seriesData']
+                else:
+                    data_folder_path = list(matching_dict["node_name"].split("-"))[-2]
+                    data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_folder_path, data_file_name)
+                    with open(data_file_path, 'r') as file:
+                        object['seriesData'] = json.load(file)["data"]
+                        object['seriesData_copy'] = object['seriesData']
             else:
-                data_folder_path = list(matching_dict["node_name"].split("-"))[-2]
-                data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_folder_path, data_file_name)
-                with open(data_file_path, 'r') as file:
-                    object['seriesData'] = json.load(file)["data"]
-                    object['seriesData_copy'] = object['seriesData']
-                    
+                object["node_name"] = matching_node["node_name"]
+                object["level"] = matching_node["level"]
+                children_id = matching_node["children_id"]
+                seriesData_list = []
+                for child_id in children_id:
+                    matching_item = next((item for item in collection if item["id"] == child_id), None)
+                    seriesData_list.append(matching_item["seriesData"])
                 
+                object['seriesData'] = getAverageSeriesData(seriesData_list)
+                object['seriesData_copy'] = object['seriesData']
+ 
             collection.append(object)
     
     return {"seriesCollection": collection}

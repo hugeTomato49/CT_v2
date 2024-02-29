@@ -58,19 +58,13 @@ const actions = {
     },
     updateSelectionTree({state, commit, dispatch}, currentSelectionTree){
       commit('UPDATE_SELECTION_TREE', currentSelectionTree)
-      if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length){
+      if(state.level_id_list.length != [...new Set(currentSelectionTree.map((node) => node.level))].length && state.groupState == false){
         dispatch('updateLevelIdList', [...new Set(currentSelectionTree.map((node) => node.level))])
       }
-      const node_list = []
-      currentSelectionTree.forEach(node => {
-        if(!node?.attribute??"".includes("group")){
-          node_list.push(node.id)
-        }
-      })
-      dispatch('getSeriesCollection', node_list)
+      dispatch('getSeriesCollection', currentSelectionTree)
     },
-    getSeriesCollection({state, commit, dispatch}, node_list){
-      axios.post('/api/SeriesCollection',{"nodeList":node_list, "dataset":state.dataset}).then((response) => {
+    getSeriesCollection({state, commit, dispatch}, selectionTree){
+      axios.post('/api/SeriesCollection',{"selectionTree":selectionTree, "dataset":state.dataset}).then((response) => {
         const newSeriesCollection = response.data.seriesCollection.map(node => {
           return {
             ...node,
@@ -78,8 +72,9 @@ const actions = {
           }
         })
         commit("UPDATE_SERIES_COLLECTION", newSeriesCollection)
-        dispatch('size/updateScale', newSeriesCollection, {root : true})
-        
+        if(state.groupState == false){
+          dispatch('size/updateScale', newSeriesCollection, {root : true})
+        } 
       })
     },
     updateTimeRange({commit, dispatch}, newTimeRange) {
@@ -172,16 +167,15 @@ const actions = {
       state.level_id_list.push(max + 1) 
       dispatch('updateLevelIdList', state.level_id_list)
     },
-    addLayer({state, commit, rootState}, obj){
+    addLayer({state, dispatch, commit, rootState}, obj){
       state.groupState = true
       axios.post('/api/addLayer',obj).then((response) => {
         console.log("check newOriginalTree")
         console.log(response.data.newOriginalTree)
         commit('UPDATE_ORIGINAL_TREE', response.data.newOriginalTree) // originalTree
-        commit('UPDATE_SELECTION_TREE', updateSelectionFromOriginal(state.selectionTree, state.originalTree, obj.level_id)) // selectionTree
+        dispatch('updateSelectionTree', updateSelectionFromOriginal(state.selectionTree, state.originalTree, obj.level_id)) // selectionTree & seriesCollection
         commit('UPDATE_LEVEL_ID_LIST', [...new Set(state.selectionTree.map(node => node.level))].sort((a, b) => a - b)) // level_id_list
         commit('UPDATE_LEVELS', addLevels(state.levels, obj.level_id)) // levels
-        commit('UPDATE_SERIES_COLLECTION', updateSeriesCollection(state.seriesCollection, obj.level_id)) // seriesCollection
         commit('size/UPDATE_Y_SCALE', addYScale(rootState.size.yScale, obj.level_id), { root: true }) // yScale
         commit('scatterPlot/UPDATE_COORDINATE_COLLECTION', response.data.newCoordinateCollection, { root: true }) // coordinateCollection
         const {plotX, plotY} = addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id)

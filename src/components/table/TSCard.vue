@@ -27,7 +27,7 @@ import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
 export default {
     name: 'TSCard',
-    props: ['seriesData', 'level', 'node_id'],
+    props: ['seriesData', 'level', 'node_id', 'groupedNode'],
     setup(props) {
         const store = useStore()
         const colorBar = computed(()=>store.getters["tree/colorBar"])
@@ -35,7 +35,7 @@ export default {
         const cardHeight = computed(()=>store.getters['size/cardHeight'])
         const cardWidth = computed(()=>store.getters['size/cardWidth'])
 
-        const foldState = ref(true)
+        const foldState = ref(!props.groupedNode)
 
         const xScale = computed(()=>store.getters['size/xScale'])
         const yScale = computed(()=>store.getters['size/yScale'][props.level-1])
