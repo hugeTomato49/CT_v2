@@ -50,8 +50,8 @@ export const highlightNodes = (id, originalTree) => {
             circle.style.fillOpacity = '1'; // 完全不透明
             // circle.setAttribute('r', '10'); // 假设高亮时半径变为10
             circle.style.r = '13'; // 恢复默认半径
-            circle.setAttribute('stroke', 'rgb(226, 226, 226)'); // 设置描边颜色为灰色
-            circle.setAttribute('stroke-width', '6'); // 设置描边宽度
+            circle.setAttribute('stroke', '#F3F3F3'); // 设置描边颜色为灰色
+            circle.setAttribute('stroke-width', '4'); // 设置描边宽度
             
         }
     });

@@ -121,7 +121,7 @@ export default {
     );
 
     const colorBar = computed(() => store.getters["tree/colorBar"]);
-    const levelRadiusMap = { 1: 7, 2: 6, 3: 3 };
+
 
     const bezierPaths = ref([]);
     //step2: 取对应的scale和coordindateCollection数据
@@ -143,7 +143,7 @@ export default {
       // 填充数据
       Object.entries(coordinateCollection.value).forEach(
         ([level_id, coordinates]) => {
-          const radius =  7; // 提供默认半径
+          const radius =  8; // 提供默认半径
           const xScaleObj = plot_X_Scale.value.find(
             (scale) => scale.level_id == level_id
           );
