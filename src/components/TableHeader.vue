@@ -108,6 +108,7 @@ import {
   highlightNodes,
   resetNodes,
   calculatePlotLinks,
+  hasChildren
 } from "../computation/treeComputation";
 
 export default {
@@ -122,6 +123,25 @@ export default {
 
     const colorBar = computed(() => store.getters["tree/colorBar"]);
 
+    const dataset = computed(()=> store.getters["tree/dataset"])
+    const originalTree = computed(() => store.getters["tree/originalTree"]);
+    const selectionTree = computed(() => store.getters["tree/selectionTree"])
+    const levels = computed(() => store.getters["tree/levels"]);
+    const level_id_list = computed(() => store.getters["tree/level_id_list"]);
+    const level_name_list = computed(() =>
+      level_id_list.value.map((id) => levels.value[id - 1])
+    );
+
+    const dynamicWidth = computed(() => {
+      if (headerContainer.value && level_name_list.value) {
+        return (
+          headerContainer.value.offsetWidth *
+          columnPercentage.value *
+          level_name_list.value.length
+        );
+      }
+      return 0;
+    });
 
     const bezierPaths = ref([]);
     //step2: 取对应的scale和coordindateCollection数据
@@ -165,24 +185,7 @@ export default {
 
       return initialCirclesData;
     })
-    const dataset = computed(()=> store.getters["tree/dataset"])
-    const originalTree = computed(() => store.getters["tree/originalTree"]);
-    const levels = computed(() => store.getters["tree/levels"]);
-    const level_id_list = computed(() => store.getters["tree/level_id_list"]);
-    const level_name_list = computed(() =>
-      level_id_list.value.map((id) => levels.value[id - 1])
-    );
 
-    const dynamicWidth = computed(() => {
-      if (headerContainer.value && level_name_list.value) {
-        return (
-          headerContainer.value.offsetWidth *
-          columnPercentage.value *
-          level_name_list.value.length
-        );
-      }
-      return 0;
-    });
     const handleMouseOver = (id) => {
       highlightNodes(id, originalTree.value);
       bezierPaths.value = calculatePlotLinks(
@@ -201,7 +204,13 @@ export default {
     };
 
     const handleNodeClick = (id) => {
-      store.dispatch('tree/selectNodeAndChildren', id)
+      if(!hasChildren(selectionTree.value, id)){
+        store.dispatch('tree/selectNodeAndChildren', id)
+      }
+      else{
+        store.dispatch('tree/deselectNodeAndChildren', id)
+      }
+      
     }
 
     const addColumn = () => {
@@ -239,7 +248,7 @@ export default {
       handleMouseOut,
       handleMouseOver,
       addColumn,
-      createLayers
+      createLayers,
     };
   },
 };
