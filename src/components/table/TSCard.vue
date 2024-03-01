@@ -4,7 +4,7 @@
     :style="{ height: rowHeight + 'px' }" 
     @click="foldState ? unfold(node_id) : fold(node_id)"
     >
-        <div :class="['w-full h-full card', { 'hover-effect': !foldState }]" id="cardContainer">
+        <div :class="['w-full h-full card']" id="cardContainer">
             <svg class="w-full h-full bg-stone-100">
                 <g ref="brushRef"></g>
                 <path

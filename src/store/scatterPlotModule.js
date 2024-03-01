@@ -100,8 +100,6 @@ const getters = {
     plot_Y_Scale: state => state.plot_Y_Scale,
     coordinateCollection: state => state.coordinateCollection,
     plotLinks: state => state.plotLinks
-
-
 }
 
 const scatterPlotModule = {

@@ -145,7 +145,7 @@ function findNodeCoordinates(nodeId, coordinateCollection, x_Scale, y_Scale, off
             );
             const node = coordinates.find(node => node.id === nodeId);
             if (node) {
-                console.log("link node is", node)
+                // console.log("link node is", node)
                 coordinate = { x: xScaleObj.xScale(node.x) + offset * (level_id - 1), y: yScaleObj.yScale(node.y) };
             }
         }
