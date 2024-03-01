@@ -2,9 +2,9 @@
     <div 
     class="w-full p-0.8" 
     :style="{ height: rowHeight + 'px' }" 
-    @click="foldState ? unfold(node_id) : fold(node_id)"
+    @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
     >
-        <div :class="['w-full h-full card']" id="cardContainer">
+        <div :class="['w-full h-full card', { 'hover-effect': hasChildren(selectionTree, node_id) }]" id="cardContainer">
             <svg class="w-full h-full bg-stone-100">
                 <g ref="brushRef"></g>
                 <path
@@ -25,6 +25,7 @@ import { useStore } from 'vuex';
 import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
+import { hasChildren } from '../../computation/treeComputation';
 export default {
     name: 'TSCard',
     props: ['seriesData', 'level', 'node_id', 'groupedNode'],
@@ -36,7 +37,6 @@ export default {
         const cardHeight = computed(()=>store.getters['size/cardHeight'])
         const cardWidth = computed(()=>store.getters['size/cardWidth'])
 
-        const foldState = ref(!props.groupedNode)
 
         const xScale = computed(()=>store.getters['size/xScale'])
         const yScale = computed(()=>store.getters['size/yScale'][props.level-1])
@@ -87,9 +87,10 @@ export default {
             generatePath,
             brushRef,
             colorBar,
-            foldState,
             fold,
-            unfold
+            unfold,
+            selectionTree,
+            hasChildren
         }
     }
 }

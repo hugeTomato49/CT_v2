@@ -1,3 +1,16 @@
+export const hasChildren = (selectionTree,id) => {
+    const node = selectionTree.find(node => node.id == id)
+    const children_list = node["children_id"]
+    if(children_list.length == 0){
+        return false
+    }
+    else{
+        return true
+    }
+}
+
+
+
 export const DFS = (tree) => {
     const result = [];
     const nodeMap = tree.reduce((acc, node) => {
@@ -40,7 +53,7 @@ export const highlightNodes = (id, originalTree) => {
 
     // 先将所有节点透明度设置为20%
     document.querySelectorAll('circle').forEach(circle => {
-        circle.style.fillOpacity = '0.1';
+        circle.style.fillOpacity = '0.05';
     });
 
     // 高亮相关节点：透明度100%，半径增大
@@ -49,9 +62,9 @@ export const highlightNodes = (id, originalTree) => {
         if (circle) {
             circle.style.fillOpacity = '1'; // 完全不透明
             // circle.setAttribute('r', '10'); // 假设高亮时半径变为10
-            circle.style.r = '13'; // 恢复默认半径
-            circle.setAttribute('stroke', 'rgb(226, 226, 226)'); // 设置描边颜色为灰色
-            circle.setAttribute('stroke-width', '6'); // 设置描边宽度
+            circle.style.r = '12'; // 恢复默认半径
+            circle.setAttribute('stroke', '#F5F5F5'); // 设置描边颜色为灰色
+            circle.setAttribute('stroke-width', '2'); // 设置描边宽度
             
         }
     });
@@ -61,7 +74,7 @@ export const resetNodes = () => {
     // 选择所有circle元素，恢复默认透明度和半径
     document.querySelectorAll('.node').forEach(circle => {
         circle.style.fillOpacity = '0.5'; // 恢复默认透明度为50%
-        circle.style.r = '5'; // 恢复默认半径
+        circle.style.r = '8'; // 恢复默认半径
         circle.setAttribute('stroke', 'none'); 
     });
 };
