@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full">
     <div class="w-full h-full rounded-md flex flex-col" id="headerContainer">
-      <div class="flex flex-row h-1/8 w-full">
+      <div class="flex flex-row h-1/8 w-full" >
         <div
           v-for="(level_name, index) in level_name_list"
           :key="level_name"
@@ -31,12 +31,12 @@
           </div>
         </div>
       </div>
-      <div class="w-full h-7/8 py-1">
+      <div class="w-full h-7/8 py-1" style="position: relative; z-index: 2;">
         <div
           class="w-full h-full flex flex-row"
           id="plotContainer"
         >
-          <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
+          <div class="h-full" :style="{ width: dynamicWidth + 'px' } ">
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
               <g
                 v-for="(level_name, index) in level_name_list"
@@ -85,15 +85,14 @@
                   @click="handleNodeClick(circle.key)"
                 ></circle>
               </g>
-
-              <!-- <path
-                v-for="(path, index) in bezierPaths"
-                :key="index"
+              <path
+                v-for="path in bezierPaths"
+                :key=path
                 :d="path"
-                stroke="black"
+                stroke="rgb(243,194,18)"
                 stroke-width="2"
                 fill="none"
-              /> -->
+              />
             </svg>
           </div>
         </div>
@@ -146,10 +145,10 @@ export default {
         ([level_id, coordinates]) => {
           const radius =  7; // 提供默认半径
           const xScaleObj = plot_X_Scale.value.find(
-            (scale) => scale.level_id === level_id
+            (scale) => scale.level_id == level_id
           );
           const yScaleObj = plot_Y_Scale.value.find(
-            (scale) => scale.level_id === level_id
+            (scale) => scale.level_id == level_id
           );
           if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
 
@@ -191,12 +190,13 @@ export default {
         originalTree.value,
         coordinateCollection.value,
         plot_X_Scale.value,
-        plot_Y_Scale.value
+        plot_Y_Scale.value,
+        headerContainer.value.offsetWidth *columnPercentage.value
       );
     };
 
     const handleMouseOut = () => {
-      // bezierPaths.value = [];
+      bezierPaths.value = [];
       resetNodes();
     };
 
@@ -210,8 +210,8 @@ export default {
 
     const createLayers = (level_id) => {
       const obj = {"dataset": dataset.value, "level_id": level_id}
-      console.log("check dataset")
-      console.log(dataset.value)
+      // console.log("check dataset")
+      // console.log(dataset.value)
       store.dispatch("tree/addLayer", obj)
     }
 

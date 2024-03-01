@@ -55,8 +55,8 @@ export const getMin = (manySeries) => {
 }
 
 export const groupData = (seriesCollection) => {
-    console.log("CHECK input data")
-    console.log(seriesCollection)
+    // console.log("CHECK input data")
+    // console.log(seriesCollection)
     const groupedData = seriesCollection.reduce((acc, item) => {
         const groupIndex = acc.findIndex(group => group.level === item.level)
         if (groupIndex !== -1) {
@@ -72,8 +72,8 @@ export const groupData = (seriesCollection) => {
         }
         return acc
       }, []).map(group => group.data)
-      console.log("groupedData")
-      console.log(groupedData)
+    //   console.log("groupedData")
+    //   console.log(groupedData)
       return groupedData
 
 

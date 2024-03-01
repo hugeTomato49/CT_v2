@@ -6,7 +6,7 @@
             class="flex flex-row h-full "
             >
                 <div 
-                class="h-full  flex flex-col border-1 rounded-md"
+                class="h-full flex flex-col border-1 rounded-md overflow overflow-scroll"
                 :style="{
                 width: tableContainer?.offsetWidth * columnPercentage - 20 + 'px'
                 }">
@@ -17,6 +17,7 @@
                     :seriesData = findSeriesData(id)
                     :level = "level_id"
                     :node_id = "id"
+                    :groupedNode = groupedNodeFlag(id)
                     />
                 </div>
                 <div class="w-20px h-full"></div>
@@ -28,6 +29,7 @@
 import { computed, ref, watchEffect, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import TSCard from './TSCard.vue'
+import { selection } from 'd3'
 
 
 
@@ -56,14 +58,24 @@ export default {
 
         const groupedIdCollection = (level_id)=> {
          
-            console.log("Check groupedID")
-            console.log(selectionTree.value.filter(node => node.level == level_id).map(node => node.id))
+            // console.log("Check groupedID")
+            // console.log(selectionTree.value.filter(node => node.level == level_id).map(node => node.id))
             return selectionTree.value.filter(node => node.level == level_id).map(node => node.id)
         }
 
     
         const findSeriesData = (id) => {
             return seriesCollection.value.find(node => node.id ==id)?.seriesData??[]
+        }
+
+        const groupedNodeFlag = (id) => {
+            const attribute = selectionTree.value.find(node => node.id == id)?.attribute??""
+            if(attribute.includes("group")) {
+                return true
+            }
+            else {
+                return false
+            }    
         }
 
 
@@ -82,6 +94,8 @@ export default {
             columnPercentage,
             tableContainer,
             groupedIdCollection,
+            groupedNodeFlag,
+
         }
 
 

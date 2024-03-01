@@ -19,7 +19,9 @@ export const updateSelectionFromOriginal = (oldSelectionTree, newOriginalTree, l
 
         // If Node2 is found
         if (Node2) {
-            newSelectionTree.push({...Node2}); 
+            if (!newSelectionTree.some(node => node.id === Node2.id)) {
+                newSelectionTree.push({...Node2}); 
+            }
 
             // Update Node1's parent_id and level, and ensure Node2.id is in its parent's children_id
             const Node1Index = newSelectionTree.findIndex(node => node.id === Node1.id);
@@ -35,5 +37,26 @@ export const updateSelectionFromOriginal = (oldSelectionTree, newOriginalTree, l
         }
     });
 
+    // console.log("check SSSS")
+    // console.log(newSelectionTree)
+
     return newSelectionTree;
-};
+}
+
+export const addLevels = (levels, level_id) => {
+    const levels_copy = cloneDeep(levels)
+    const level_name = levels_copy[level_id - 1]
+    const grouped_level_name = "Grouped_" + level_name
+    levels_copy.splice(level_id - 1, 0, grouped_level_name)
+    return levels_copy 
+}
+
+export const updateSeriesCollection = (seriesCollection, level_id) => {
+    const collection = cloneDeep(seriesCollection)
+    collection.forEach(series => {
+        if(series.level == level_id){
+            series.level = level_id + 1
+        }
+    })
+    return collection
+}
