@@ -1,5 +1,5 @@
 <template>
-    <div class="h-17/18 w-full flex flex-row">
+    <div class="h-24/25 w-full flex flex-row">
         <div class="w-2/17 h-full pl-2 py-5 bg-stone-100">
             <DataPanel />
         </div>

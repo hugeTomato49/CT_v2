@@ -14,7 +14,7 @@ const state = {
     levels: ['Transformer', 'Converter', 'Line'],
     level_id_list: [],
     timeRange: [],
-    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC","#B3D1EC", "#B3D1EC","#B3D1EC"],
+    colorBar: ["#4B99D0", "#4B99D0", "#4B99D0","#4B99D0", "#4B99D0","#4B99D0"],
     groupState: false
 
     

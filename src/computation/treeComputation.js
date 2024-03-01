@@ -9,6 +9,19 @@ export const hasChildren = (selectionTree,id) => {
     }
 }
 
+export const ifEmphasize = (selectionTree, id, level, level_id_list) => {
+    if(hasChildren(selectionTree, id)){
+        return true
+    }
+    else if(level == level_id_list.length){
+        return true
+    }
+    else {
+        return false
+    }
+    
+}
+
 
 
 export const DFS = (tree) => {

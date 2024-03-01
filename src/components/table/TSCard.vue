@@ -1,6 +1,8 @@
 <template>
     <div 
-    class="w-full p-0.8" 
+    :class="[
+        'w-full p-0.8 hover:opacity-100',
+        { 'opacity-50': !ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
     :style="{ height: rowHeight + 'px' }" 
     @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
     >
@@ -25,13 +27,14 @@ import { useStore } from 'vuex';
 import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
-import { hasChildren } from '../../computation/treeComputation';
+import { hasChildren, ifEmphasize } from '../../computation/treeComputation';
 export default {
     name: 'TSCard',
     props: ['seriesData', 'level', 'node_id', 'groupedNode'],
     setup(props) {
         const store = useStore()
         const selectionTree = computed(() => store.getters["tree/selectionTree"])
+        const level_id_list = computed(()=> store.getters["tree/level_id_list"])
         const colorBar = computed(()=>store.getters["tree/colorBar"])
         const rowHeight = computed(()=>store.getters['size/rowHeight'])
         const cardHeight = computed(()=>store.getters['size/cardHeight'])
@@ -65,12 +68,10 @@ export default {
 
         const unfold = (id) => {
             store.dispatch('tree/selectNodeAndChildren', id)
-            foldState.value = false
         }
 
         const fold = (id) => {
             store.dispatch('tree/deselectNodeAndChildren', id)
-            foldState.value = true
         }
         
         onMounted(()=>{
@@ -90,7 +91,9 @@ export default {
             fold,
             unfold,
             selectionTree,
-            hasChildren
+            hasChildren,
+            ifEmphasize,
+            level_id_list
         }
     }
 }
@@ -104,7 +107,7 @@ export default {
 }
 
 .hover-effect {
-    box-shadow: 0 5px 4px -2.5px rgba(39, 39, 38, 0.3);
+    box-shadow: 0 5px 4px -2.5px rgba(151, 192, 204, 0.6);
 }
 
 .card :hover {

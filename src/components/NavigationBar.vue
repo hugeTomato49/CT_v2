@@ -1,9 +1,9 @@
 <template>
     <div 
-    class="w-full h-1/18 flex flex-row items-center justify-center"
-    style="background-color: #9CDCF6;"
+    class="w-full h-1/25 flex flex-row items-center "
+    style="background-color: #4B99D0;"
     >
-        <div class="text-3xl font-serif text-center text-white title">ChronoTable</div>
+        <div class="ml-4 text-xl  text-center text-white pacifico-regular">ChronoTable</div>
     </div>
 </template>
 
@@ -18,11 +18,11 @@ export default {
 </script>
 
 <style>
-.title {
-  font-family: "Roboto Mono", monospace;
-  font-optical-sizing: auto;
-  font-weight: 700;
+.pacifico-regular {
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
   font-style: normal;
 }
+
 
 </style>
