@@ -31,6 +31,8 @@ def getSeriesCollection():
     dataset = data.get('dataset', None)
     collection = []
     nodeList = []
+    pv_tree_data =[]
+    pv_tree_grouped_data = []
 
     for item in selectionTree:
         nodeList.append(item["id"])
@@ -55,7 +57,10 @@ def getSeriesCollection():
             matching_node = next((item for item in pv_tree_grouped_data if item["id"] == id), None)
             if matching_dict is not None:
                 object["node_name"] = matching_dict["node_name"]
-                object["level"] = matching_node["level"]
+                if matching_node is not None:
+                    object["level"] = matching_node["level"]
+                elif matching_node is None:
+                    object["level"] = matching_dict["level"]
                 data_file_name = matching_dict["node_name"] + ".json"
                 if id == 1:
                     data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_file_name)
