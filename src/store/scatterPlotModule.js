@@ -26,9 +26,12 @@ const mutations = {
     },
     UPDATE_COORDINATE_COLLECTION(state, payload) {
         state.coordinateCollection = payload
-        // console.log("Check CC")
-        // console.log(payload)
     },
+    UPDATE_PLOT_LINK(state, nodeId) {
+        if (!state.plotLinks.includes(nodeId)) {
+          state.plotLinks.push(nodeId);
+        }
+      },
 }
 
 const actions = {
@@ -78,13 +81,13 @@ const actions = {
             // console.log("yScale is", plot_Y_Scale)
             
         });
-        
-        
-
         // 提交包含所有级别 x 比例尺的数组
         commit('UPDATE_PLOT_X_SCALE', plot_X_Scale);
         // 提交包含所有级别 y 比例尺的数组
         commit('UPDATE_PLOT_Y_SCALE', plot_Y_Scale);
+    },
+    updatePlotLinks({ commit }, id){
+        commit('UPDATE_PLOT_LINK', id)
     },
     updatePlotWidth({ commit }, plotWidth) {
         commit('UPDATE_PLOT_WIDTH', plotWidth)
@@ -100,8 +103,6 @@ const getters = {
     plot_Y_Scale: state => state.plot_Y_Scale,
     coordinateCollection: state => state.coordinateCollection,
     plotLinks: state => state.plotLinks
-
-
 }
 
 const scatterPlotModule = {

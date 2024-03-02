@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full">
     <div class="w-full h-full rounded-md flex flex-col" id="headerContainer">
-      <div class="flex flex-row h-1/8 w-full" >
+      <div class="flex flex-row h-1/8 w-full">
         <div
           v-for="(level_name, index) in level_name_list"
           :key="level_name"
@@ -40,12 +40,9 @@
           </div>
         </div>
       </div>
-      <div class="w-full h-7/8 py-1" style="position: relative; z-index: 2;">
-        <div
-          class="w-full h-full flex flex-row"
-          id="plotContainer"
-        >
-          <div class="h-full" :style="{ width: dynamicWidth + 'px' } ">
+      <div class="w-full h-7/8 py-1" style="position: relative; z-index: 2">
+        <div class="w-full h-full flex flex-row" id="plotContainer">
+          <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
               <g
                 v-for="(level_name, index) in level_name_list"
@@ -76,7 +73,7 @@
                   :cy="circle.cy"
                   :r="circle.r"
                   :fill="colorBar[index]"
-                  :fill-opacity="0.5"
+                  :fill-opacity="circle.fillOpacity"
                   @mouseover="() => handleMouseOver(circle.key)"
                   @mouseout="handleMouseOut"
                   @click="handleNodeClick(circle.key)"
@@ -84,11 +81,20 @@
                 ></circle>
               </g>
               <path
-                v-for="path in bezierPaths"
-                :key=path
-                :d="path"
+                v-for="pathObj in bezierPaths"
+                :key="pathObj.key"
+                :d="pathObj.d"
                 stroke="rgb(243,194,18)"
                 stroke-width="2"
+                fill="none"
+              />
+              <path
+                v-for="pathObj in selectNodePaths"
+                :key="pathObj.key"
+                :d="pathObj.d"
+                stroke="rgb(243,194,18)"
+                stroke-width="2"
+                stroke-opacity="0.8"
                 fill="none"
               />
             </svg>
@@ -106,8 +112,11 @@ import {
   highlightNodes,
   resetNodes,
   calculatePlotLinks,
-  hasChildren
+  calculateCircles,
+  hasChildren,
+  hasNode,
 } from "../computation/treeComputation";
+import scatterPlotModule from "../store/scatterPlotModule";
 
 export default {
   name: "TableHeader",
@@ -121,9 +130,10 @@ export default {
 
     const colorBar = computed(() => store.getters["tree/colorBar"]);
 
-    const dataset = computed(()=> store.getters["tree/dataset"])
+    const dataset = computed(() => store.getters["tree/dataset"]);
     const originalTree = computed(() => store.getters["tree/originalTree"]);
-    const selectionTree = computed(() => store.getters["tree/selectionTree"])
+    const selectionTree = computed(() => store.getters["tree/selectionTree"]);
+    const plotLinks = computed(() => store.getters["scatterPlot/plotLinks"]);
     const levels = computed(() => store.getters["tree/levels"]);
     const level_id_list = computed(() => store.getters["tree/level_id_list"]);
     const level_name_list = computed(() =>
@@ -152,37 +162,59 @@ export default {
     const coordinateCollection = computed(
       () => store.getters["scatterPlot/coordinateCollection"]
     );
-    const circlesData = computed(() => {
-      const initialCirclesData = level_id_list.value.reduce((acc, level_id) => {
-        acc[level_id] = [];
-        return acc;
-      }, {});
-
-      // 填充数据
-      Object.entries(coordinateCollection.value).forEach(
-        ([level_id, coordinates]) => {
-          const radius =  8; // 提供默认半径
-          const xScaleObj = plot_X_Scale.value.find(
-            (scale) => scale.level_id == level_id
-          );
-          const yScaleObj = plot_Y_Scale.value.find(
-            (scale) => scale.level_id == level_id
-          );
-          if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
-
-          const circles = coordinates.map((coordinate) => ({
-            cx: xScaleObj.xScale(coordinate.x),
-            cy: yScaleObj.yScale(coordinate.y),
-            r: radius,
-            key: coordinate.id,
-          }));
-
-          initialCirclesData[level_id] = circles;
+    const selectNodePaths = computed(() => {
+      let allPaths = [];
+      selectionTree.value.forEach((node) => {
+        if (hasChildren(selectionTree.value, node.id)) {
+          const pathsForNode = calculatePlotLinks(
+            node.id,
+            originalTree.value,
+            coordinateCollection.value,
+            plot_X_Scale.value,
+            plot_Y_Scale.value,
+            headerContainer.value.offsetWidth * columnPercentage.value
+          ); // 根据节点ID计算路径
+          allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
         }
+      });
+      return allPaths;
+    });
+    const circlesData = computed(() => {
+      // const initialCirclesData = level_id_list.value.reduce((acc, level_id) => {
+      //   acc[level_id] = [];
+      //   return acc;
+      // }, {});
+      // // 填充数据
+      // Object.entries(coordinateCollection.value).forEach(
+      //   ([level_id, coordinates]) => {
+      //     const xScaleObj = plot_X_Scale.value.find(
+      //       (scale) => scale.level_id == level_id
+      //     );
+      //     const yScaleObj = plot_Y_Scale.value.find(
+      //       (scale) => scale.level_id == level_id
+      //     );
+      //     if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
+      //     const circles = coordinates.map((coordinate) => ({
+      //       cx: xScaleObj.xScale(coordinate.x),
+      //       cy: yScaleObj.yScale(coordinate.y),
+      //       r: hasNode(selectionTree.value, coordinate.id) ? 12 : 8,
+      //       key: coordinate.id,
+      //       fillOpacity: hasNode(selectionTree.value, coordinate.id)
+      //         ? 0.9
+      //         : 0.5,
+      //     }));
+      //     initialCirclesData[level_id] = circles;
+      //   }
+      // );
+      // return initialCirclesData;
+      return calculateCircles(
+        level_id_list.value,
+        coordinateCollection.value,
+        plot_X_Scale.value,
+        plot_Y_Scale.value,
+        selectionTree.value
       );
-
-      return initialCirclesData;
-    })
+    });
 
     const handleMouseOver = (id) => {
       highlightNodes(id, originalTree.value);
@@ -192,35 +224,33 @@ export default {
         coordinateCollection.value,
         plot_X_Scale.value,
         plot_Y_Scale.value,
-        headerContainer.value.offsetWidth *columnPercentage.value
+        headerContainer.value.offsetWidth * columnPercentage.value
       );
     };
 
     const handleMouseOut = () => {
       bezierPaths.value = [];
-      resetNodes();
+      resetNodes(selectionTree.value);
     };
 
     const handleNodeClick = (id) => {
-      if(!hasChildren(selectionTree.value, id)){
-        store.dispatch('tree/selectNodeAndChildren', id)
+      if (!hasChildren(selectionTree.value, id)) {
+        store.dispatch("tree/selectNodeAndChildren", id);
+      } else {
+        store.dispatch("tree/deselectNodeAndChildren", id);
       }
-      else{
-        store.dispatch('tree/deselectNodeAndChildren', id)
-      }
-      
-    }
+    };
 
     const addColumn = () => {
       store.dispatch("tree/addLevelToLevelIdList");
-    }
+    };
 
     const createLayers = (level_id) => {
-      const obj = {"dataset": dataset.value, "level_id": level_id}
+      const obj = { dataset: dataset.value, level_id: level_id };
       // console.log("check dataset")
       // console.log(dataset.value)
-      store.dispatch("tree/addLayer", obj)
-    }
+      store.dispatch("tree/addLayer", obj);
+    };
 
     const filterCurrentNode = (id) => {
         const currentNode = selectionTree.value.find(node => node.id == id)
@@ -234,11 +264,18 @@ export default {
     onMounted(() => {
       headerContainer.value = document.querySelector("#headerContainer");
       plotContainer.value = document.querySelector("#plotContainer");
-      store.dispatch("scatterPlot/updatePlotWidth",headerContainer.value.offsetWidth * columnPercentage.value - 20);
-      store.dispatch("scatterPlot/updatePlotHeight",plotContainer.value.offsetHeight);
+      store.dispatch(
+        "scatterPlot/updatePlotWidth",
+        headerContainer.value.offsetWidth * columnPercentage.value - 20
+      );
+      store.dispatch(
+        "scatterPlot/updatePlotHeight",
+        plotContainer.value.offsetHeight
+      );
     });
 
     return {
+      selectionTree,
       headerContainer,
       plotContainer,
       level_id_list,
@@ -251,6 +288,7 @@ export default {
       dynamicWidth,
       columnPercentage,
       bezierPaths,
+      selectNodePaths,
       handleNodeClick,
       handleMouseOut,
       handleMouseOver,
