@@ -44,6 +44,23 @@
         <div class="w-full h-full flex flex-row" id="plotContainer">
           <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
+              <path
+                v-for="pathObj in bezierPaths"
+                :key="pathObj.key"
+                :d="pathObj.d"
+                stroke="rgb(243,194,18)"
+                stroke-width="2"
+                fill="none"
+              />
+              <path
+                v-for="pathObj in selectNodePaths"
+                :key="pathObj.key"
+                :d="pathObj.d"
+                stroke="rgb(243,194,18)"
+                stroke-width="2"
+                stroke-opacity="0.8"
+                fill="none"
+              />
               <g
                 v-for="(level_name, index) in level_name_list"
                 :key="level_name"
@@ -74,29 +91,12 @@
                   :r="circle.r"
                   :fill="colorBar[index]"
                   :fill-opacity="circle.fillOpacity"
-                  @mouseover="() => handleMouseOver(circle.key)"
-                  @mouseout="handleMouseOut"
+                  :stroke = "circle.stroke"
+                  :stroke-width = "circle.strokeWidth"
                   @click="handleNodeClick(circle.key)"
                   @dblclick="filterCurrentNode(circle.key)"
                 ></circle>
-              </g>
-              <path
-                v-for="pathObj in bezierPaths"
-                :key="pathObj.key"
-                :d="pathObj.d"
-                stroke="rgb(243,194,18)"
-                stroke-width="2"
-                fill="none"
-              />
-              <path
-                v-for="pathObj in selectNodePaths"
-                :key="pathObj.key"
-                :d="pathObj.d"
-                stroke="rgb(243,194,18)"
-                stroke-width="2"
-                stroke-opacity="0.8"
-                fill="none"
-              />
+              </g>  
             </svg>
           </div>
         </div>
@@ -114,9 +114,10 @@ import {
   calculatePlotLinks,
   calculateCircles,
   hasChildren,
+  ifEmphasize,
   hasNode,
 } from "../computation/treeComputation";
-import scatterPlotModule from "../store/scatterPlotModule";
+
 
 export default {
   name: "TableHeader",
@@ -133,7 +134,6 @@ export default {
     const dataset = computed(() => store.getters["tree/dataset"]);
     const originalTree = computed(() => store.getters["tree/originalTree"]);
     const selectionTree = computed(() => store.getters["tree/selectionTree"]);
-    const plotLinks = computed(() => store.getters["scatterPlot/plotLinks"]);
     const levels = computed(() => store.getters["tree/levels"]);
     const level_id_list = computed(() => store.getters["tree/level_id_list"]);
     const level_name_list = computed(() =>
@@ -163,12 +163,15 @@ export default {
       () => store.getters["scatterPlot/coordinateCollection"]
     );
     const selectNodePaths = computed(() => {
-      let allPaths = [];
-      selectionTree.value.forEach((node) => {
+      let allPaths = []
+      const newTree = selectionTree.value.filter(node => ifEmphasize(selectionTree.value, node.id, node.level, level_id_list.value))
+      console.log("CHECK")
+      console.log(newTree.length)
+      newTree.forEach((node) => {
         if (hasChildren(selectionTree.value, node.id)) {
           const pathsForNode = calculatePlotLinks(
             node.id,
-            originalTree.value,
+            selectionTree.value,
             coordinateCollection.value,
             plot_X_Scale.value,
             plot_Y_Scale.value,
@@ -177,36 +180,10 @@ export default {
           allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
         }
       });
+      console.log(allPaths.length)
       return allPaths;
     });
     const circlesData = computed(() => {
-      // const initialCirclesData = level_id_list.value.reduce((acc, level_id) => {
-      //   acc[level_id] = [];
-      //   return acc;
-      // }, {});
-      // // 填充数据
-      // Object.entries(coordinateCollection.value).forEach(
-      //   ([level_id, coordinates]) => {
-      //     const xScaleObj = plot_X_Scale.value.find(
-      //       (scale) => scale.level_id == level_id
-      //     );
-      //     const yScaleObj = plot_Y_Scale.value.find(
-      //       (scale) => scale.level_id == level_id
-      //     );
-      //     if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
-      //     const circles = coordinates.map((coordinate) => ({
-      //       cx: xScaleObj.xScale(coordinate.x),
-      //       cy: yScaleObj.yScale(coordinate.y),
-      //       r: hasNode(selectionTree.value, coordinate.id) ? 12 : 8,
-      //       key: coordinate.id,
-      //       fillOpacity: hasNode(selectionTree.value, coordinate.id)
-      //         ? 0.9
-      //         : 0.5,
-      //     }));
-      //     initialCirclesData[level_id] = circles;
-      //   }
-      // );
-      // return initialCirclesData;
       return calculateCircles(
         level_id_list.value,
         coordinateCollection.value,
@@ -247,8 +224,6 @@ export default {
 
     const createLayers = (level_id) => {
       const obj = { dataset: dataset.value, level_id: level_id };
-      // console.log("check dataset")
-      // console.log(dataset.value)
       store.dispatch("tree/addLayer", obj);
     };
 
@@ -294,7 +269,8 @@ export default {
       handleMouseOver,
       addColumn,
       createLayers,
-      filterCurrentNode
+      filterCurrentNode,
+      hasNode
     };
   },
 };

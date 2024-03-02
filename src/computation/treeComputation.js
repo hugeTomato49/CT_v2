@@ -25,33 +25,11 @@ export const ifEmphasize = (selectionTree, id, level, level_id_list) => {
     }  
 }
 
-export const ifInSelectionTree = (selectionTree, id) => {
+export const hasNode = (selectionTree, id) => {
     const id_list = selectionTree.map(node => node.id)
     return id_list.includes(id)
 }
-export const hasNode = (selectionTree, id) => {
-    const node = selectionTree.find(node => node.id == id)
-    if (node === undefined) return false
-    else return true
 
-}
-
-export const DFS = (tree) => {
-    const result = [];
-    const nodeMap = tree.reduce((acc, node) => {
-        acc[node.id] = node;
-        return acc;
-    }, {});
-    const dfs = (nodeId) => {
-        const node = nodeMap[nodeId];
-        if (!node) return;
-
-        result.push(node);
-        node.children_id.forEach(childId => dfs(childId));
-    };
-    dfs(1);
-    return result;
-};
 
 export const calculateEdges = (tree) => {
     // parameter tree is linearizedTree
@@ -101,7 +79,7 @@ export const resetNodes = (selectionTree) => {
         let number = parseInt(match[0], 10); // 将匹配的字符串转换成数字
         if (!hasNode(selectionTree, number)) {
             // console.log("circle ke is", circle.id)
-            circle.style.fillOpacity = '0.5'; // 恢复默认透明度为50%
+            circle.style.fillOpacity = '0.2'; // 恢复默认透明度为50%
             circle.style.r = '8'; // 恢复默认半径
             circle.setAttribute('stroke', 'none');
         }
@@ -133,11 +111,13 @@ export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Sca
                 const circles = coordinates.map((coordinate) => ({
                     cx: xScaleObj.xScale(coordinate.x),
                     cy: yScaleObj.yScale(coordinate.y),
-                    r: hasNode(selectionTree, coordinate.id) ? 12 : 8,
+                    r: 10,
                     key: coordinate.id,
-                    fillOpacity: hasNode(selectionTree, coordinate.id)
+                    stroke: "#000000",
+                    strokeWidth: hasNode(selectionTree, coordinate.id) ? 2 : 0,
+                    fillOpacity: ifEmphasize(selectionTree, coordinate.id, level_id, level_id_list) && hasNode(selectionTree, coordinate.id)
                         ? 1.0
-                        : 0.5,
+                        : 0.1,
                 }));
                 initialCirclesData[level_id] = circles;
             }
