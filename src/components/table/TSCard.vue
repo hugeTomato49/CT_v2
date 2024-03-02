@@ -1,12 +1,13 @@
 <template>
     <div 
-    :class="[
-        'w-full p-0.8 hover:opacity-100',
-        { 'opacity-50': !ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
+    class="
+        w-full p-0.8" 
     :style="{ height: rowHeight + 'px' }" 
     @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
+    @dblclick="filterCurrentCard(node_id)"
+
     >
-        <div :class="['w-full h-full card', { 'hover-effect': hasChildren(selectionTree, node_id) }]" id="cardContainer">
+        <div :class="['w-full h-full card hover:opacity-100', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}]" id="cardContainer">
             <svg class="w-full h-full bg-stone-100">
                 <g ref="brushRef"></g>
                 <path
@@ -73,6 +74,15 @@ export default {
         const fold = (id) => {
             store.dispatch('tree/deselectNodeAndChildren', id)
         }
+
+        const filterCurrentCard = (id) => {
+            const currentNode = selectionTree.value.find(node => node.id == id)
+            const level = currentNode.level
+            const id_list = selectionTree.value.filter(node => node.id != id && node.level == level).map(node => node.id)
+            id_list.forEach(id => {
+                store.dispatch('tree/deselectNodeAndChildren', id)
+            })
+        }
         
         onMounted(()=>{
             cardContainer.value = document.querySelector("#cardContainer")
@@ -93,7 +103,8 @@ export default {
             selectionTree,
             hasChildren,
             ifEmphasize,
-            level_id_list
+            level_id_list,
+            filterCurrentCard
         }
     }
 }
@@ -106,12 +117,12 @@ export default {
     opacity: 0.3;
 }
 
-.hover-effect {
+.emphasize-effect {
     box-shadow: 0 5px 4px -2.5px rgba(151, 192, 204, 0.6);
 }
 
 .card :hover {
-    box-shadow: 0 5px 4px -2.5px rgba(161, 187, 205, 0.6);
+    box-shadow: 0 5px 4px -2.5px rgba(151, 192, 204, 0.6);
 }
 
 

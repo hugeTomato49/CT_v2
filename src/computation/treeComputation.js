@@ -9,6 +9,7 @@ export const hasChildren = (selectionTree,id) => {
     }
 }
 
+// the following two functions are for 
 export const ifEmphasize = (selectionTree, id, level, level_id_list) => {
     if(hasChildren(selectionTree, id)){
         return true
@@ -18,10 +19,13 @@ export const ifEmphasize = (selectionTree, id, level, level_id_list) => {
     }
     else {
         return false
-    }
-    
+    }  
 }
 
+export const ifInSelectionTree = (selectionTree, id) => {
+    const id_list = selectionTree.map(node => node.id)
+    return id_list.includes(id)
+}
 
 
 export const DFS = (tree) => {

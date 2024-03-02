@@ -1,18 +1,18 @@
 <template>
-    <div class="w-full h-full">
-        
-    </div>
+    <div>
 
+    </div>
 </template>
+
+
 
 <script>
 export default {
-    name: 'Tree'
+    name: 'PathCard',
 }
 
 
 </script>
-
 
 <style>
 
