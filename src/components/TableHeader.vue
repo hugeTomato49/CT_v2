@@ -78,27 +78,27 @@
                   :cy="circle.cy"
                   :r="circle.r"
                   :fill="colorBar[index]"
-                  :fill-opacity="0.5"
+                  :fill-opacity="circle.fillOpacity"
                   @mouseover="() => handleMouseOver(circle.key)"
                   @mouseout="handleMouseOut"
                   @click="handleNodeClick(circle.key)"
                 ></circle>
               </g>
               <path
-                v-for="path in bezierPaths"
-                :key="path"
-                :d="path"
-                stroke="rgb(208,63,228)"
+                v-for="pathObj in bezierPaths"
+                :key="pathObj.key"
+                :d="pathObj.d"
+                stroke="rgb(243,194,18)"
                 stroke-width="2"
                 fill="none"
               />
               <path
-                v-for="path in selectNodePaths"
-                :key="path"
-                :d="path"
+                v-for="pathObj in selectNodePaths"
+                :key="pathObj.key"
+                :d="pathObj.d"
                 stroke="rgb(243,194,18)"
                 stroke-width="2"
-                stroke-opacity="0.7"
+                stroke-opacity="0.8"
                 fill="none"
               />
             </svg>
@@ -116,7 +116,9 @@ import {
   highlightNodes,
   resetNodes,
   calculatePlotLinks,
+  calculateCircles,
   hasChildren,
+  hasNode,
 } from "../computation/treeComputation";
 import scatterPlotModule from "../store/scatterPlotModule";
 
@@ -166,46 +168,56 @@ export default {
     );
     const selectNodePaths = computed(() => {
       let allPaths = [];
-      plotLinks.value.forEach((id) => {
-        const pathsForNode = calculatePlotLinks(
-          id,
-          originalTree.value,
-          coordinateCollection.value,
-          plot_X_Scale.value,
-          plot_Y_Scale.value,
-          headerContainer.value.offsetWidth * columnPercentage.value
-        ); // 根据节点ID计算路径
-        allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
+      selectionTree.value.forEach((node) => {
+        if (hasChildren(selectionTree.value, node.id)) {
+          const pathsForNode = calculatePlotLinks(
+            node.id,
+            originalTree.value,
+            coordinateCollection.value,
+            plot_X_Scale.value,
+            plot_Y_Scale.value,
+            headerContainer.value.offsetWidth * columnPercentage.value
+          ); // 根据节点ID计算路径
+          allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
+        }
       });
       return allPaths;
     });
     const circlesData = computed(() => {
-      const initialCirclesData = level_id_list.value.reduce((acc, level_id) => {
-        acc[level_id] = [];
-        return acc;
-      }, {});
-      // 填充数据
-      Object.entries(coordinateCollection.value).forEach(
-        ([level_id, coordinates]) => {
-          const radius = 8; // 提供默认半径
-          const xScaleObj = plot_X_Scale.value.find(
-            (scale) => scale.level_id == level_id
-          );
-          const yScaleObj = plot_Y_Scale.value.find(
-            (scale) => scale.level_id == level_id
-          );
-          if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
-          const circles = coordinates.map((coordinate) => ({
-            cx: xScaleObj.xScale(coordinate.x),
-            cy: yScaleObj.yScale(coordinate.y),
-            r: radius,
-            key: coordinate.id,
-          }));
-
-          initialCirclesData[level_id] = circles;
-        }
+      // const initialCirclesData = level_id_list.value.reduce((acc, level_id) => {
+      //   acc[level_id] = [];
+      //   return acc;
+      // }, {});
+      // // 填充数据
+      // Object.entries(coordinateCollection.value).forEach(
+      //   ([level_id, coordinates]) => {
+      //     const xScaleObj = plot_X_Scale.value.find(
+      //       (scale) => scale.level_id == level_id
+      //     );
+      //     const yScaleObj = plot_Y_Scale.value.find(
+      //       (scale) => scale.level_id == level_id
+      //     );
+      //     if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
+      //     const circles = coordinates.map((coordinate) => ({
+      //       cx: xScaleObj.xScale(coordinate.x),
+      //       cy: yScaleObj.yScale(coordinate.y),
+      //       r: hasNode(selectionTree.value, coordinate.id) ? 12 : 8,
+      //       key: coordinate.id,
+      //       fillOpacity: hasNode(selectionTree.value, coordinate.id)
+      //         ? 0.9
+      //         : 0.5,
+      //     }));
+      //     initialCirclesData[level_id] = circles;
+      //   }
+      // );
+      // return initialCirclesData;
+      return calculateCircles(
+        level_id_list.value,
+        coordinateCollection.value,
+        plot_X_Scale.value,
+        plot_Y_Scale.value,
+        selectionTree.value
       );
-      return initialCirclesData;
     });
 
     const handleMouseOver = (id) => {
@@ -222,7 +234,7 @@ export default {
 
     const handleMouseOut = () => {
       bezierPaths.value = [];
-      resetNodes();
+      resetNodes(selectionTree.value);
     };
 
     const handleNodeClick = (id) => {
@@ -258,6 +270,7 @@ export default {
     });
 
     return {
+      selectionTree,
       headerContainer,
       plotContainer,
       level_id_list,

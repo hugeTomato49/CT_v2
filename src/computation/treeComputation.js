@@ -1,15 +1,23 @@
-export const hasChildren = (selectionTree,id) => {
+export const hasChildren = (selectionTree, id) => {
     const node = selectionTree.find(node => node.id == id)
-    const children_list = node["children_id"]
-    if(children_list.length == 0){
+    if (node === undefined) {
         return false
     }
-    else{
+    const children_list = node["children_id"]
+    if (children_list.length == 0) {
+        return false
+    }
+    else {
         return true
     }
 }
 
+export const hasNode = (selectionTree, id) => {
+    const node = selectionTree.find(node => node.id == id)
+    if (node === undefined) return false
+    else return true
 
+}
 
 export const DFS = (tree) => {
     const result = [];
@@ -53,7 +61,8 @@ export const highlightNodes = (id, originalTree) => {
 
     // 先将所有节点透明度设置为20%
     document.querySelectorAll('circle').forEach(circle => {
-        circle.style.fillOpacity = '0.05';
+        circle.style.fillOpacity = '0.2';
+        circle.style.r = '8'; // 恢复默认半径
     });
 
     // 高亮相关节点：透明度100%，半径增大
@@ -61,37 +70,66 @@ export const highlightNodes = (id, originalTree) => {
         const circle = document.getElementById(`node${nodeId}`);
         if (circle) {
             circle.style.fillOpacity = '1'; // 完全不透明
-            // circle.setAttribute('r', '10'); // 假设高亮时半径变为10
             circle.style.r = '12'; // 恢复默认半径
             circle.setAttribute('stroke', '#F5F5F5'); // 设置描边颜色为灰色
-            circle.setAttribute('stroke-width', '2'); // 设置描边宽度
-            
+            circle.setAttribute('stroke-width', '2'); // 设置描边宽度  
         }
     });
 };
 
-export const resetNodes = () => {
+export const resetNodes = (selectionTree) => {
     // 选择所有circle元素，恢复默认透明度和半径
     document.querySelectorAll('.node').forEach(circle => {
-        circle.style.fillOpacity = '0.5'; // 恢复默认透明度为50%
-        circle.style.r = '8'; // 恢复默认半径
-        circle.setAttribute('stroke', 'none'); 
+        let match = circle.id.match(/\d+/); // 使用正则表达式匹配连续的数字
+        let number = parseInt(match[0], 10); // 将匹配的字符串转换成数字
+        if (!hasNode(selectionTree, number)) {
+            // console.log("circle ke is", circle.id)
+            circle.style.fillOpacity = '0.5'; // 恢复默认透明度为50%
+            circle.style.r = '8'; // 恢复默认半径
+            circle.setAttribute('stroke', 'none');
+        }
+        //is unfold node
+        else {
+            circle.style.fillOpacity = '1'; // 恢复默认透明度为90%
+            circle.style.r = '12'; // 恢复默认半径
+            circle.setAttribute('stroke', 'none');
+        }
     });
 };
 
+export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Scale, plot_Y_Scale, selectionTree) => {
+    const initialCirclesData = level_id_list.reduce((acc, level_id) => {
+        acc[level_id] = [];
+        return acc;
+    }, {});
+    // 填充数据
+    Object.entries(coordinateCollection).forEach(
+        ([level_id, coordinates]) => {
+            if (level_id <= level_id_list.length) {
+                const xScaleObj = plot_X_Scale.find(
+                    (scale) => scale.level_id == level_id
+                );
+                const yScaleObj = plot_Y_Scale.find(
+                    (scale) => scale.level_id == level_id
+                );
+                if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
+                const circles = coordinates.map((coordinate) => ({
+                    cx: xScaleObj.xScale(coordinate.x),
+                    cy: yScaleObj.yScale(coordinate.y),
+                    r: hasNode(selectionTree, coordinate.id) ? 12 : 8,
+                    key: coordinate.id,
+                    fillOpacity: hasNode(selectionTree, coordinate.id)
+                        ? 1.0
+                        : 0.5,
+                }));
+                initialCirclesData[level_id] = circles;
+            }
+        }
+    );
+    return initialCirclesData;
+}
 
 export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection, xScale, yScale, offset) => {
-    //     return [
-    //         {
-    //         "start_id": 1,
-    //         "end_id": 2,
-    //         "start_x": 0,
-    //         "start_y": 0,
-    //         "end_x": 0,
-    //         "end_y": 0,
-    //     },
-    //     ...
-    // ]
     const paths = [];
     const hoveredNode = findNodeById(hoveredId, coordinateCollection);
     const relatedNodeIds = findAllRelatedNodeIds(hoveredId, originalTree);
@@ -104,7 +142,12 @@ export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection
         if (start && end && childId !== hoveredId) {
             // console.log("paths is", paths)
             const pathD = generateBezierPath(start, end);
-            paths.push(pathD);
+            paths.push({
+                d: pathD, // 路径数据
+                key: `${hoveredId}-${childId}`, // 组合 key
+                hoveredId, // 保存 hoveredId
+                childId // 保存 childId
+            });
         }
     });
     return paths;

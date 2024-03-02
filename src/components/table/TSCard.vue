@@ -67,12 +67,12 @@ export default {
         const unfold = (id) => {
             store.dispatch('tree/selectNodeAndChildren', id)
             store.dispatch('scatterPlot/updatePlotLinks',id)
-            foldState.value = false
+            // foldState.value = false
         }
 
         const fold = (id) => {
             store.dispatch('tree/deselectNodeAndChildren', id)
-            foldState.value = true
+            // foldState.value = true
         }
         
         onMounted(()=>{
