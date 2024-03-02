@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full">
     <div class="w-full h-full rounded-md flex flex-col" id="headerContainer">
-      <div class="flex flex-row h-1/8 w-full" >
+      <div class="flex flex-row h-1/8 w-full">
         <div
           v-for="(level_name, index) in level_name_list"
           :key="level_name"
@@ -31,12 +31,9 @@
           </div>
         </div>
       </div>
-      <div class="w-full h-7/8 py-1" style="position: relative; z-index: 2;">
-        <div
-          class="w-full h-full flex flex-row"
-          id="plotContainer"
-        >
-          <div class="h-full" :style="{ width: dynamicWidth + 'px' } ">
+      <div class="w-full h-7/8 py-1" style="position: relative; z-index: 2">
+        <div class="w-full h-full flex flex-row" id="plotContainer">
+          <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
               <g
                 v-for="(level_name, index) in level_name_list"
@@ -49,16 +46,18 @@
                 "
               >
                 <!-- Group for positioning the icon at the top-right corner of the rectangle -->
-                <g 
-                viewBox="0 0 320 512"
-                :transform="`translate(${headerContainer?.offsetWidth * columnPercentage - 50}, 5) scale(0.04)`"
-                class="cursor-pointer"
-                @click="createLayers(level_id_list[index])"
+                <g
+                  viewBox="0 0 320 512"
+                  :transform="`translate(${
+                    headerContainer?.offsetWidth * columnPercentage - 50
+                  }, 5) scale(0.04)`"
+                  class="cursor-pointer"
+                  @click="createLayers(level_id_list[index])"
                 >
-                  <path 
-                  fill="#F5F5F5"
-                  d="M32 119.4C12.9 108.4 0 87.7 0 64C0 28.7 28.7 0 64 0c23.7 0 44.4 12.9 55.4 32H328.6C339.6 12.9 360.3 0 384 0c35.3 0 64 28.7 64 64c0 23.7-12.9 44.4-32 55.4V232.6c19.1 11.1 32 31.7 32 55.4c0 35.3-28.7 64-64 64c-23.7 0-44.4-12.9-55.4-32H119.4c-11.1 19.1-31.7 32-55.4 32c-35.3 0-64-28.7-64-64c0-23.7 12.9-44.4 32-55.4V119.4zM119.4 96c-5.6 9.7-13.7 17.8-23.4 23.4V232.6c9.7 5.6 17.8 13.7 23.4 23.4H328.6c5.6-9.7 13.7-17.8 23.4-23.4V119.4c-9.7-5.6-17.8-13.7-23.4-23.4H119.4zm192 384c-11.1 19.1-31.7 32-55.4 32c-35.3 0-64-28.7-64-64c0-23.7 12.9-44.4 32-55.4V352h64v40.6c9.7 5.6 17.8 13.7 23.4 23.4H520.6c5.6-9.7 13.7-17.8 23.4-23.4V279.4c-9.7-5.6-17.8-13.7-23.4-23.4h-46c-5.4-15.4-14.6-28.9-26.5-39.6V192h72.6c11.1-19.1 31.7-32 55.4-32c35.3 0 64 28.7 64 64c0 23.7-12.9 44.4-32 55.4V392.6c19.1 11.1 32 31.7 32 55.4c0 35.3-28.7 64-64 64c-23.7 0-44.4-12.9-55.4-32H311.4z"
-                  />  
+                  <path
+                    fill="#F5F5F5"
+                    d="M32 119.4C12.9 108.4 0 87.7 0 64C0 28.7 28.7 0 64 0c23.7 0 44.4 12.9 55.4 32H328.6C339.6 12.9 360.3 0 384 0c35.3 0 64 28.7 64 64c0 23.7-12.9 44.4-32 55.4V232.6c19.1 11.1 32 31.7 32 55.4c0 35.3-28.7 64-64 64c-23.7 0-44.4-12.9-55.4-32H119.4c-11.1 19.1-31.7 32-55.4 32c-35.3 0-64-28.7-64-64c0-23.7 12.9-44.4 32-55.4V119.4zM119.4 96c-5.6 9.7-13.7 17.8-23.4 23.4V232.6c9.7 5.6 17.8 13.7 23.4 23.4H328.6c5.6-9.7 13.7-17.8 23.4-23.4V119.4c-9.7-5.6-17.8-13.7-23.4-23.4H119.4zm192 384c-11.1 19.1-31.7 32-55.4 32c-35.3 0-64-28.7-64-64c0-23.7 12.9-44.4 32-55.4V352h64v40.6c9.7 5.6 17.8 13.7 23.4 23.4H520.6c5.6-9.7 13.7-17.8 23.4-23.4V279.4c-9.7-5.6-17.8-13.7-23.4-23.4h-46c-5.4-15.4-14.6-28.9-26.5-39.6V192h72.6c11.1-19.1 31.7-32 55.4-32c35.3 0 64 28.7 64 64c0 23.7-12.9 44.4-32 55.4V392.6c19.1 11.1 32 31.7 32 55.4c0 35.3-28.7 64-64 64c-23.7 0-44.4-12.9-55.4-32H311.4z"
+                  />
                 </g>
                 <rect
                   x="0"
@@ -87,10 +86,19 @@
               </g>
               <path
                 v-for="path in bezierPaths"
-                :key=path
+                :key="path"
+                :d="path"
+                stroke="rgb(208,63,228)"
+                stroke-width="2"
+                fill="none"
+              />
+              <path
+                v-for="path in selectNodePaths"
+                :key="path"
                 :d="path"
                 stroke="rgb(243,194,18)"
                 stroke-width="2"
+                stroke-opacity="0.7"
                 fill="none"
               />
             </svg>
@@ -108,8 +116,9 @@ import {
   highlightNodes,
   resetNodes,
   calculatePlotLinks,
-  hasChildren
+  hasChildren,
 } from "../computation/treeComputation";
+import scatterPlotModule from "../store/scatterPlotModule";
 
 export default {
   name: "TableHeader",
@@ -123,9 +132,10 @@ export default {
 
     const colorBar = computed(() => store.getters["tree/colorBar"]);
 
-    const dataset = computed(()=> store.getters["tree/dataset"])
+    const dataset = computed(() => store.getters["tree/dataset"]);
     const originalTree = computed(() => store.getters["tree/originalTree"]);
-    const selectionTree = computed(() => store.getters["tree/selectionTree"])
+    const selectionTree = computed(() => store.getters["tree/selectionTree"]);
+    const plotLinks = computed(() => store.getters["scatterPlot/plotLinks"]);
     const levels = computed(() => store.getters["tree/levels"]);
     const level_id_list = computed(() => store.getters["tree/level_id_list"]);
     const level_name_list = computed(() =>
@@ -154,16 +164,30 @@ export default {
     const coordinateCollection = computed(
       () => store.getters["scatterPlot/coordinateCollection"]
     );
+    const selectNodePaths = computed(() => {
+      let allPaths = [];
+      plotLinks.value.forEach((id) => {
+        const pathsForNode = calculatePlotLinks(
+          id,
+          originalTree.value,
+          coordinateCollection.value,
+          plot_X_Scale.value,
+          plot_Y_Scale.value,
+          headerContainer.value.offsetWidth * columnPercentage.value
+        ); // 根据节点ID计算路径
+        allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
+      });
+      return allPaths;
+    });
     const circlesData = computed(() => {
       const initialCirclesData = level_id_list.value.reduce((acc, level_id) => {
         acc[level_id] = [];
         return acc;
       }, {});
-
       // 填充数据
       Object.entries(coordinateCollection.value).forEach(
         ([level_id, coordinates]) => {
-          const radius =  8; // 提供默认半径
+          const radius = 8; // 提供默认半径
           const xScaleObj = plot_X_Scale.value.find(
             (scale) => scale.level_id == level_id
           );
@@ -171,7 +195,6 @@ export default {
             (scale) => scale.level_id == level_id
           );
           if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
-
           const circles = coordinates.map((coordinate) => ({
             cx: xScaleObj.xScale(coordinate.x),
             cy: yScaleObj.yScale(coordinate.y),
@@ -182,9 +205,8 @@ export default {
           initialCirclesData[level_id] = circles;
         }
       );
-
       return initialCirclesData;
-    })
+    });
 
     const handleMouseOver = (id) => {
       highlightNodes(id, originalTree.value);
@@ -194,7 +216,7 @@ export default {
         coordinateCollection.value,
         plot_X_Scale.value,
         plot_Y_Scale.value,
-        headerContainer.value.offsetWidth *columnPercentage.value
+        headerContainer.value.offsetWidth * columnPercentage.value
       );
     };
 
@@ -204,31 +226,35 @@ export default {
     };
 
     const handleNodeClick = (id) => {
-      if(!hasChildren(selectionTree.value, id)){
-        store.dispatch('tree/selectNodeAndChildren', id)
+      if (!hasChildren(selectionTree.value, id)) {
+        store.dispatch("tree/selectNodeAndChildren", id);
+      } else {
+        store.dispatch("tree/deselectNodeAndChildren", id);
       }
-      else{
-        store.dispatch('tree/deselectNodeAndChildren', id)
-      }
-      
-    }
+    };
 
     const addColumn = () => {
       store.dispatch("tree/addLevelToLevelIdList");
-    }
+    };
 
     const createLayers = (level_id) => {
-      const obj = {"dataset": dataset.value, "level_id": level_id}
+      const obj = { dataset: dataset.value, level_id: level_id };
       // console.log("check dataset")
       // console.log(dataset.value)
-      store.dispatch("tree/addLayer", obj)
-    }
+      store.dispatch("tree/addLayer", obj);
+    };
 
     onMounted(() => {
       headerContainer.value = document.querySelector("#headerContainer");
       plotContainer.value = document.querySelector("#plotContainer");
-      store.dispatch("scatterPlot/updatePlotWidth",headerContainer.value.offsetWidth * columnPercentage.value - 20);
-      store.dispatch("scatterPlot/updatePlotHeight",plotContainer.value.offsetHeight);
+      store.dispatch(
+        "scatterPlot/updatePlotWidth",
+        headerContainer.value.offsetWidth * columnPercentage.value - 20
+      );
+      store.dispatch(
+        "scatterPlot/updatePlotHeight",
+        plotContainer.value.offsetHeight
+      );
     });
 
     return {
@@ -244,6 +270,7 @@ export default {
       dynamicWidth,
       columnPercentage,
       bezierPaths,
+      selectNodePaths,
       handleNodeClick,
       handleMouseOut,
       handleMouseOver,

@@ -26,6 +26,7 @@ import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
 import { hasChildren } from '../../computation/treeComputation';
+import scatterPlotModule from '../../store/scatterPlotModule';
 export default {
     name: 'TSCard',
     props: ['seriesData', 'level', 'node_id', 'groupedNode'],
@@ -65,6 +66,7 @@ export default {
 
         const unfold = (id) => {
             store.dispatch('tree/selectNodeAndChildren', id)
+            store.dispatch('scatterPlot/updatePlotLinks',id)
             foldState.value = false
         }
 
