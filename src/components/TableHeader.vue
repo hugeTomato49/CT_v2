@@ -95,6 +95,8 @@
                   :stroke-width = "circle.strokeWidth"
                   @click="handleNodeClick(circle.key)"
                   @dblclick="filterCurrentNode(circle.key)"
+                  @mouseover="handleMouseOver(circle.key)"
+                  @mouseout="handleMouseOut"
                 ></circle>
               </g>  
             </svg>
@@ -116,6 +118,7 @@ import {
   hasChildren,
   ifEmphasize,
   hasNode,
+  highlightLinks
 } from "../computation/treeComputation";
 
 
@@ -175,7 +178,8 @@ export default {
             coordinateCollection.value,
             plot_X_Scale.value,
             plot_Y_Scale.value,
-            headerContainer.value.offsetWidth * columnPercentage.value
+            headerContainer.value.offsetWidth * columnPercentage.value,
+            level_id_list.value
           ); // 根据节点ID计算路径
           allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
         }
@@ -195,7 +199,7 @@ export default {
 
     const handleMouseOver = (id) => {
       highlightNodes(id, originalTree.value);
-      bezierPaths.value = calculatePlotLinks(
+      bezierPaths.value = highlightLinks(
         id,
         originalTree.value,
         coordinateCollection.value,
@@ -207,7 +211,7 @@ export default {
 
     const handleMouseOut = () => {
       bezierPaths.value = [];
-      resetNodes(selectionTree.value);
+      resetNodes(selectionTree.value, level_id_list.value);
     };
 
     const handleNodeClick = (id) => {
