@@ -126,7 +126,7 @@ export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Sca
     return initialCirclesData;
 }
 
-export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection, xScale, yScale, offset) => {
+export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection, xScale, yScale, offset, level_id_list) => {
     const paths = [];
     const hoveredNode = findNodeById(hoveredId, coordinateCollection);
     const relatedNodeIds = findAllRelatedNodeIds(hoveredId, originalTree);
@@ -135,8 +135,10 @@ export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection
         // 假设 findNodeCoordinates 可以从 coordinateCollection 获取节点坐标
         const start = findNodeCoordinates(hoveredId, coordinateCollection, xScale, yScale, offset);
         const end = findNodeCoordinates(childId, coordinateCollection, xScale, yScale, offset);
+        const node = originalTree.find(node => node.id === childId);
+        const level_id = node.level
 
-        if (start && end && childId !== hoveredId) {
+        if (start && end && childId !== hoveredId && ifEmphasize(originalTree, childId, level_id, level_id_list)) {
             // console.log("paths is", paths)
             const pathD = generateBezierPath(start, end);
             paths.push({
