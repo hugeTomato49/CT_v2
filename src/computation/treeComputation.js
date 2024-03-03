@@ -54,18 +54,11 @@ export const calculateEdges = (tree) => {
 export const highlightNodes = (id, originalTree) => {
     const relatedNodeIds = findAllRelatedNodeIds(id, originalTree); // 查找所有相关节点的ID
 
-    // 先将所有节点透明度设置为20%
-    document.querySelectorAll('circle').forEach(circle => {
-        circle.style.fillOpacity = '0.2';
-        circle.style.r = '8'; // 恢复默认半径
-    });
-
-    // 高亮相关节点：透明度100%，半径增大
+    // 高亮相关节点：透明度100%, 增加stroke
     relatedNodeIds.forEach(nodeId => {
         const circle = document.getElementById(`node${nodeId}`);
         if (circle) {
             circle.style.fillOpacity = '1'; // 完全不透明
-            circle.style.r = '12'; // 恢复默认半径
             circle.setAttribute('stroke', '#F5F5F5'); // 设置描边颜色为灰色
             circle.setAttribute('stroke-width', '2'); // 设置描边宽度  
         }
@@ -73,23 +66,9 @@ export const highlightNodes = (id, originalTree) => {
 };
 
 export const resetNodes = (selectionTree) => {
-    // 选择所有circle元素，恢复默认透明度和半径
-    document.querySelectorAll('.node').forEach(circle => {
-        let match = circle.id.match(/\d+/); // 使用正则表达式匹配连续的数字
-        let number = parseInt(match[0], 10); // 将匹配的字符串转换成数字
-        if (!hasNode(selectionTree, number)) {
-            // console.log("circle ke is", circle.id)
-            circle.style.fillOpacity = '0.2'; // 恢复默认透明度为50%
-            circle.style.r = '8'; // 恢复默认半径
-            circle.setAttribute('stroke', 'none');
-        }
-        //is unfold node
-        else {
-            circle.style.fillOpacity = '1'; // 恢复默认透明度为90%
-            circle.style.r = '12'; // 恢复默认半径
-            circle.setAttribute('stroke', 'none');
-        }
-    });
+    //修改函数形参
+    //把刚刚hover后高亮的所有点恢复到原来的状态,也就是stroke为none, 透明度为0.1
+    
 };
 
 export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Scale, plot_Y_Scale, selectionTree) => {
@@ -113,8 +92,8 @@ export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Sca
                     cy: yScaleObj.yScale(coordinate.y),
                     r: 10,
                     key: coordinate.id,
-                    stroke: "#000000",
-                    strokeWidth: hasNode(selectionTree, coordinate.id) ? 2 : 0,
+                    stroke: "#DFDEDE",
+                    strokeWidth: ifEmphasize(selectionTree, coordinate.id, level_id, level_id_list) && hasNode(selectionTree, coordinate.id) ? 3 : 0,
                     fillOpacity: ifEmphasize(selectionTree, coordinate.id, level_id, level_id_list) && hasNode(selectionTree, coordinate.id)
                         ? 1.0
                         : 0.1,
