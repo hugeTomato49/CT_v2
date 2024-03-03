@@ -95,6 +95,8 @@
                   :stroke-width = "circle.strokeWidth"
                   @click="handleNodeClick(circle.key)"
                   @dblclick="filterCurrentNode(circle.key)"
+                  @mouseover="handleMouseOver(circle.key)"
+                  @mouseout="handleMouseOut"
                 ></circle>
               </g>  
             </svg>
@@ -116,6 +118,7 @@ import {
   hasChildren,
   ifEmphasize,
   hasNode,
+  highlightLinks
 } from "../computation/treeComputation";
 
 
@@ -196,9 +199,9 @@ export default {
 
     const handleMouseOver = (id) => {
       highlightNodes(id, originalTree.value);
-      bezierPaths.value = calculatePlotLinks(
+      bezierPaths.value = highlightLinks(
         id,
-        selectionTree.value,
+        originalTree.value,
         coordinateCollection.value,
         plot_X_Scale.value,
         plot_Y_Scale.value,
@@ -208,7 +211,7 @@ export default {
 
     const handleMouseOut = () => {
       bezierPaths.value = [];
-      resetNodes(selectionTree.value);
+      resetNodes(selectionTree.value, level_id_list.value);
     };
 
     const handleNodeClick = (id) => {
