@@ -13,7 +13,6 @@
                     <TSCard
                     v-for = "(id,index) in groupedIdCollection(level_id)"
                     :key = "id"
-                    :id="'card' + id"
                     :seriesData = findSeriesData(id)
                     :level = "level_id"
                     :node_id = "id"

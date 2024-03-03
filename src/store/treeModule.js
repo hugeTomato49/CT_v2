@@ -15,10 +15,8 @@ const state = {
     level_id_list: [],
     timeRange: [],
     colorBar: ["#4B99D0", "#4B99D0", "#4B99D0","#4B99D0", "#4B99D0","#4B99D0"],
-    groupState: false
-
-    
-
+    groupState: false,
+    themeColor: "#4B99D0"
 }
 
 const mutations = {
@@ -195,7 +193,8 @@ const getters = {
     level_id_list: state => state.level_id_list,
     timeRange: state => state.timeRange.PV_Tree,
     colorBar: state => state.colorBar,
-    groupState: state => state.groupState
+    groupState: state => state.groupState,
+    themeColor: state => state.themeColor
     
 
 

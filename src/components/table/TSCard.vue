@@ -1,13 +1,16 @@
 <template>
     <div 
-    class="
-        w-full p-0.8" 
+    :class="['w-full p-0.8', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
+    :id = "card" + node_id
     :style="{ height: rowHeight + 'px' }" 
     @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
     @dblclick="filterCurrentCard(node_id)"
+    
 
     >
-        <div :class="['w-full h-full card hover:opacity-100', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}]" id="cardContainer">
+        <div 
+        :class="['w-full h-full card hover:opacity-100', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]" 
+        id="cardContainer">
             <svg class="w-full h-full bg-stone-100">
                 <g ref="brushRef"></g>
                 <path
