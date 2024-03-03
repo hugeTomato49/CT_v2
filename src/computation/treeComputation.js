@@ -1,3 +1,5 @@
+import { select } from "d3"
+
 export const hasChildren = (selectionTree, id) => {
     const node = selectionTree.find(node => node.id == id)
     if (node === undefined) {
@@ -17,7 +19,7 @@ export const ifEmphasize = (selectionTree, id, level, level_id_list) => {
     if (hasChildren(selectionTree, id)) {
         return true
     }
-    else if (level == level_id_list.length) {
+    else if (level == level_id_list.length && hasNode(selectionTree, id)) {
         return true
     }
     else {
@@ -51,53 +53,7 @@ export const calculateEdges = (tree) => {
     return edges
 }
 
-export const highlightNodes = (id, originalTree) => {
-    const relatedNodeIds = findAllRelatedNodeIds(id, originalTree); // 查找所有相关节点的ID
-    document.querySelectorAll('circle').forEach(circle => {
-        // circle.style.fillOpacity = '0.2';
-        circle.style.r = '10'; // 恢复默认半径
-    });
-    // 高亮相关节点：透明度100%, 增加stroke
-    relatedNodeIds.forEach(nodeId => {
-        const circle = document.getElementById(`node${nodeId}`);
-        if (circle) {
-            circle.style.fillOpacity = '1'; // 完全不透明
-            circle.style.stroke = "#DFDEDE"; // 设置描边颜色为灰色
-            circle.style.strokeWidth = 2; // 设置描边宽度  
-        }
-    });
 
-};
-
-export const resetNodes = (selectionTree, level_id_list) => {
-    //修改函数形参
-    //把刚刚hover后高亮的所有点恢复到原来的状态,也就是stroke为none, 透明度为0.1
-    document.querySelectorAll('.node').forEach(circle => {
-        let match = circle.id.match(/\d+/); // 使用正则表达式匹配连续的数字
-        let number = parseInt(match[0], 10); // 将匹配的字符串转换成数字
-        const node = selectionTree.find(node => node.id === number);
-        if (node) {
-            const level_id = node.level;
-            if (ifEmphasize(selectionTree, number, level_id, level_id_list)) {
-                circle.style.fillOpacity = '1'; // 恢复默认透明度为50%
-                circle.style.r = '10'; // 恢复默认半径
-                circle.style.strokeWidth = 3; // 设置描边宽度
-                circle.style.stroke = "#DFDEDE"; // 设置描边颜色为灰色
-            }
-            else {
-                circle.style.fillOpacity = '0.1';
-                circle.style.r = '10'; // 恢复默认半径
-                circle.style.strokeWidth = 0; // 设置描边宽度 
-            }
-        }
-        //is unfold node
-        else {
-            circle.style.fillOpacity = '0.1';
-            circle.style.r = '10'; // 恢复默认半径
-            circle.style.strokeWidth = 0; // 设置描边宽度 
-        }
-    });
-};
 
 export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Scale, plot_Y_Scale, selectionTree) => {
     const initialCirclesData = level_id_list.reduce((acc, level_id) => {
@@ -120,11 +76,11 @@ export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Sca
                     cy: yScaleObj.yScale(coordinate.y),
                     r: 10,
                     key: coordinate.id,
-                    stroke: "#DFDEDE",
-                    strokeWidth: ifEmphasize(selectionTree, coordinate.id, level_id, level_id_list) && hasNode(selectionTree, coordinate.id) ? 3 : 0,
-                    fillOpacity: ifEmphasize(selectionTree, coordinate.id, level_id, level_id_list) && hasNode(selectionTree, coordinate.id)
+                    stroke: "#F5F5F5",
+                    strokeWidth: hasNode(selectionTree, coordinate.id)  ? 2 : 0,
+                    fillOpacity: ifEmphasize(selectionTree, coordinate.id, level_id, level_id_list) 
                         ? 1.0
-                        : 0.1,
+                        : hasNode(selectionTree, coordinate.id) ? 0.3 : 0.05
                 }));
                 initialCirclesData[level_id] = circles;
             }
@@ -163,10 +119,10 @@ export const highlightLinks = (hoveredId, originalTree, coordinateCollection, xS
     const paths = [];
     const hoveredNode = findNodeById(hoveredId, coordinateCollection);
     const relatedNodeIds = findAllRelatedNodeIds(hoveredId, originalTree);
-    console.log('related node id is', relatedNodeIds)
+    // console.log('related node id is', relatedNodeIds)
     relatedNodeIds.forEach(childId => {
         // findNodeCoordinates 可以从 coordinateCollection 获取节点坐标
-        console.log("link id is", childId)
+        // console.log("link id is", childId)
         const start = findNodeCoordinates(hoveredId, coordinateCollection, xScale, yScale, offset);
         const end = findNodeCoordinates(childId, coordinateCollection, xScale, yScale, offset);
         const node = originalTree.find(node => node.id === childId);
@@ -184,7 +140,7 @@ export const highlightLinks = (hoveredId, originalTree, coordinateCollection, xS
     });
     return paths;
 }
-const findAllRelatedNodeIds = (nodeId, tree) => {
+export const findAllRelatedNodeIds = (nodeId, tree) => {
     let ids = [nodeId]; // 初始化包含当前节点ID的数组
 
     const findChildrenIds = (id, nodes) => {
@@ -199,7 +155,21 @@ const findAllRelatedNodeIds = (nodeId, tree) => {
 
     findChildrenIds(nodeId, tree);
     return ids;
-};
+}
+
+export const findChildrenIds = (id, tree) => {
+    let ids = [id]
+    const node = tree.find(node => node.id === id);
+    if (node && node.children_id) {
+        node.children_id.forEach(childId => {
+            ids.push(childId); // 添加子节点ID到数组
+            // findChildrenIds(childId, nodes); // 递归查找更深层的子节点
+        });
+    }
+
+    return ids
+}
+
 function findNodeById(id, coordinateCollection) {
     let node = null
     Object.entries(coordinateCollection).forEach(

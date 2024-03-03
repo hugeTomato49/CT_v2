@@ -4,10 +4,12 @@ import { PLOT_Scale } from "../scale/scale";
 const state = {
     plotWidth: 0,
     plotHeight: 0,
+    columnWidth: 0,
     plot_X_Scale: [],
     plot_Y_Scale: [],
     coordinateCollection: [],
-    plotLinks: []
+    bezierPaths: []
+
 
 }
 
@@ -17,6 +19,9 @@ const mutations = {
     },
     UPDATE_PLOT_HEIGHT(state, payload) {
         state.plotHeight = payload
+    },
+    UPDATE_COLUMN_WIDTH(state, payload) {
+        state.columnWidth = payload
     },
     UPDATE_PLOT_X_SCALE(state, payload) {
         state.plot_X_Scale = payload
@@ -31,7 +36,10 @@ const mutations = {
         if (!state.plotLinks.includes(nodeId)) {
           state.plotLinks.push(nodeId);
         }
-      },
+    },
+    UPDATE_BEZIER_PATHS(state, payload) {
+        state.bezierPaths = payload
+    }
 }
 
 const actions = {
@@ -94,15 +102,22 @@ const actions = {
     },
     updatePlotHeight({ commit }, plotHeight) {
         commit("UPDATE_PLOT_HEIGHT", plotHeight)
+    },
+    updateBezierPaths({commit}, links) {
+        commit("UPDATE_BEZIER_PATHS", links)
+    },
+    updateColumnWidth({commit}, width) {
+        commit('UPDATE_COLUMN_WIDTH', width)
     }
 }
 const getters = {
     plotWidth: state => state.plotHWidth,
     plotHeight: state => state.plotHeight,
+    columnWidth: state => state.columnWidth,
     plot_X_Scale: state => state.plot_X_Scale,
     plot_Y_Scale: state => state.plot_Y_Scale,
     coordinateCollection: state => state.coordinateCollection,
-    plotLinks: state => state.plotLinks
+    bezierPaths: state => state.bezierPaths
 }
 
 const scatterPlotModule = {

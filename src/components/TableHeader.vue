@@ -60,6 +60,7 @@
                 stroke-width="2"
                 stroke-opacity="0.8"
                 fill="none"
+                class="emphasizeLink"
               />
               <g
                 v-for="(level_name, index) in level_name_list"
@@ -82,7 +83,7 @@
                   rx="5"
                 ></rect>
                 <circle
-                  v-for="circle in circlesData[level_id_list[index]] ?? []"
+                  v-for="circle in circlesData[level_id_list[index]].filter(circle => !hasNode(selectionTree, circle.key))"
                   class="node cursor-pointer"
                   :id="'node' + circle.key"
                   :key="circle.key"
@@ -95,8 +96,40 @@
                   :stroke-width = "circle.strokeWidth"
                   @click="handleNodeClick(circle.key)"
                   @dblclick="filterCurrentNode(circle.key)"
-                  @mouseover="handleMouseOver(circle.key)"
-                  @mouseout="handleMouseOut"
+                  @mouseover="handleMouseOver(circle.key, level_id_list[index])"
+                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"
+                ></circle>
+                <circle
+                  v-for="circle in circlesData[level_id_list[index]].filter(circle => hasNode(selectionTree, circle.key) && !ifEmphasize(selectionTree, circle.key, level_id_list[index], level_id_list))"
+                  class="node cursor-pointer foldNode"
+                  :id="'node' + circle.key"
+                  :key="circle.key"
+                  :cx="circle.cx"
+                  :cy="circle.cy"
+                  :r="circle.r"
+                  :fill="colorBar[index]"
+                  :fill-opacity="circle.fillOpacity"
+                  :stroke = "circle.stroke"
+                  :stroke-width = "circle.strokeWidth"
+                  @click="handleNodeClick(circle.key)"
+                  @dblclick="filterCurrentNode(circle.key)"
+                  @mouseover="handleMouseOver(circle.key, level_id_list[index])"
+                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"
+                ></circle>
+                <circle
+                  v-for="circle in circlesData[level_id_list[index]].filter(circle => ifEmphasize(selectionTree, circle.key, level_id_list[index], level_id_list))"
+                  class="node cursor-pointer emphasizeNode"
+                  :id="'node' + circle.key"
+                  :key="circle.key"
+                  :cx="circle.cx"
+                  :cy="circle.cy"
+                  :r="circle.r"
+                  :fill="colorBar[index]"
+                  :fill-opacity="circle.fillOpacity"
+                  :stroke = "circle.stroke"
+                  :stroke-width = "circle.strokeWidth"
+                  @click="handleNodeClick(circle.key)"
+                  @dblclick="filterCurrentNode(circle.key)"
                 ></circle>
               </g>  
             </svg>
@@ -108,18 +141,26 @@
 </template>
 
 <script>
-import { useStore } from "vuex";
-import { computed, ref, onMounted } from "vue";
+import { useStore } from "vuex"
+import { computed, ref, onMounted } from "vue"
 import {
-  highlightNodes,
-  resetNodes,
   calculatePlotLinks,
   calculateCircles,
   hasChildren,
   ifEmphasize,
   hasNode,
-  highlightLinks
-} from "../computation/treeComputation";
+  highlightLinks,
+  findAllRelatedNodeIds,
+  findChildrenIds
+} from "../computation/treeComputation"
+import {
+  highlightNodes,
+  deHighlightNodes,
+  highlightCards,
+  deHighlightCards,
+  resetNodes
+} from "../highlight/highlight"
+import { selection } from "d3";
 
 
 export default {
@@ -154,17 +195,11 @@ export default {
       return 0;
     });
 
-    const bezierPaths = ref([]);
+    const bezierPaths = computed(() => store.getters["scatterPlot/bezierPaths"])
     //step2: 取对应的scale和coordindateCollection数据
-    const plot_X_Scale = computed(
-      () => store.getters["scatterPlot/plot_X_Scale"]
-    );
-    const plot_Y_Scale = computed(
-      () => store.getters["scatterPlot/plot_Y_Scale"]
-    );
-    const coordinateCollection = computed(
-      () => store.getters["scatterPlot/coordinateCollection"]
-    );
+    const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"]);
+    const plot_Y_Scale = computed(() => store.getters["scatterPlot/plot_Y_Scale"]);
+    const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"]);
     const selectNodePaths = computed(() => {
       let allPaths = []
       const newTree = selectionTree.value.filter(node => ifEmphasize(selectionTree.value, node.id, node.level, level_id_list.value))
@@ -197,21 +232,28 @@ export default {
       );
     });
 
-    const handleMouseOver = (id) => {
-      highlightNodes(id, originalTree.value);
-      bezierPaths.value = highlightLinks(
-        id,
-        originalTree.value,
-        coordinateCollection.value,
-        plot_X_Scale.value,
-        plot_Y_Scale.value,
-        headerContainer.value.offsetWidth * columnPercentage.value
-      );
+    const handleMouseOver = (id,level) => {
+      if(!ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
+        const id_list = findChildrenIds(id, originalTree.value)
+        highlightNodes(id_list)
+        store.dispatch('scatterPlot/updateBezierPaths',      
+          highlightLinks(
+          id,
+          originalTree.value,
+          coordinateCollection.value,
+          plot_X_Scale.value,
+          plot_Y_Scale.value,
+          headerContainer.value.offsetWidth * columnPercentage.value
+          ))
+      }
     };
 
-    const handleMouseOut = () => {
-      bezierPaths.value = [];
-      resetNodes(selectionTree.value, level_id_list.value);
+    const handleMouseOut = (id,level) => {
+      if(!ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
+        const id_list = findChildrenIds(id, originalTree.value)
+        deHighlightNodes(id_list)
+        store.dispatch('scatterPlot/updateBezierPaths',[])
+      }
     };
 
     const handleNodeClick = (id) => {
@@ -246,6 +288,10 @@ export default {
       store.dispatch(
         "scatterPlot/updatePlotWidth",
         headerContainer.value.offsetWidth * columnPercentage.value - 20
+      )
+      store.dispatch(
+        "scatterPlot/updateColumnWidth",
+        headerContainer.value.offsetWidth * columnPercentage.value 
       );
       store.dispatch(
         "scatterPlot/updatePlotHeight",
@@ -274,7 +320,8 @@ export default {
       addColumn,
       createLayers,
       filterCurrentNode,
-      hasNode
+      hasNode,
+      ifEmphasize
     };
   },
 };

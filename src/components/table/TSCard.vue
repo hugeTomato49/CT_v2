@@ -1,15 +1,15 @@
 <template>
     <div 
-    :class="['w-full p-0.8', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
-    :id = "card" + node_id
+    :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
+    :id="'card' + node_id"
     :style="{ height: rowHeight + 'px' }" 
+    @mouseover="handleMouseOver(node_id)"
+    @mouseout="handleMouseOut(node_id)"
     @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
     @dblclick="filterCurrentCard(node_id)"
-    
-
     >
         <div 
-        :class="['w-full h-full card hover:opacity-100', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]" 
+        :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]" 
         id="cardContainer">
             <svg class="w-full h-full bg-stone-100">
                 <g ref="brushRef"></g>
@@ -31,7 +31,10 @@ import { useStore } from 'vuex';
 import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
-import { hasChildren, ifEmphasize } from '../../computation/treeComputation';
+import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
+import { highlightNodes, deHighlightNodes } from "../../highlight/highlight"
+
+
 export default {
     name: 'TSCard',
     props: ['seriesData', 'level', 'node_id', 'groupedNode'],
@@ -47,6 +50,14 @@ export default {
 
         const xScale = computed(()=>store.getters['size/xScale'])
         const yScale = computed(()=>store.getters['size/yScale'][props.level-1])
+
+        const originalTree = computed(() => store.getters["tree/originalTree"])
+        const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"])
+        const plot_Y_Scale = computed(() => store.getters["scatterPlot/plot_Y_Scale"])
+        const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"])
+        const columnWidth = computed(() => store.getters["scatterPlot/columnWidth"])
+
+
 
         const brushRef = ref(null)
 
@@ -88,6 +99,31 @@ export default {
                 store.dispatch('tree/deselectNodeAndChildren', id)
             })
         }
+
+        const handleMouseOver = (id) => {
+            if(!ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+                const id_list = findChildrenIds(id, originalTree.value)
+                highlightNodes(id_list)
+                store.dispatch('scatterPlot/updateBezierPaths',      
+                    highlightLinks(
+                    id,
+                    originalTree.value,
+                    coordinateCollection.value,
+                    plot_X_Scale.value,
+                    plot_Y_Scale.value,
+                    columnWidth.value
+                    ))
+            }   
+
+        };
+
+        const handleMouseOut = (id) => {
+            if(!ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+                const id_list = findChildrenIds(id, originalTree.value)
+                deHighlightNodes(id_list)
+                store.dispatch('scatterPlot/updateBezierPaths',[])
+            }
+        };
         
         onMounted(()=>{
             cardContainer.value = document.querySelector("#cardContainer")
@@ -109,7 +145,9 @@ export default {
             hasChildren,
             ifEmphasize,
             level_id_list,
-            filterCurrentCard
+            filterCurrentCard,
+            handleMouseOver,
+            handleMouseOut
         }
     }
 }
