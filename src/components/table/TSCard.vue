@@ -1,6 +1,6 @@
 <template>
     <div 
-    :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
+    :class="['w-full p-0.8 hover:opacity-100', {'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}, {'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
     :id="'card' + node_id"
     :style="{ height: rowHeight + 'px' }" 
     @mouseover="handleMouseOver(node_id)"

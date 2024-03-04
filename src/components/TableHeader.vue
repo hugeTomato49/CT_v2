@@ -56,11 +56,13 @@
                 v-for="pathObj in selectNodePaths"
                 :key="pathObj.key"
                 :d="pathObj.d"
-                stroke="rgb(243,194,18)"
+                stroke="rgba(243,194,18,0.8)"
                 stroke-width="2"
-                stroke-opacity="0.8"
                 fill="none"
-                class="emphasizeLink"
+                class="emphasizeLink cursor-pointer"
+                :id="pathObj.key"
+                @mouseover = handleMouseOverLink(pathObj.key)
+                @mouseleave = handleMouseOutLink(pathObj.key)
               />
               <g
                 v-for="(level_name, index) in level_name_list"
@@ -156,9 +158,9 @@ import {
 import {
   highlightNodes,
   deHighlightNodes,
-  highlightCards,
-  deHighlightCards,
-  resetNodes
+  highlightLink,
+  highlightEmphaizeCards,
+  deHighlightEmphasizeCards
 } from "../highlight/highlight"
 import { selection } from "d3";
 
@@ -246,7 +248,7 @@ export default {
           headerContainer.value.offsetWidth * columnPercentage.value
           ))
       }
-    };
+    }
 
     const handleMouseOut = (id,level) => {
       if(!ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
@@ -254,7 +256,19 @@ export default {
         deHighlightNodes(id_list)
         store.dispatch('scatterPlot/updateBezierPaths',[])
       }
-    };
+    }
+
+    const handleMouseOverLink = (key) => {
+      deHighlightEmphasizeCards()
+      highlightNodes(key.split('-'))
+      highlightLink(key)
+
+    }
+
+    const handleMouseOutLink = (key) => {
+      highlightEmphaizeCards()
+      deHighlightNodes(key.split('-'))
+    }
 
     const handleNodeClick = (id) => {
       if (!hasChildren(selectionTree.value, id)) {
@@ -262,16 +276,16 @@ export default {
       } else {
         store.dispatch("tree/deselectNodeAndChildren", id);
       }
-    };
+    }
 
     const addColumn = () => {
       store.dispatch("tree/addLevelToLevelIdList");
-    };
+    }
 
     const createLayers = (level_id) => {
       const obj = { dataset: dataset.value, level_id: level_id };
       store.dispatch("tree/addLayer", obj);
-    };
+    }
 
     const filterCurrentNode = (id) => {
         const currentNode = selectionTree.value.find(node => node.id == id)
@@ -315,13 +329,16 @@ export default {
       bezierPaths,
       selectNodePaths,
       handleNodeClick,
-      handleMouseOut,
       handleMouseOver,
+      handleMouseOut,
+      handleMouseOverLink,
+      handleMouseOutLink,
       addColumn,
       createLayers,
       filterCurrentNode,
       hasNode,
-      ifEmphasize
+      ifEmphasize,
+
     };
   },
 };

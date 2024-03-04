@@ -107,8 +107,8 @@ export const calculatePlotLinks = (hoveredId, selectionTree, coordinateCollectio
             paths.push({
                 d: pathD, // 路径数据
                 key: `${hoveredId}-${childId}`, // 组合 key
-                hoveredId, // 保存 hoveredId
-                childId // 保存 childId
+                hoveredId: hoveredId, // 保存 hoveredId
+                childId: childId // 保存 childId
             });
         }
     });

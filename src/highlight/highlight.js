@@ -1,4 +1,4 @@
-import  {ifEmphasize, findAllRelatedNodeIds}  from "../computation/treeComputation"
+import  {ifEmphasize}  from "../computation/treeComputation"
 
 export const highlightCards = (id_list) => {
     id_list.forEach(id => {
@@ -39,13 +39,21 @@ export const deHighlightNodes = (id_list) => {
     highlightEmphasize()
     id_list.forEach(nodeId => {
         const circle = document.getElementById(`node${nodeId}`);
-        if (circle) {
+        if (circle && !Array.from(circle.classList).includes("foldNode")) {
             circle.style.fillOpacity = '0.05'; 
             circle.style.strokeWidth = 0; 
         }
     })
-    deHighlightCards(id_list)
- 
+    highlightEmphasize()
+    deHighlightCards(id_list) 
+}
+
+export const highlightLink = (id) => {
+    const link = document.getElementById(id)
+    if(link) {
+        link.style.stroke = "rgba(243,194,18,1)"
+        link.style.strokeWidth = 2
+    }
 }
 
 
@@ -87,19 +95,21 @@ export const resetNodes = (selectionTree, level_id_list) => {
 export const highlightEmphasize = () => {
     const emphasizeLinks = document.getElementsByClassName("emphasizeLink")
     Array.from(emphasizeLinks).forEach(link => {
-        link.style.stroke = "rgb(243,194,18)"
+        link.style.stroke = "rgba(243,194,18,0.8)"
     })
 
     const emphasizeNodes = document.getElementsByClassName("emphasizeNode")
     Array.from(emphasizeNodes).forEach(node => {
         node.style.fillOpacity = 1
-        node.style.stroke ="rgba(245, 245, 245)"
+        node.style.stroke ="rgba(245, 245, 245,1)"
+        node.style.strokeWidth = 2
     })
 
     const foldNodes = document.getElementsByClassName("foldNode")
     Array.from(foldNodes).forEach(node => {
         node.style.fillOpacity = 0.3
-        node.style.stroke ="rgba(245, 245, 245)"
+        node.style.stroke ="rgba(245, 245, 245,1)"
+        node.style.strokeWidth = 2
     })
 
 }
@@ -107,7 +117,7 @@ export const highlightEmphasize = () => {
 export const deHightLigtEmphasize = () => {
     const emphasizeLinks = document.getElementsByClassName("emphasizeLink")
     Array.from(emphasizeLinks).forEach(link => {
-        link.style.stroke = "rgb(243,194,18, 0.3)"
+        link.style.stroke = "rgba(243,194,18, 0.3)"
     })
 
     const emphasizeNodes = document.getElementsByClassName("emphasizeNode")
@@ -122,6 +132,24 @@ export const deHightLigtEmphasize = () => {
         node.style.strokeWidth = 0
     })
 
+
+}
+
+export const highlightEmphaizeCards = () => {
+    const emphasizeCards = document.getElementsByClassName("emphasizeCard")
+    Array.from(emphasizeCards).forEach(card => {
+        card.classList.remove("opacity-40")
+        card.classList.add("opacity-100")  
+    })   
+
+}
+
+export const deHighlightEmphasizeCards = () => {
+    const emphasizeCards = document.getElementsByClassName("emphasizeCard")
+    Array.from(emphasizeCards).forEach(card => {
+        card.classList.remove("opacity-100")
+        card.classList.add("opacity-40")
+    })   
 }
 
 
