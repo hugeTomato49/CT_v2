@@ -24,8 +24,10 @@ const mutations = {
         state.originalTree = payload
     },
     UPDATE_SELECTION_TREE(state, payload){
-        // console.log("CHECK SelectionTree")
-        // console.log(payload)
+        if(state.groupState == true) {
+          console.log("CHECK SelectionTree")
+          console.log(payload)
+        }
         state.selectionTree = payload
     },
     UPDATE_SERIES_COLLECTION(state, payload){

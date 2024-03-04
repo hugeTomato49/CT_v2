@@ -7,7 +7,8 @@ export const updateSelectionFromOriginal = (oldSelectionTree, newOriginalTree, l
 
     node_list.forEach(Node1 => {
         const parentIndex = newSelectionTree.findIndex(node => node.id === Node1.parent_id);
-        if (parentIndex !== -1) {
+        if (parentIndex != -1 && newSelectionTree[parentIndex].init != true) {
+            newSelectionTree[parentIndex].init = true
             newSelectionTree[parentIndex].children_id = [];
         }
 
