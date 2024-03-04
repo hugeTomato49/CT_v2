@@ -22,10 +22,20 @@
               {{ level_name }}
             </div>
             <div class="flex-1 h-full"></div>
-            <div class="flex flex-row mr-2">
+            <div class="flex flex-row mr-1">
+              <font-awesome-icon 
+              :icon="['fas', 'layer-group']" 
+              class="mr-2 cursor-pointer"
+              style="color: #ffffff;" 
+              />
+              <font-awesome-icon 
+              :icon="['fas', 'arrow-up-wide-short']" 
+              class="mr-2 cursor-pointer"
+              style="color: #ffffff;" 
+              />
               <font-awesome-icon 
               :icon="['fas', 'object-ungroup']" 
-              class="cursor-pointer"
+              class="cursor-pointer mr-2"
               style="color: #ffffff;" 
               @click="createLayers(level_id_list[index])"
               />
@@ -205,8 +215,6 @@ export default {
     const selectNodePaths = computed(() => {
       let allPaths = []
       const newTree = selectionTree.value.filter(node => ifEmphasize(selectionTree.value, node.id, node.level, level_id_list.value))
-      console.log("CHECK")
-      console.log(newTree.length)
       newTree.forEach((node) => {
         if (hasChildren(selectionTree.value, node.id)) {
           const pathsForNode = calculatePlotLinks(

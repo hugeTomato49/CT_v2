@@ -52,7 +52,7 @@ export const TS_Scales = (data, width, height) => {
 
     const yScale = d3.scaleLinear()
         .domain([min, max])
-        .range([height, 0])
+        .range([height-2, 5])
 
     // console.log("check xScale")
     // console.log(d3.extent(Object.values(data)[0], d => d.Time))
