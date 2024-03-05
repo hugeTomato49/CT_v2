@@ -86,7 +86,7 @@ export const PLOT_Scale = (data, width, height) => {
     // console.log("maxX is", maxX )
 
     // 使用绝对值最大的数来创建比例尺，确保比例尺能覆盖所有数据点
-    const xScale = d3.scaleLinear().domain([-maxX, maxX]).range([10, width-10]);
+    const xScale = d3.scaleLinear().domain([-maxX, maxX]).range([15, width-15]);
     const yScale = d3.scaleLinear().domain([-maxY, maxY]).range([height-10, 10]);
     // console.log("width is", width)
 

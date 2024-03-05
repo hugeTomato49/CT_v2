@@ -58,40 +58,6 @@ export const highlightLink = (id) => {
 
 
 
-export const resetNodes = (selectionTree, level_id_list) => {
-    //修改函数形参
-    //把刚刚hover后高亮的所有点恢复到原来的状态,也就是stroke为none, 透明度为0.1
-    document.querySelectorAll('.node').forEach(circle => {
-        let match = circle.id.match(/\d+/); // 使用正则表达式匹配连续的数字
-        let number = parseInt(match[0], 10); // 将匹配的字符串转换成数字
-        const node = selectionTree.find(node => node.id === number);
-        if (node) {
-            const level_id = node.level;
-            if (ifEmphasize(selectionTree, number, level_id, level_id_list)) {
-                circle.style.fillOpacity = '1'; // 恢复默认透明度为50%
-                circle.style.r = '10'; // 恢复默认半径
-                circle.style.strokeWidth = 3; // 设置描边宽度
-                circle.style.stroke = "#F5F5F5"; // 设置描边颜色为灰色
-            }
-            else {
-                circle.style.fillOpacity = '0.05';
-                circle.style.r = '10'; // 恢复默认半径
-                circle.style.strokeWidth = 0; // 设置描边宽度 
-            }
-        }
-        //is unfold node
-        else {
-            circle.style.fillOpacity = '0.05';
-            circle.style.r = '10'; // 恢复默认半径
-            circle.style.strokeWidth = 0; // 设置描边宽度 
-        }
-    });
-};
-
-
-
-
-
 export const highlightEmphasize = () => {
     const emphasizeLinks = document.getElementsByClassName("emphasizeLink")
     Array.from(emphasizeLinks).forEach(link => {
@@ -151,6 +117,37 @@ export const deHighlightEmphasizeCards = () => {
         card.classList.add("opacity-40")
     })   
 }
+
+// export const resetNodes = (selectionTree, level_id_list) => {
+//     //修改函数形参
+//     //把刚刚hover后高亮的所有点恢复到原来的状态,也就是stroke为none, 透明度为0.1
+//     document.querySelectorAll('.node').forEach(circle => {
+//         let match = circle.id.match(/\d+/); // 使用正则表达式匹配连续的数字
+//         let number = parseInt(match[0], 10); // 将匹配的字符串转换成数字
+//         const node = selectionTree.find(node => node.id === number);
+//         if (node) {
+//             const level_id = node.level;
+//             if (ifEmphasize(selectionTree, number, level_id, level_id_list)) {
+//                 circle.style.fillOpacity = '1'; // 恢复默认透明度为50%
+//                 circle.style.r = '10'; // 恢复默认半径
+//                 circle.style.strokeWidth = 3; // 设置描边宽度
+//                 circle.style.stroke = "#F5F5F5"; // 设置描边颜色为灰色
+//             }
+//             else {
+//                 circle.style.fillOpacity = '0.05';
+//                 circle.style.r = '10'; // 恢复默认半径
+//                 circle.style.strokeWidth = 0; // 设置描边宽度 
+//             }
+//         }
+//         //is unfold node
+//         else {
+//             circle.style.fillOpacity = '0.05';
+//             circle.style.r = '10'; // 恢复默认半径
+//             circle.style.strokeWidth = 0; // 设置描边宽度 
+//         }
+//     });
+// };
+
 
 
 

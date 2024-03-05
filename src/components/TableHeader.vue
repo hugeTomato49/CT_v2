@@ -55,14 +55,6 @@
           <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
               <path
-                v-for="pathObj in bezierPaths"
-                :key="pathObj.key"
-                :d="pathObj.d"
-                stroke="rgb(243,194,18)"
-                stroke-width="2"
-                fill="none"
-              />
-              <path
                 v-for="pathObj in selectNodePaths"
                 :key="pathObj.key"
                 :d="pathObj.d"
@@ -73,6 +65,14 @@
                 :id="pathObj.key"
                 @mouseover = handleMouseOverLink(pathObj.key)
                 @mouseleave = handleMouseOutLink(pathObj.key)
+              />
+              <path
+                v-for="pathObj in bezierPaths"
+                :key="pathObj.key"
+                :d="pathObj.d"
+                stroke="rgb(243,194,18)"
+                stroke-width="2"
+                fill="none"
               />
               <g
                 v-for="(level_name, index) in level_name_list"
@@ -140,6 +140,8 @@
                   :fill-opacity="circle.fillOpacity"
                   :stroke = "circle.stroke"
                   :stroke-width = "circle.strokeWidth"
+                  @mouseover="handleMouseOver(circle.key, level_id_list[index])"
+                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"
                   @click="handleNodeClick(circle.key)"
                   @dblclick="filterCurrentNode(circle.key)"
                 ></circle>
@@ -243,27 +245,29 @@ export default {
     });
 
     const handleMouseOver = (id,level) => {
-      if(!ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
-        const id_list = findChildrenIds(id, originalTree.value)
-        highlightNodes(id_list)
-        store.dispatch('scatterPlot/updateBezierPaths',      
-          highlightLinks(
-          id,
-          originalTree.value,
-          coordinateCollection.value,
-          plot_X_Scale.value,
-          plot_Y_Scale.value,
-          headerContainer.value.offsetWidth * columnPercentage.value
-          ))
+      if(ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
+         deHighlightEmphasizeCards()
       }
+      const id_list = findChildrenIds(id, originalTree.value)
+      highlightNodes(id_list)
+      store.dispatch('scatterPlot/updateBezierPaths',      
+        highlightLinks(
+        id,
+        originalTree.value,
+        coordinateCollection.value,
+        plot_X_Scale.value,
+        plot_Y_Scale.value,
+        headerContainer.value.offsetWidth * columnPercentage.value
+      ))
     }
 
     const handleMouseOut = (id,level) => {
-      if(!ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
-        const id_list = findChildrenIds(id, originalTree.value)
-        deHighlightNodes(id_list)
-        store.dispatch('scatterPlot/updateBezierPaths',[])
+      if(ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
+        highlightEmphaizeCards() 
       }
+      const id_list = findChildrenIds(id, originalTree.value)
+      deHighlightNodes(id_list)
+      store.dispatch('scatterPlot/updateBezierPaths',[])
     }
 
     const handleMouseOverLink = (key) => {
