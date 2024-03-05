@@ -1,10 +1,16 @@
 <template>
     <div 
-    class="w-full p-0.8" 
+    :class="['w-full p-0.8 hover:opacity-100', {'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}, {'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
+    :id="'card' + node_id"
     :style="{ height: rowHeight + 'px' }" 
-    @click="foldState ? unfold(node_id) : fold(node_id)"
+    @mouseover="handleMouseOver(node_id)"
+    @mouseout="handleMouseOut(node_id)"
+    @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
+    @dblclick="filterCurrentCard(node_id)"
     >
-        <div :class="['w-full h-full card', { 'hover-effect': !foldState }]" id="cardContainer">
+        <div 
+        :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]" 
+        id="cardContainer">
             <svg class="w-full h-full bg-stone-100">
                 <g ref="brushRef"></g>
                 <path
@@ -25,21 +31,33 @@ import { useStore } from 'vuex';
 import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
+import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
+import { highlightNodes, deHighlightNodes } from "../../highlight/highlight"
+
+
 export default {
     name: 'TSCard',
     props: ['seriesData', 'level', 'node_id', 'groupedNode'],
     setup(props) {
         const store = useStore()
         const selectionTree = computed(() => store.getters["tree/selectionTree"])
+        const level_id_list = computed(()=> store.getters["tree/level_id_list"])
         const colorBar = computed(()=>store.getters["tree/colorBar"])
         const rowHeight = computed(()=>store.getters['size/rowHeight'])
         const cardHeight = computed(()=>store.getters['size/cardHeight'])
         const cardWidth = computed(()=>store.getters['size/cardWidth'])
 
-        const foldState = ref(!props.groupedNode)
 
         const xScale = computed(()=>store.getters['size/xScale'])
         const yScale = computed(()=>store.getters['size/yScale'][props.level-1])
+
+        const originalTree = computed(() => store.getters["tree/originalTree"])
+        const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"])
+        const plot_Y_Scale = computed(() => store.getters["scatterPlot/plot_Y_Scale"])
+        const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"])
+        const columnWidth = computed(() => store.getters["scatterPlot/columnWidth"])
+
+
 
         const brushRef = ref(null)
 
@@ -65,13 +83,47 @@ export default {
 
         const unfold = (id) => {
             store.dispatch('tree/selectNodeAndChildren', id)
-            foldState.value = false
+
+
         }
 
         const fold = (id) => {
             store.dispatch('tree/deselectNodeAndChildren', id)
-            foldState.value = true
         }
+
+        const filterCurrentCard = (id) => {
+            const currentNode = selectionTree.value.find(node => node.id == id)
+            const level = currentNode.level
+            const id_list = selectionTree.value.filter(node => node.id != id && node.level == level).map(node => node.id)
+            id_list.forEach(id => {
+                store.dispatch('tree/deselectNodeAndChildren', id)
+            })
+        }
+
+        const handleMouseOver = (id) => {
+            if(!ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+                const id_list = findChildrenIds(id, originalTree.value)
+                highlightNodes(id_list)
+                store.dispatch('scatterPlot/updateBezierPaths',      
+                    highlightLinks(
+                    id,
+                    originalTree.value,
+                    coordinateCollection.value,
+                    plot_X_Scale.value,
+                    plot_Y_Scale.value,
+                    columnWidth.value
+                    ))
+            }   
+
+        };
+
+        const handleMouseOut = (id) => {
+            if(!ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+                const id_list = findChildrenIds(id, originalTree.value)
+                deHighlightNodes(id_list)
+                store.dispatch('scatterPlot/updateBezierPaths',[])
+            }
+        };
         
         onMounted(()=>{
             cardContainer.value = document.querySelector("#cardContainer")
@@ -87,9 +139,15 @@ export default {
             generatePath,
             brushRef,
             colorBar,
-            foldState,
             fold,
-            unfold
+            unfold,
+            selectionTree,
+            hasChildren,
+            ifEmphasize,
+            level_id_list,
+            filterCurrentCard,
+            handleMouseOver,
+            handleMouseOut
         }
     }
 }
@@ -102,12 +160,12 @@ export default {
     opacity: 0.3;
 }
 
-.hover-effect {
-    box-shadow: 0 5px 4px -2.5px rgba(39, 39, 38, 0.3);
+.emphasize-effect {
+    box-shadow: 0 5px 4px -2.5px rgba(151, 192, 204, 0.6);
 }
 
 .card :hover {
-    box-shadow: 0 5px 4px -2.5px rgba(161, 187, 205, 0.6);
+    box-shadow: 0 5px 4px -2.5px rgba(151, 192, 204, 0.6);
 }
 
 

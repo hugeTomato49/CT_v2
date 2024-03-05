@@ -1,19 +1,37 @@
-export const DFS = (tree) => {
-    const result = [];
-    const nodeMap = tree.reduce((acc, node) => {
-        acc[node.id] = node;
-        return acc;
-    }, {});
-    const dfs = (nodeId) => {
-        const node = nodeMap[nodeId];
-        if (!node) return;
+import { select } from "d3"
 
-        result.push(node);
-        node.children_id.forEach(childId => dfs(childId));
-    };
-    dfs(1);
-    return result;
-};
+export const hasChildren = (selectionTree, id) => {
+    const node = selectionTree.find(node => node.id == id)
+    if (node === undefined) {
+        return false
+    }
+    const children_list = node["children_id"]
+    if (children_list.length == 0) {
+        return false
+    }
+    else {
+        return true
+    }
+}
+
+// the following two functions are for 
+export const ifEmphasize = (selectionTree, id, level, level_id_list) => {
+    if (hasChildren(selectionTree, id)) {
+        return true
+    }
+    else if (level == level_id_list.length && hasNode(selectionTree, id)) {
+        return true
+    }
+    else {
+        return false
+    }
+}
+
+export const hasNode = (selectionTree, id) => {
+    const id_list = selectionTree.map(node => node.id)
+    return id_list.includes(id)
+}
+
 
 export const calculateEdges = (tree) => {
     // parameter tree is linearizedTree
@@ -35,68 +53,94 @@ export const calculateEdges = (tree) => {
     return edges
 }
 
-export const highlightNodes = (id, originalTree) => {
-    const relatedNodeIds = findAllRelatedNodeIds(id, originalTree); // 查找所有相关节点的ID
 
-    // 先将所有节点透明度设置为20%
-    document.querySelectorAll('circle').forEach(circle => {
-        circle.style.fillOpacity = '0.1';
-    });
 
-    // 高亮相关节点：透明度100%，半径增大
-    relatedNodeIds.forEach(nodeId => {
-        const circle = document.getElementById(`node${nodeId}`);
-        if (circle) {
-            circle.style.fillOpacity = '1'; // 完全不透明
-            // circle.setAttribute('r', '10'); // 假设高亮时半径变为10
-            circle.style.r = '13'; // 恢复默认半径
-            circle.setAttribute('stroke', 'rgb(226, 226, 226)'); // 设置描边颜色为灰色
-            circle.setAttribute('stroke-width', '6'); // 设置描边宽度
-            
+export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Scale, plot_Y_Scale, selectionTree) => {
+    const initialCirclesData = level_id_list.reduce((acc, level_id) => {
+        acc[level_id] = [];
+        return acc;
+    }, {});
+    // 填充数据
+    Object.entries(coordinateCollection).forEach(
+        ([level_id, coordinates]) => {
+            if (level_id <= level_id_list.length) {
+                const xScaleObj = plot_X_Scale.find(
+                    (scale) => scale.level_id == level_id
+                );
+                const yScaleObj = plot_Y_Scale.find(
+                    (scale) => scale.level_id == level_id
+                );
+                if (!xScaleObj && !yScaleObj) return; // 确保找到了比例尺
+                const circles = coordinates.map((coordinate) => ({
+                    cx: xScaleObj.xScale(coordinate.x),
+                    cy: yScaleObj.yScale(coordinate.y),
+                    r: 10,
+                    key: coordinate.id,
+                    stroke: "#F5F5F5",
+                    strokeWidth: hasNode(selectionTree, coordinate.id)  ? 2 : 0,
+                    fillOpacity: ifEmphasize(selectionTree, coordinate.id, level_id, level_id_list) 
+                        ? 1.0
+                        : hasNode(selectionTree, coordinate.id) ? 0.3 : 0.05
+                }));
+                initialCirclesData[level_id] = circles;
+            }
         }
-    });
-};
-
-export const resetNodes = () => {
-    // 选择所有circle元素，恢复默认透明度和半径
-    document.querySelectorAll('.node').forEach(circle => {
-        circle.style.fillOpacity = '0.5'; // 恢复默认透明度为50%
-        circle.style.r = '5'; // 恢复默认半径
-        circle.setAttribute('stroke', 'none'); 
-    });
-};
-
-
-export const calculatePlotLinks = (hoveredId, originalTree, coordinateCollection, xScale, yScale, offset) => {
-    //     return [
-    //         {
-    //         "start_id": 1,
-    //         "end_id": 2,
-    //         "start_x": 0,
-    //         "start_y": 0,
-    //         "end_x": 0,
-    //         "end_y": 0,
-    //     },
-    //     ...
-    // ]
+    );
+    return initialCirclesData;
+}
+//计算初始展开节点的link
+export const calculatePlotLinks = (hoveredId, selectionTree, coordinateCollection, xScale, yScale, offset, level_id_list) => {
     const paths = [];
     const hoveredNode = findNodeById(hoveredId, coordinateCollection);
-    const relatedNodeIds = findAllRelatedNodeIds(hoveredId, originalTree);
+    const relatedNodeIds = findAllRelatedNodeIds(hoveredId, selectionTree);
     // console.log('related node id is', relatedNodeIds)
     relatedNodeIds.forEach(childId => {
         // 假设 findNodeCoordinates 可以从 coordinateCollection 获取节点坐标
         const start = findNodeCoordinates(hoveredId, coordinateCollection, xScale, yScale, offset);
         const end = findNodeCoordinates(childId, coordinateCollection, xScale, yScale, offset);
+        const node = selectionTree.find(node => node.id === childId);
+        const level_id = node.level
 
-        if (start && end && childId !== hoveredId) {
+        if (start && end && childId !== hoveredId && ifEmphasize(selectionTree, childId, level_id, level_id_list)) {
             // console.log("paths is", paths)
             const pathD = generateBezierPath(start, end);
-            paths.push(pathD);
+            paths.push({
+                d: pathD, // 路径数据
+                key: `${hoveredId}-${childId}`, // 组合 key
+                hoveredId: hoveredId, // 保存 hoveredId
+                childId: childId // 保存 childId
+            });
         }
     });
     return paths;
 }
-const findAllRelatedNodeIds = (nodeId, tree) => {
+//计算高亮节点的link
+export const highlightLinks = (hoveredId, originalTree, coordinateCollection, xScale, yScale, offset, level_id_list) => {
+    const paths = [];
+    const hoveredNode = findNodeById(hoveredId, coordinateCollection);
+    const relatedNodeIds = findAllRelatedNodeIds(hoveredId, originalTree);
+    // console.log('related node id is', relatedNodeIds)
+    relatedNodeIds.forEach(childId => {
+        // findNodeCoordinates 可以从 coordinateCollection 获取节点坐标
+        // console.log("link id is", childId)
+        const start = findNodeCoordinates(hoveredId, coordinateCollection, xScale, yScale, offset);
+        const end = findNodeCoordinates(childId, coordinateCollection, xScale, yScale, offset);
+        const node = originalTree.find(node => node.id === childId);
+        const level_id = node.level
+
+        if (start && end && childId !== hoveredId) {
+            const pathD = generateBezierPath(start, end);
+            paths.push({
+                d: pathD, // 路径数据
+                key: `${hoveredId}-${childId}`, // 组合 key
+                hoveredId, // 保存 hoveredId
+                childId // 保存 childId
+            });
+        }
+    });
+    return paths;
+}
+export const findAllRelatedNodeIds = (nodeId, tree) => {
     let ids = [nodeId]; // 初始化包含当前节点ID的数组
 
     const findChildrenIds = (id, nodes) => {
@@ -111,7 +155,21 @@ const findAllRelatedNodeIds = (nodeId, tree) => {
 
     findChildrenIds(nodeId, tree);
     return ids;
-};
+}
+
+export const findChildrenIds = (id, tree) => {
+    let ids = [id]
+    const node = tree.find(node => node.id === id);
+    if (node && node.children_id) {
+        node.children_id.forEach(childId => {
+            ids.push(childId); // 添加子节点ID到数组
+            // findChildrenIds(childId, nodes); // 递归查找更深层的子节点
+        });
+    }
+
+    return ids
+}
+
 function findNodeById(id, coordinateCollection) {
     let node = null
     Object.entries(coordinateCollection).forEach(
@@ -145,7 +203,7 @@ function findNodeCoordinates(nodeId, coordinateCollection, x_Scale, y_Scale, off
             );
             const node = coordinates.find(node => node.id === nodeId);
             if (node) {
-                console.log("link node is", node)
+                // console.log("link node is", node)
                 coordinate = { x: xScaleObj.xScale(node.x) + offset * (level_id - 1), y: yScaleObj.yScale(node.y) };
             }
         }

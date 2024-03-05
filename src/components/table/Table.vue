@@ -1,5 +1,5 @@
 <template>
-        <div class="w-full h-full rounded-md flex flex-row" id="tableContainer">
+        <div class="w-full h-full rounded-md flex flex-row table" id="tableContainer">
             <div 
             v-for="(level_id, index) in level_id_list"
             :key="level_id"
@@ -13,14 +13,19 @@
                     <TSCard
                     v-for = "(id,index) in groupedIdCollection(level_id)"
                     :key = "id"
-                    :id="'card' + id"
                     :seriesData = findSeriesData(id)
                     :level = "level_id"
                     :node_id = "id"
                     :groupedNode = groupedNodeFlag(id)
                     />
                 </div>
-                <div class="w-20px h-full"></div>
+                <div class="w-20px h-full">
+                    <LinkColumn 
+                    v-if="level_id != level_id_list.length"
+                    :level = level_id
+                    />
+
+                </div>
             </div>
         </div>
 </template>
@@ -29,7 +34,8 @@
 import { computed, ref, watchEffect, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import TSCard from './TSCard.vue'
-import { selection } from 'd3'
+import LinkColumn from './LinkColumn.vue'
+
 
 
 
@@ -38,7 +44,8 @@ import { selection } from 'd3'
 export default {
     name: 'Table',
     components: {
-        TSCard
+        TSCard,
+        LinkColumn
     },
     setup() {
         const tableContainer = ref(null)

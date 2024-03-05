@@ -12,13 +12,12 @@ const state = {
     seriesCollection: [],
     dataset: 'PV',
     levels: ['Transformer', 'Converter', 'Line'],
+    description: ['generation -kw/h', 'generation -kw/h', 'current -mA', 'current -mA'],
     level_id_list: [],
     timeRange: [],
-    colorBar: ["#B3D1EC", "#B3D1EC", "#B3D1EC","#B3D1EC", "#B3D1EC","#B3D1EC"],
-    groupState: false
-
-    
-
+    colorBar: ["#4B99D0", "#4B99D0", "#4B99D0","#4B99D0", "#4B99D0","#4B99D0"],
+    groupState: false,
+    themeColor: "#4B99D0"
 }
 
 const mutations = {
@@ -26,8 +25,10 @@ const mutations = {
         state.originalTree = payload
     },
     UPDATE_SELECTION_TREE(state, payload){
-        // console.log("CHECK SelectionTree")
-        // console.log(payload)
+        if(state.groupState == true) {
+          console.log("CHECK SelectionTree")
+          console.log(payload)
+        }
         state.selectionTree = payload
     },
     UPDATE_SERIES_COLLECTION(state, payload){
@@ -72,7 +73,7 @@ const actions = {
           }
         })
         commit("UPDATE_SERIES_COLLECTION", newSeriesCollection)
-        if(state.groupState == false){
+        if(state.groupState == false) {
           dispatch('size/updateScale', newSeriesCollection, {root : true})
         } 
       })
@@ -91,8 +92,9 @@ const actions = {
         }
       })
       commit('UPDATE_SERIES_COLLECTION', currentSeriesCollection)
-      dispatch('size/updateScale', currentSeriesCollection, {root : true})
-      
+      if(state.groupState == false){
+        dispatch('size/updateScale', currentSeriesCollection, {root : true})
+      }  
     },
     // fold and unfold operation
     selectNodeAndChildren({state, dispatch}, id) {
@@ -181,6 +183,7 @@ const actions = {
         const {plotX, plotY} = addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id)
         commit('scatterPlot/UPDATE_PLOT_X_SCALE', plotX, { root: true }) //plot_x_scale
         commit('scatterPlot/UPDATE_PLOT_Y_SCALE', plotY, { root: true }) //plot_y_scale
+        //dispatch("size/updateScale", state.seriesCollection, {root:true})
       })
     }
     
@@ -193,9 +196,11 @@ const getters = {
     dataset: state => state.dataset,
     levels: state => state.levels,
     level_id_list: state => state.level_id_list,
+    description: state => state.description,
     timeRange: state => state.timeRange.PV_Tree,
     colorBar: state => state.colorBar,
-    groupState: state => state.groupState
+    groupState: state => state.groupState,
+    themeColor: state => state.themeColor
     
 
 
