@@ -175,7 +175,7 @@ def getGroupedCoordinateCollection():
         for i in range(level-1, 0, -1):
             collection[i] = origin_collection["coordinateCollection"][str(i)]
         grouped_result = {"newOriginalTree":grouped_Tree, "newCoordinateCollection":collection}
-       
+        
 
         
         return grouped_result
