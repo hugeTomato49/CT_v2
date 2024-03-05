@@ -1,5 +1,5 @@
 <template>
-        <div class="w-full h-full rounded-md flex flex-row table" id="tableContainer">
+        <div class="w-full h-full rounded-md flex flex-row tableContainer" id="tableContainer">
             <div 
             v-for="(level_id, index) in level_id_list"
             :key="level_id"
