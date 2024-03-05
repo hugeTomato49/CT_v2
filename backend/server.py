@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, make_response
 import os
 import json  
 from compute.filter import filterDataByTimeRange
-from compute.dr import mds_to2d
+from compute.dr import mds_to2d, t_sne_to2d
 from compute.groupTree import constructGT, getGroupedPoints
 from compute.basic import getAverageSeriesData
 
@@ -95,6 +95,7 @@ def getSeriesCollection():
 
 @app.route('/coordinateCollection', methods=["POST"])
 def getCoordinateCollection():
+    # print("getCoordinateCollection running!")
     data = request.get_json()
     dataset = data.get("dataset","")
     level_id_list = data.get("level_id_list",[])
@@ -103,6 +104,11 @@ def getCoordinateCollection():
     # print(timeRange)
 
     if dataset == "PV":
+        # if os.path.isfile(collection_json_path):
+        #     with open(collection_json_path, 'r') as file:
+        #         collection_dict = json.load(file)
+            
+        #     return collection_dict
 
         file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
         if os.path.exists(file_path):
@@ -131,14 +137,16 @@ def getCoordinateCollection():
                     with open(data_file_path, 'r') as file:
                         object[node["id"]] = filterDataByTimeRange(json.load(file)["data"], timeRange)
                         
-            result = mds_to2d(object)
+            # result = mds_to2d(object)
+            result = t_sne_to2d(object, perp=5, ee=12)
+
             collection[level_id] = result
         
         collection_dict = {"coordinateCollection":collection}
         os.makedirs(os.path.join(os.path.dirname(__file__),"tmp"), exist_ok=True)
         with open(collection_json_path, 'w') as json_file:
             json.dump(collection_dict, json_file)
-
+        
         return collection_dict
 
 @app.route('/addLayer', methods=["POST"])
