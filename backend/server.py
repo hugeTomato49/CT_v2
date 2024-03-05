@@ -104,11 +104,11 @@ def getCoordinateCollection():
     # print(timeRange)
 
     if dataset == "PV":
-        if os.path.isfile(collection_json_path):
-            with open(collection_json_path, 'r') as file:
-                collection_dict = json.load(file)
+        # if os.path.isfile(collection_json_path):
+        #     with open(collection_json_path, 'r') as file:
+        #         collection_dict = json.load(file)
             
-            return collection_dict
+        #     return collection_dict
 
         file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
         if os.path.exists(file_path):
