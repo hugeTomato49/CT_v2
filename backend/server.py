@@ -104,6 +104,7 @@ def getCoordinateCollection():
     # print(timeRange)
 
     if dataset == "PV":
+        # I dont know why I wrote this, but it maybe useful.
         # if os.path.isfile(collection_json_path):
         #     with open(collection_json_path, 'r') as file:
         #         collection_dict = json.load(file)
