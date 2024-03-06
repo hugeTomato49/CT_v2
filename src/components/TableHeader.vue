@@ -14,7 +14,7 @@
             class="h-full flex flex-row items-center"
             :style="{
               width:
-                headerContainer?.offsetWidth * columnPercentage - 20 + 'px',
+                headerContainer?.offsetWidth * columnPercentage - 30 + 'px',
               backgroundColor: colorBar[index],
             }"
           >
@@ -43,7 +43,7 @@
           </div>
           <div
             class="h-full px-0.5px bg-stone-100 cursor-pointer flex flex-row justify-center items-center"
-            :style="{ width: 20 + 'px' }"
+            :style="{ width: 30 + 'px' }"
             @click="addColumn"
           >
             <font-awesome-icon :icon="['fas', 'plus']" style="color: #e2e3e4" />
@@ -87,7 +87,7 @@
                 <rect
                   x="0"
                   y="0"
-                  :width="headerContainer?.offsetWidth * columnPercentage - 20"
+                  :width="headerContainer?.offsetWidth * columnPercentage - 30"
                   height="100%"
                   stroke="#e5e7eb"
                   stroke-width="2"
@@ -313,7 +313,7 @@ export default {
       plotContainer.value = document.querySelector("#plotContainer");
       store.dispatch(
         "scatterPlot/updatePlotWidth",
-        headerContainer.value.offsetWidth * columnPercentage.value - 20
+        headerContainer.value.offsetWidth * columnPercentage.value - 30
       )
       store.dispatch(
         "scatterPlot/updateColumnWidth",
