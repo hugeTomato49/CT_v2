@@ -78,25 +78,30 @@ const actions = {
         } 
       })
     },
-    sortSelectionTree({state,commit}, level, mode){
+    sortSelectionTree({state,commit}, obj){
       let nodesToSort = [...state.selectionTree]
-      const otherLevelNodes = nodesToSort.filter(node => node.level !== level)
-      nodesToSort = nodesToSort.filter(node => node.level === level)
+      const otherLevelNodes = nodesToSort.filter(node => node.level !== obj.level)
+      nodesToSort = nodesToSort.filter(node => node.level === obj.level)
 
       nodesToSort = nodesToSort.map(node => {
         const seriesNode = state.seriesCollection.find(item => item.id === node.id)
         const average = seriesNode ? calculateSeriesAverage(seriesNode.seriesData) : 0
         return { ...node, average }
-      });
+      })
 
-      if (mode === "desc") {
+      
+
+      if (obj.mode == "desc") {
         nodesToSort.sort((a, b) => b.average - a.average)
-      } else if (mode === "asc") {
+      } else if (mode == "asc") {
         nodesToSort.sort((a, b) => a.average - b.average)
       }
 
       const updatedNodes = nodesToSort.map(({ average, ...node }) => node)
       const updatedSelectionTree = [...otherLevelNodes, ...updatedNodes]
+      console.log("ENTER")
+      console.log(updatedNodes)
+      console.log(updatedSelectionTree)
 
       commit('UPDATE_SELECTION_TREE', updatedSelectionTree)
 
