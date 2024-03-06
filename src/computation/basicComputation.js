@@ -75,6 +75,15 @@ export const groupData = (seriesCollection) => {
     //   console.log("groupedData")
     //   console.log(groupedData)
       return groupedData
+}
+
+export const calculateSeriesAverage = (seriesData) => {
+    const array = seriesData.map(d => d.value)
+    const total = array.reduce((sum, currentValue) => sum + currentValue, 0);
+  
+    return array.length > 0 ? total / array.length : 0;
+
+
 
 
 }

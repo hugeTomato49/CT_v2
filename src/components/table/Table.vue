@@ -16,6 +16,7 @@
                     :seriesData = findSeriesData(id)
                     :level = "level_id"
                     :node_id = "id"
+                    :node_name = findNodeName(id)
                     :groupedNode = groupedNodeFlag(id)
                     />
                 </div>
@@ -75,6 +76,10 @@ export default {
             return seriesCollection.value.find(node => node.id ==id)?.seriesData??[]
         }
 
+        const findNodeName = (id) => {
+            return seriesCollection.value.find(node => node.id ==id)?.node_name??""
+        }
+
         const groupedNodeFlag = (id) => {
             const attribute = selectionTree.value.find(node => node.id == id)?.attribute??""
             if(attribute.includes("group")) {
@@ -97,6 +102,7 @@ export default {
 
         return {
             findSeriesData,
+            findNodeName,
             level_id_list,
             columnPercentage,
             tableContainer,
