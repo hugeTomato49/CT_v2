@@ -8,7 +8,7 @@
                 <div 
                 class="h-full flex flex-col border-1 rounded-md overflow overflow-scroll"
                 :style="{
-                width: tableContainer?.offsetWidth * columnPercentage - 20 + 'px'
+                width: tableContainer?.offsetWidth * columnPercentage - 30 + 'px'
                 }">
                     <TSCard
                     v-for = "(id,index) in groupedIdCollection(level_id)"
@@ -19,7 +19,7 @@
                     :groupedNode = groupedNodeFlag(id)
                     />
                 </div>
-                <div class="w-20px h-full">
+                <div class="w-30px h-full">
                     <LinkColumn 
                     v-if="level_id != level_id_list.length"
                     :level = level_id

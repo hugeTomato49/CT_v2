@@ -32,7 +32,7 @@ import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
 import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
-import { highlightNodes, deHighlightNodes } from "../../highlight/highlight"
+import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
 
 export default {
@@ -101,28 +101,30 @@ export default {
         }
 
         const handleMouseOver = (id) => {
-            if(!ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
-                const id_list = findChildrenIds(id, originalTree.value)
-                highlightNodes(id_list)
-                store.dispatch('scatterPlot/updateBezierPaths',      
-                    highlightLinks(
-                    id,
-                    originalTree.value,
-                    coordinateCollection.value,
-                    plot_X_Scale.value,
-                    plot_Y_Scale.value,
-                    columnWidth.value
-                    ))
-            }   
+            if(ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+                deHighlightEmphasizeCards()
+            }
+            const id_list = findChildrenIds(id, originalTree.value)
+            highlightNodes(id_list)
+            store.dispatch('scatterPlot/updateBezierPaths',      
+                highlightLinks(
+                id,
+                originalTree.value,
+                coordinateCollection.value,
+                plot_X_Scale.value,
+                plot_Y_Scale.value,
+                columnWidth.value
+            ))
 
         };
 
         const handleMouseOut = (id) => {
-            if(!ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
-                const id_list = findChildrenIds(id, originalTree.value)
-                deHighlightNodes(id_list)
-                store.dispatch('scatterPlot/updateBezierPaths',[])
+            if(ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+                highlightEmphaizeCards()
             }
+            const id_list = findChildrenIds(id, originalTree.value)
+            deHighlightNodes(id_list)
+            store.dispatch('scatterPlot/updateBezierPaths',[])
         };
         
         onMounted(()=>{
