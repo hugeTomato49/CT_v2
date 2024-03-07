@@ -229,7 +229,7 @@ export default {
           allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
         }
       });
-      console.log(allPaths.length)
+      // console.log(allPaths.length)
       return allPaths;
     });
     const circlesData = computed(() => {
