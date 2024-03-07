@@ -32,6 +32,7 @@
               :icon="['fas', 'arrow-up-wide-short']" 
               class="mr-2 cursor-pointer"
               style="color: #ffffff;" 
+              @click="sortColumn(level_id_list[index],'desc')"
               />
               <font-awesome-icon 
               :icon="['fas', 'object-ungroup']" 
@@ -174,7 +175,7 @@ import {
   highlightEmphaizeCards,
   deHighlightEmphasizeCards
 } from "../highlight/highlight"
-import { selection } from "d3";
+
 
 
 export default {
@@ -294,6 +295,11 @@ export default {
       store.dispatch("tree/addLevelToLevelIdList");
     }
 
+    const sortColumn = (level,mode) => {
+      store.dispatch("tree/sortSelectionTree", {"level":level, "mode":mode})
+
+    }
+
     const createLayers = (level_id) => {
       const obj = { dataset: dataset.value, level_id: level_id };
       store.dispatch("tree/addLayer", obj);
@@ -346,6 +352,7 @@ export default {
       handleMouseOverLink,
       handleMouseOutLink,
       addColumn,
+      sortColumn,
       createLayers,
       filterCurrentNode,
       hasNode,

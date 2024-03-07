@@ -12,6 +12,7 @@
         :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]" 
         id="cardContainer">
             <svg class="w-full h-full bg-stone-100">
+                <text x="5" y="12" class="node-name text-ms">{{ node_name }}</text>
                 <g ref="brushRef"></g>
                 <path
                 :stroke="colorBar[level-1]"
@@ -37,7 +38,7 @@ import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEm
 
 export default {
     name: 'TSCard',
-    props: ['seriesData', 'level', 'node_id', 'groupedNode'],
+    props: ['seriesData', 'level', 'node_id', 'node_name', 'groupedNode'],
     setup(props) {
         const store = useStore()
         const selectionTree = computed(() => store.getters["tree/selectionTree"])
@@ -169,6 +170,19 @@ export default {
 .card :hover {
     box-shadow: 0 5px 4px -2.5px rgba(151, 192, 204, 0.6);
 }
+
+.node-name {
+    font-size: 6px; 
+    fill: #4B99D0; 
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: "semibold italic";
+    font-variation-settings:
+    "slnt" 0;
+
+}
+
 
 
 </style>

@@ -11,11 +11,12 @@
                 width: tableContainer?.offsetWidth * columnPercentage - 30 + 'px'
                 }">
                     <TSCard
-                    v-for = "(id,index) in groupedIdCollection(level_id)"
+                    v-for = "(id,index) in selectionTree.filter(node => node.level == level_id).map(node => node.id)"
                     :key = "id"
                     :seriesData = findSeriesData(id)
                     :level = "level_id"
                     :node_id = "id"
+                    :node_name = findNodeName(id)
                     :groupedNode = groupedNodeFlag(id)
                     />
                 </div>
@@ -63,16 +64,20 @@ export default {
         //(1) not interfere with the state of vuex
         //(2) further change the data to suit various interactions
 
-        const groupedIdCollection = (level_id)=> {
+        const groupedIdCollection = (level_id, tree)=> {
          
             // console.log("Check groupedID")
             // console.log(selectionTree.value.filter(node => node.level == level_id).map(node => node.id))
-            return selectionTree.value.filter(node => node.level == level_id).map(node => node.id)
+            return tree.filter(node => node.level == level_id).map(node => node.id)
         }
 
     
         const findSeriesData = (id) => {
             return seriesCollection.value.find(node => node.id ==id)?.seriesData??[]
+        }
+
+        const findNodeName = (id) => {
+            return seriesCollection.value.find(node => node.id ==id)?.node_name??""
         }
 
         const groupedNodeFlag = (id) => {
@@ -96,7 +101,9 @@ export default {
 
 
         return {
+            selectionTree,
             findSeriesData,
+            findNodeName,
             level_id_list,
             columnPercentage,
             tableContainer,
