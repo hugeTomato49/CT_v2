@@ -1,7 +1,7 @@
 const state = {
     alignState: false,
     alignLevel: 1, //in default, align to the root node of the selectionTree
-    alignNumber: 1,
+    alignID : [1], //在section遍历alignID, 然后在section里面过滤节点
     largestNumber: []
 
 }
@@ -12,6 +12,9 @@ const mutations =  {
     },
     UPDATE_ALIGN_LEVEL(state, payload){
         state.alignLevel = payload
+    },
+    UPDATE_ALIGN_ID(state,payload){
+        state.alignID = payload
     },
     UPDATE_LARGEST_NUMBER(state, payload){
         state.largestNumber = payload
@@ -25,6 +28,10 @@ const actions = {
     updateAlignLevel({commit}, value){
         commit('UPDATE_ALIGN_LEVEL',value)    
     },
+    updateAlignID({commit}, value){
+        commit('UPDATE_ALIGN_ID', value)
+
+    },
     updateLargestNumber({commit}, value){
         commit('UPDATE_LARGEST_NUMBER',value)
     }
@@ -34,7 +41,7 @@ const actions = {
 const getters = {
     alignState: state => state.alignState,
     alignLevel: state => state.alignLevel,
-    alignNumber: state => state.alignNumber,
+    alignID: state => state.alignID,
     largestNumber: state => state.largestNumber 
 
 }
