@@ -10,7 +10,10 @@
         :node_name = findNodeName(id)
         :groupedNode = groupedNodeFlag(id)
         />
-        <div class="w-full p-0.8 py-0">
+        <div 
+        class="w-full p-0.8 py-0"
+        v-show="level_id > alignLevel"
+        >
             <div class="w-full flex flex-col">
                 <div 
                 class="w-full h-27px flex flex-row justify-center items-center"
@@ -83,6 +86,9 @@ export default {
 
         const configureShow = ref(false)
         const foldState = ref(false)
+
+        const alignState = computed(() => store.getters["align/alignState"])
+        const alignLevel = computed(() => store.getters["align/alignLevel"])
   
         const findSeriesData = (id) => {
             return seriesCollection.value.find(node => node.id ==id)?.seriesData??[]
@@ -126,6 +132,8 @@ export default {
             groupedNodeFlag,
             configureShow,
             foldState,
+            alignState,
+            alignLevel,
             toggleConfigureShow,
             toggleFoldState,
             ifEmphasize,

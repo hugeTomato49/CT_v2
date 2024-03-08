@@ -1,8 +1,10 @@
+import { ifEmphasize } from "../computation/treeComputation"
+
 const state = {
     alignState: false,
     alignLevel: 1, //in default, align to the root node of the selectionTree
     alignID : [1], //在section遍历alignID, 然后在section里面过滤节点
-    largestNumber: []
+    largestNumber: [] //对应每一个alignID下的最大高度是多少
 
 }
 
@@ -34,6 +36,15 @@ const actions = {
     },
     updateLargestNumber({commit}, value){
         commit('UPDATE_LARGEST_NUMBER',value)
+    },
+    calculateAlignID({state, commit, rootState}){
+        const level = state.alignLevel
+        const selectionTree = JSON.parse(JSON.stringify(rootState.tree.selectionTree))
+        const level_id_list = rootState.tree.level_id_list
+
+        const new_alignID = selectionTree.filter(node => node.level == level).filter(node => ifEmphasize(selectionTree, node.id, level, level_id_list)).map(node => node.id)
+
+        commit('UPDATE_ALIGN_ID', new_alignID)
     }
 
     
