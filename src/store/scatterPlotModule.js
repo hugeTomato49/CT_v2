@@ -111,7 +111,7 @@ const actions = {
     }
 }
 const getters = {
-    plotWidth: state => state.plotHWidth,
+    plotWidth: state => state.plotWidth,
     plotHeight: state => state.plotHeight,
     columnWidth: state => state.columnWidth,
     plot_X_Scale: state => state.plot_X_Scale,
