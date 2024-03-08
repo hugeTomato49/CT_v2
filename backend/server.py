@@ -6,6 +6,7 @@ from compute.filter import filterDataByTimeRange
 from compute.dr import mds_to2d, t_sne_to2d
 from compute.groupTree import constructGT, getGroupedPoints
 from compute.basic import getAverageSeriesData
+from compute.getBestTree import getBT
 
 app = Flask(__name__)
 
@@ -19,6 +20,8 @@ def getPVTree():
 
     if os.path.exists(os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_grouped_file_name)):
         os.remove(os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_grouped_file_name))
+    if os.path.exists(os.path.join(os.path.dirname(__file__),"tmp")):
+        shutil.rmtree(os.path.join(os.path.dirname(__file__),"tmp")) 
 
     file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
     if os.path.exists(file_path):
@@ -188,6 +191,31 @@ def getGroupedCoordinateCollection():
         shutil.rmtree(os.path.join(os.path.dirname(__file__),"tmp"))   
         
         return grouped_result
+    
+# Unfinished
+# @app.route('/addLayer', methods=["POST"])
+def getMatchedTree():
+    # data = request.get_json()
+    # dataset = data.get("dataset","")
+    # target_id = data.get("target_id",[])
+    # timeRange = data.get("timeRange",[])
+
+    # for test
+    dataset = "PV"
+    target_id = 2
+    timeRange = ["2022-12-15T00:00:00", "2022-12-28T23:59:59"]
+
+    if dataset == 'PV':
+        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+        if os.path.exists(Tree_path):
+            with open(Tree_path, 'r') as file:
+                pv_tree_data = json.load(file)
+        folder_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path)
+        besttree = getBT(timeRange, pv_tree_data, target_id, folder_path)
+        
+        # format waiting to discuss
+        return besttree
+
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)
