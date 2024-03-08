@@ -24,9 +24,10 @@
             <div class="flex-1 h-full"></div>
             <div class="flex flex-row mr-1">
               <font-awesome-icon 
-              :icon="['fas', 'layer-group']" 
+              :icon="['fas', 'toggle-on']" 
               class="mr-2 cursor-pointer"
               style="color: #ffffff;" 
+              @click="toggleAlign(level_id_list[index])"
               />
               <font-awesome-icon 
               :icon="['fas', 'arrow-up-wide-short']" 
@@ -188,16 +189,14 @@ export default {
       () => store.getters["size/columnPercentage"]
     );
 
-    const colorBar = computed(() => store.getters["tree/colorBar"]);
-
-    const dataset = computed(() => store.getters["tree/dataset"]);
-    const originalTree = computed(() => store.getters["tree/originalTree"]);
-    const selectionTree = computed(() => store.getters["tree/selectionTree"]);
-    const levels = computed(() => store.getters["tree/levels"]);
-    const level_id_list = computed(() => store.getters["tree/level_id_list"]);
-    const level_name_list = computed(() =>
-      level_id_list.value.map((id) => levels.value[id - 1])
-    );
+    const colorBar = computed(() => store.getters["tree/colorBar"])
+    const dataset = computed(() => store.getters["tree/dataset"])
+    const originalTree = computed(() => store.getters["tree/originalTree"])
+    const selectionTree = computed(() => store.getters["tree/selectionTree"])
+    const levels = computed(() => store.getters["tree/levels"])
+    const level_id_list = computed(() => store.getters["tree/level_id_list"])
+    const level_name_list = computed(() =>level_id_list.value.map((id) => levels.value[id - 1]))
+    const alignState = computed(() => store.getters["align/alignState"])
 
     const dynamicWidth = computed(() => {
       if (headerContainer.value && level_name_list.value) {
@@ -211,7 +210,6 @@ export default {
     });
 
     const bezierPaths = computed(() => store.getters["scatterPlot/bezierPaths"])
-    //step2: 取对应的scale和coordindateCollection数据
     const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"]);
     const plot_Y_Scale = computed(() => store.getters["scatterPlot/plot_Y_Scale"]);
     const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"]);
@@ -314,6 +312,21 @@ export default {
         })
     }
 
+    const toggleAlign = (level_id) => {
+      if(alignState.value == false){
+        store.dispatch("align/updateAlignState", true)
+        store.dispatch("align/updateAlignLevel", level_id)
+      }
+      else {
+        store.dispatch("aligh/updateAlignState", false)
+        store.dispatch("aligh/updateAlignLevel", 1)
+      }
+    }
+
+    
+
+
+
     onMounted(() => {
       headerContainer.value = document.querySelector("#headerContainer");
       plotContainer.value = document.querySelector("#plotContainer");
@@ -357,6 +370,8 @@ export default {
       filterCurrentNode,
       hasNode,
       ifEmphasize,
+      alignState,
+      toggleAlign
 
     };
   },

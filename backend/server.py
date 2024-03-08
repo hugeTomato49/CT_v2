@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 import os
+import shutil
 import json  
 from compute.filter import filterDataByTimeRange
 from compute.dr import mds_to2d, t_sne_to2d
@@ -15,6 +16,10 @@ collection_json_path = os.path.join(os.path.dirname(__file__), 'tmp/origin_coord
 
 @app.route('/PVTree', methods=['GET'])
 def getPVTree():
+
+    if os.path.exists(os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_grouped_file_name)):
+        os.remove(os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_grouped_file_name))
+
     file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
@@ -88,7 +93,7 @@ def getSeriesCollection():
 
                 object['seriesData'] = getAverageSeriesData(seriesData_list)
                 object['seriesData_copy'] = object['seriesData']
- 
+
             collection.append(object)
     
     return {"seriesCollection": collection}
@@ -180,7 +185,7 @@ def getGroupedCoordinateCollection():
             collection[i] = origin_collection["coordinateCollection"][str(i)]
         grouped_result = {"newOriginalTree":grouped_Tree, "newCoordinateCollection":collection}
         
-
+        shutil.rmtree(os.path.join(os.path.dirname(__file__),"tmp"))   
         
         return grouped_result
 

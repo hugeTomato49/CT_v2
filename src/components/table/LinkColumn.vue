@@ -53,6 +53,7 @@ export default {
               const controlY2 = childCoords.y;
               paths.push({
                 d: `M ${parentCoords.x},${parentCoords.y} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${childCoords.x},${childCoords.y}`,
+                key: `c-${parentNode.id}-${childId}`, 
               });
             }
           })
@@ -86,7 +87,7 @@ export default {
       });
     });
     function getNodeCoords(nodeId, childFlag) {
-      const element = document.getElementById(`card-${nodeId}`); // 使用传入的 nodeId 来获取对应的 DOM 元素
+      const element = document.getElementById(`card${nodeId}`); // 使用传入的 nodeId 来获取对应的 DOM 元素
       const table = document.getElementById("tableContainer"); // 使用传入的 nodeId 来获取对应的 DOM 元素
       flag.value= element?1:0
       if (element && childFlag) {
@@ -98,8 +99,6 @@ export default {
           5 -
           30 * (props.level - 1);
         const y = top - table.offsetTop + height / 2;
-        // console.log("x is", x);
-        // console.log("y is", y);
         return { x: x, y: y }; // 获取中心点坐标
       } else if(element){
         const { top, left, width, height } = element.getBoundingClientRect();
@@ -110,8 +109,6 @@ export default {
           30 * (props.level - 1) + 
           2;
         const y = top - table.offsetTop + height / 2;
-        // console.log("x is", x);
-        // console.log("y is", y);
         return { x: x, y: y }; // 获取中心点坐标
       }
       return null; // 如果没有找到元素，返回 null
