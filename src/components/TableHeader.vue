@@ -230,7 +230,7 @@ export default {
           allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
         }
       });
-      console.log(allPaths.length)
+      // console.log(allPaths.length)
       return allPaths;
     });
     const circlesData = computed(() => {
@@ -316,10 +316,12 @@ export default {
       if(alignState.value == false){
         store.dispatch("align/updateAlignState", true)
         store.dispatch("align/updateAlignLevel", level_id)
+        store.dispatch("align/calculateAlignID")
       }
       else {
-        store.dispatch("aligh/updateAlignState", false)
-        store.dispatch("aligh/updateAlignLevel", 1)
+        store.dispatch("align/updateAlignState", false)
+        store.dispatch("align/updateAlignLevel", 1)
+        store.dispatch("align/calculateAlignID")
       }
     }
 
