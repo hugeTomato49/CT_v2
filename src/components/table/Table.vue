@@ -19,15 +19,35 @@
             .filter((node) => node.level == level_id)
             .map((node) => node.id)"
           :key="id"
+          :id="'card-' + id"
           :seriesData="findSeriesData(id)"
           :level="level_id"
           :node_id="id"
           :node_name="findNodeName(id)"
           :groupedNode="groupedNodeFlag(id)"
+          :componentKey="componentKey"
         />
       </div>
       <div class="w-30px h-full">
-        <LinkColumn v-if="level_id != level_id_list.length" :level="level_id" />
+        <LinkColumn
+          v-if="level_id != level_id_list.length"
+          :level="level_id"
+          :key="componentKey"
+        />
+        <!-- <LinkColumn
+      v-for="(id, index) in selectionTree
+            .filter((node) => node.level == level_id)
+            .map((node) => node.id)"
+          :key="id"
+          :id="'card-' + id"
+          :seriesData="findSeriesData(id)"
+          :level="level_id"
+          :node_id="id"
+          :node_name="findNodeName(id)"
+          :groupedNode="groupedNodeFlag(id)"
+          :selectionTree="selectionTree"
+          >
+      </LinkColumn> -->
       </div>
     </div>
   </div>
@@ -101,6 +121,11 @@ export default {
         tableContainer.value?.offsetHeight / rowNum.value
       );
     });
+    const componentKey = ref(0); // 使用 ref 创建响应式引用
+
+    watchEffect(()=> {
+    componentKey.value = Date.now(); // 更新 ref 的值以强制重新渲染
+    })
 
     return {
       selectionTree,

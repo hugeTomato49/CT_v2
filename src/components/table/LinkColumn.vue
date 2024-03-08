@@ -1,12 +1,12 @@
 <template>
   <svg class="w-full h-full">
     <path
-      v-for="(path, index) in cardPaths"
-      :key="index"
+      v-for="(path) in (flag ? cardPaths : pre_cardPaths)"
+      :key="path.key"
       :d="path.d"
       fill="none"
-      stroke="red"
-      stroke-width="1"
+      stroke="rgb(210, 210, 208)"
+      stroke-width="1.5"
     />
   </svg>
 </template>
@@ -32,18 +32,13 @@ export default {
     const plotWidth = computed(() => store.getters["scatterPlot/plotWidth"]);
     const plotHeight = computed(() => store.getters["scatterPlot/plotHeight"]);
     const currentLevelNodes = computed(() => {
-      // console.log("selected tree is", selectionTree.value)
+      console.log("selected tree is", selectionTree.value)
       return selectionTree.value.filter((node) => node.level == props.level); // 直接使用level，不使用level.value
     });
-    const cardPaths = ref([]);
-
-    watchEffect(() => {
-      nextTick().then(() => {
-        let paths = [];
-        // const currentLevelNodes = selectionTree.value.filter(
-        //   (node) => node.level === props.level
-        // );
-        // console.log("current node is", currentLevelNodes)
+    const flag = ref(0)
+    const pre_cardPaths = ref()
+    const cardPaths = computed ( () => {
+      let paths = [];
         currentLevelNodes.value.forEach((parentNode) => {
           parentNode.children_id.forEach((childId) => {
             // 请确保 getNodeCoords 逻辑在这里是正确的
@@ -56,50 +51,65 @@ export default {
               const controlY1 = parentCoords.y;
               const controlX2 = (parentCoords.x + childCoords.x) / 2;
               const controlY2 = childCoords.y;
-
               paths.push({
                 d: `M ${parentCoords.x},${parentCoords.y} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${childCoords.x},${childCoords.y}`,
               });
             }
+          })
+        })
+        // });
+        return paths; // 更新路径
+    })
+    watchEffect(() => {
+      nextTick().then(() => {
+        let paths = [];
+        currentLevelNodes.value.forEach((parentNode) => {
+          parentNode.children_id.forEach((childId) => {
+            // 请确保 getNodeCoords 逻辑在这里是正确的
+            const childCoords = getNodeCoords(childId, 1); // 子节点的坐标
+            const parentCoords = getNodeCoords(parentNode.id, 0); // 父节点的坐标
+            if (parentCoords && childCoords) {
+              // 确保两个坐标都存在
+              // 计算贝塞尔曲线控制点
+              const controlX1 = (parentCoords.x + childCoords.x) / 2;
+              const controlY1 = parentCoords.y;
+              const controlX2 = (parentCoords.x + childCoords.x) / 2;
+              const controlY2 = childCoords.y;
+              paths.push({
+                d: `M ${parentCoords.x},${parentCoords.y} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${childCoords.x},${childCoords.y}`,
+                key: `c-${parentNode.id}-${childId}`, // 组合 key,
+              });
+            }
           });
         });
-        cardPaths.value = paths; // 更新路径
+        pre_cardPaths.value = paths; // 更新路径
       });
     });
     function getNodeCoords(nodeId, childFlag) {
       const element = document.getElementById(`card-${nodeId}`); // 使用传入的 nodeId 来获取对应的 DOM 元素
       const table = document.getElementById("tableContainer"); // 使用传入的 nodeId 来获取对应的 DOM 元素
+      flag.value= element?1:0
       if (element && childFlag) {
         const { top, left, width, height } = element.getBoundingClientRect();
-        // console.log("id is", nodeId);
-        // console.log("top is", element.offsetTop);
-        // console.log("left is", element.offsetLeft);
-        // console.log("table top is", table.offsetTop);
-        // console.log("table left is", table.offsetLeft);
-        // console.log("plotWidth is", plotWidth.value);
         const x =
           left -
           plotWidth.value * props.level -
           table.offsetLeft -
           5 -
-          20 * (props.level - 1);
+          30 * (props.level - 1);
         const y = top - table.offsetTop + height / 2;
         // console.log("x is", x);
         // console.log("y is", y);
         return { x: x, y: y }; // 获取中心点坐标
-      } else {
+      } else if(element){
         const { top, left, width, height } = element.getBoundingClientRect();
-        // console.log("id is", nodeId);
-        // console.log("top is", element.offsetTop);
-        // console.log("left is", element.offsetLeft);
-        // console.log("table top is", table.offsetTop);
-        // console.log("plotWidth is", plotWidth.value);
         const x =
           left -
           table.offsetLeft -
           plotWidth.value * (props.level - 1) -
-          20 * (props.level - 1);
-        const y = top - table.offsetTop;
+          30 * (props.level - 1) + 
+          2;
+        const y = top - table.offsetTop + height / 2;
         // console.log("x is", x);
         // console.log("y is", y);
         return { x: x, y: y }; // 获取中心点坐标
@@ -110,7 +120,9 @@ export default {
       cardPaths,
       plotWidth,
       plotHeight,
-      selectionTree,
+      currentLevelNodes,
+      pre_cardPaths,
+      flag
     };
   },
 };
