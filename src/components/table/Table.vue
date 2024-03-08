@@ -11,21 +11,23 @@
       <div
         class="h-full flex flex-col border-1 rounded-md overflow overflow-scroll"
         :style="{
-          width: tableContainer?.offsetWidth * columnPercentage - 20 + 'px',
+          width: tableContainer?.offsetWidth * columnPercentage - 30 + 'px',
         }"
       >
         <TSCard
-          v-for="(id, index) in groupedIdCollection(level_id)"
-          :id="'card-' + id"
+          v-for="(id, index) in selectionTree
+            .filter((node) => node.level == level_id)
+            .map((node) => node.id)"
           :key="id"
           :seriesData="findSeriesData(id)"
           :level="level_id"
           :node_id="id"
+          :node_name="findNodeName(id)"
           :groupedNode="groupedNodeFlag(id)"
         />
       </div>
-      <div class="w-20px h-full">
-        <LinkColumn v-if="level_id != level_id_list.length" :level="level_id" :key="level_id"/>
+      <div class="w-30px h-full">
+        <LinkColumn v-if="level_id != level_id_list.length" :level="level_id" />
       </div>
     </div>
   </div>
@@ -62,10 +64,10 @@ export default {
     //(1) not interfere with the state of vuex
     //(2) further change the data to suit various interactions
 
-    const groupedIdCollection = (level_id) => {
+    const groupedIdCollection = (level_id, tree) => {
       // console.log("Check groupedID")
       // console.log(selectionTree.value.filter(node => node.level == level_id).map(node => node.id))
-      return selectionTree.value
+      return tree
         .filter((node) => node.level == level_id)
         .map((node) => node.id);
     };
@@ -73,6 +75,12 @@ export default {
     const findSeriesData = (id) => {
       return (
         seriesCollection.value.find((node) => node.id == id)?.seriesData ?? []
+      );
+    };
+
+    const findNodeName = (id) => {
+      return (
+        seriesCollection.value.find((node) => node.id == id)?.node_name ?? ""
       );
     };
 
@@ -95,13 +103,14 @@ export default {
     });
 
     return {
+      selectionTree,
       findSeriesData,
+      findNodeName,
       level_id_list,
       columnPercentage,
       tableContainer,
       groupedIdCollection,
       groupedNodeFlag,
-      selectionTree
     };
   },
 };

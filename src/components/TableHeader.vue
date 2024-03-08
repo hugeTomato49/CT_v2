@@ -14,7 +14,7 @@
             class="h-full flex flex-row items-center"
             :style="{
               width:
-                headerContainer?.offsetWidth * columnPercentage - 20 + 'px',
+                headerContainer?.offsetWidth * columnPercentage - 30 + 'px',
               backgroundColor: colorBar[index],
             }"
           >
@@ -32,6 +32,7 @@
               :icon="['fas', 'arrow-up-wide-short']" 
               class="mr-2 cursor-pointer"
               style="color: #ffffff;" 
+              @click="sortColumn(level_id_list[index],'desc')"
               />
               <font-awesome-icon 
               :icon="['fas', 'object-ungroup']" 
@@ -43,7 +44,7 @@
           </div>
           <div
             class="h-full px-0.5px bg-stone-100 cursor-pointer flex flex-row justify-center items-center"
-            :style="{ width: 20 + 'px' }"
+            :style="{ width: 30 + 'px' }"
             @click="addColumn"
           >
             <font-awesome-icon :icon="['fas', 'plus']" style="color: #e2e3e4" />
@@ -55,14 +56,6 @@
           <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
               <path
-                v-for="pathObj in bezierPaths"
-                :key="pathObj.key"
-                :d="pathObj.d"
-                stroke="rgb(243,194,18)"
-                stroke-width="2"
-                fill="none"
-              />
-              <path
                 v-for="pathObj in selectNodePaths"
                 :key="pathObj.key"
                 :d="pathObj.d"
@@ -73,6 +66,14 @@
                 :id="pathObj.key"
                 @mouseover = handleMouseOverLink(pathObj.key)
                 @mouseleave = handleMouseOutLink(pathObj.key)
+              />
+              <path
+                v-for="pathObj in bezierPaths"
+                :key="pathObj.key"
+                :d="pathObj.d"
+                stroke="rgb(243,194,18)"
+                stroke-width="2"
+                fill="none"
               />
               <g
                 v-for="(level_name, index) in level_name_list"
@@ -87,7 +88,7 @@
                 <rect
                   x="0"
                   y="0"
-                  :width="headerContainer?.offsetWidth * columnPercentage - 20"
+                  :width="headerContainer?.offsetWidth * columnPercentage - 30"
                   height="100%"
                   stroke="#e5e7eb"
                   stroke-width="2"
@@ -140,6 +141,8 @@
                   :fill-opacity="circle.fillOpacity"
                   :stroke = "circle.stroke"
                   :stroke-width = "circle.strokeWidth"
+                  @mouseover="handleMouseOver(circle.key, level_id_list[index])"
+                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"
                   @click="handleNodeClick(circle.key)"
                   @dblclick="filterCurrentNode(circle.key)"
                 ></circle>
@@ -172,7 +175,7 @@ import {
   highlightEmphaizeCards,
   deHighlightEmphasizeCards
 } from "../highlight/highlight"
-import { selection } from "d3";
+
 
 
 export default {
@@ -243,27 +246,29 @@ export default {
     });
 
     const handleMouseOver = (id,level) => {
-      if(!ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
-        const id_list = findChildrenIds(id, originalTree.value)
-        highlightNodes(id_list)
-        store.dispatch('scatterPlot/updateBezierPaths',      
-          highlightLinks(
-          id,
-          originalTree.value,
-          coordinateCollection.value,
-          plot_X_Scale.value,
-          plot_Y_Scale.value,
-          headerContainer.value.offsetWidth * columnPercentage.value
-          ))
+      if(ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
+         deHighlightEmphasizeCards()
       }
+      const id_list = findChildrenIds(id, originalTree.value)
+      highlightNodes(id_list)
+      store.dispatch('scatterPlot/updateBezierPaths',      
+        highlightLinks(
+        id,
+        originalTree.value,
+        coordinateCollection.value,
+        plot_X_Scale.value,
+        plot_Y_Scale.value,
+        headerContainer.value.offsetWidth * columnPercentage.value
+      ))
     }
 
     const handleMouseOut = (id,level) => {
-      if(!ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
-        const id_list = findChildrenIds(id, originalTree.value)
-        deHighlightNodes(id_list)
-        store.dispatch('scatterPlot/updateBezierPaths',[])
+      if(ifEmphasize(selectionTree.value, id, level, level_id_list.value)){
+        highlightEmphaizeCards() 
       }
+      const id_list = findChildrenIds(id, originalTree.value)
+      deHighlightNodes(id_list)
+      store.dispatch('scatterPlot/updateBezierPaths',[])
     }
 
     const handleMouseOverLink = (key) => {
@@ -290,6 +295,11 @@ export default {
       store.dispatch("tree/addLevelToLevelIdList");
     }
 
+    const sortColumn = (level,mode) => {
+      store.dispatch("tree/sortSelectionTree", {"level":level, "mode":mode})
+
+    }
+
     const createLayers = (level_id) => {
       const obj = { dataset: dataset.value, level_id: level_id };
       store.dispatch("tree/addLayer", obj);
@@ -309,7 +319,7 @@ export default {
       plotContainer.value = document.querySelector("#plotContainer");
       store.dispatch(
         "scatterPlot/updatePlotWidth",
-        headerContainer.value.offsetWidth * columnPercentage.value - 20
+        headerContainer.value.offsetWidth * columnPercentage.value - 30
       )
       store.dispatch(
         "scatterPlot/updateColumnWidth",
@@ -342,6 +352,7 @@ export default {
       handleMouseOverLink,
       handleMouseOutLink,
       addColumn,
+      sortColumn,
       createLayers,
       filterCurrentNode,
       hasNode,

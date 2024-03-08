@@ -1,5 +1,5 @@
 node_modules
-/api
+api
 backend/data
 backend/tmp
 __pycache__/

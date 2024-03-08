@@ -18,10 +18,10 @@
                             <div>{{ description[node.level-1] }}</div> -->
                         </div>
                     </div>
-                    <div class="w-5/7 h-full bg-blue-100">
+                    <div class="w-5/7 h-full ">
                         
                     </div>
-                    <div class="w-1/7 h-full bg-green-100">
+                    <div class="w-1/7 h-full ">
                         
                     </div>
                 </div>

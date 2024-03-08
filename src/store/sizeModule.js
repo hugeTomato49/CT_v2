@@ -9,7 +9,7 @@ const state = {
     xScale: d3.scaleTime(),
     yScale: [],
     columnPercentage: 0.25,
-    rowNum: 18
+    rowNum: 16
 
 }
 

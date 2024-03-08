@@ -12,6 +12,7 @@
         :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]" 
         id="cardContainer">
             <svg class="w-full h-full bg-stone-100">
+                <text x="5" y="12" class="node-name text-ms">{{ node_name }}</text>
                 <g ref="brushRef"></g>
                 <path
                 :stroke="colorBar[level-1]"
@@ -32,12 +33,12 @@ import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
 import { generatePath } from "../../generator/generator"
 import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
-import { highlightNodes, deHighlightNodes } from "../../highlight/highlight"
+import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
 
 export default {
     name: 'TSCard',
-    props: ['seriesData', 'level', 'node_id', 'groupedNode'],
+    props: ['seriesData', 'level', 'node_id', 'node_name', 'groupedNode'],
     setup(props) {
         const store = useStore()
         const selectionTree = computed(() => store.getters["tree/selectionTree"])
@@ -101,28 +102,30 @@ export default {
         }
 
         const handleMouseOver = (id) => {
-            if(!ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
-                const id_list = findChildrenIds(id, originalTree.value)
-                highlightNodes(id_list)
-                store.dispatch('scatterPlot/updateBezierPaths',      
-                    highlightLinks(
-                    id,
-                    originalTree.value,
-                    coordinateCollection.value,
-                    plot_X_Scale.value,
-                    plot_Y_Scale.value,
-                    columnWidth.value
-                    ))
-            }   
+            if(ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+                deHighlightEmphasizeCards()
+            }
+            const id_list = findChildrenIds(id, originalTree.value)
+            highlightNodes(id_list)
+            store.dispatch('scatterPlot/updateBezierPaths',      
+                highlightLinks(
+                id,
+                originalTree.value,
+                coordinateCollection.value,
+                plot_X_Scale.value,
+                plot_Y_Scale.value,
+                columnWidth.value
+            ))
 
         };
 
         const handleMouseOut = (id) => {
-            if(!ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
-                const id_list = findChildrenIds(id, originalTree.value)
-                deHighlightNodes(id_list)
-                store.dispatch('scatterPlot/updateBezierPaths',[])
+            if(ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+                highlightEmphaizeCards()
             }
+            const id_list = findChildrenIds(id, originalTree.value)
+            deHighlightNodes(id_list)
+            store.dispatch('scatterPlot/updateBezierPaths',[])
         };
         
         onMounted(()=>{
@@ -167,6 +170,19 @@ export default {
 .card :hover {
     box-shadow: 0 5px 4px -2.5px rgba(151, 192, 204, 0.6);
 }
+
+.node-name {
+    font-size: 6px; 
+    fill: #4B99D0; 
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: "semibold italic";
+    font-variation-settings:
+    "slnt" 0;
+
+}
+
 
 
 </style>
