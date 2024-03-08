@@ -2,7 +2,7 @@
     <div class="w-full flex flex-col">
         <TSCard
         v-for = "(id,index) in node_id_list"
-        v-show = "(!alignState && (!foldState || ifEmphasize(selectionTree, id, level_id, level_id_list))) || (alignState && (level_id > alignLevel || ifEmphasize(selectionTree, id, level_id, level_id_list)))"
+        v-show = "!foldState || ifEmphasize(selectionTree, id, level_id, level_id_list)"
         :key = "id"
         :seriesData = findSeriesData(id)
         :level = "level_id"
