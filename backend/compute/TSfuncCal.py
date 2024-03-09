@@ -2,7 +2,7 @@
 @Description: a file define the pearson correlation coefficient function.
 @Author: Nemo
 @Date: 2024-01-31 15:19:43
-@LastEditTime: 2024-03-08 23:28:49
+@LastEditTime: 2024-03-09 22:07:05
 @LastEditors: Nemo
 '''
 import pandas as pd
@@ -25,23 +25,41 @@ def Eucdis_cal(TS1, TS2):
     Eucdis = np.linalg.norm(TS1_datalist - TS2_datalist)
     return Eucdis
 
-def BestMatchedLayer_cal(target_children_node_data, target_children_node_w_o, other_children_node_data):
+def BestMatchedLayer_cal(target_children_node_data, target_children_node_w_o, other_children_node_data, mode = 'similarity'):
     # final_score = Eucdis_cal(target_father_node_data, other_father_node_data)
     final_score = 0
     best_matched_layer = {}
-    for target_index in target_children_node_w_o:
-        target_child_node_f = target_children_node_data[target_index]
-        tmp_score = 0
-        tmp_index = 0
-        for other_index in range(len(other_children_node_data)):
-            other_child_node_f = other_children_node_data[other_index]
-            if other_child_node_f != 0 and Eucdis_cal(target_child_node_f, other_child_node_f) > tmp_score:
-                tmp_score = Eucdis_cal(target_child_node_f, other_child_node_f)
-                tmp_index = other_index
-        final_score += tmp_score
-        other_children_node_data[tmp_index] = 0
-        best_matched_layer[target_index] = (tmp_index)
-    return final_score, best_matched_layer
+    if mode == 'similarity':
+        for target_index in target_children_node_w_o:
+            target_child_node_f = target_children_node_data[target_index]
+            tmp_score = float('inf')
+            tmp_index = 0
+            for other_index in range(len(other_children_node_data)):
+                other_child_node_f = other_children_node_data[other_index]
+                if other_child_node_f != 0 and Eucdis_cal(target_child_node_f, other_child_node_f) < tmp_score:
+                    tmp_score = Eucdis_cal(target_child_node_f, other_child_node_f)
+                    tmp_index = other_index
+            final_score += tmp_score
+            other_children_node_data[tmp_index] = 0
+            best_matched_layer[target_index] = (tmp_index)
+        return final_score, best_matched_layer
+    elif mode == 'correlation':
+        for target_index in target_children_node_w_o:
+            target_child_node_f = target_children_node_data[target_index]
+            tmp_score = float('-inf')
+            tmp_index = 0
+            for other_index in range(len(other_children_node_data)):
+                other_child_node_f = other_children_node_data[other_index]
+                if other_child_node_f != 0 and Eucdis_cal(target_child_node_f, other_child_node_f) > tmp_score:
+                    tmp_score = Pearson_cal(target_child_node_f, other_child_node_f)
+                    tmp_index = other_index
+            final_score += tmp_score
+            other_children_node_data[tmp_index] = 0
+            best_matched_layer[target_index] = (tmp_index)
+        return final_score, best_matched_layer
+    else:
+        print("mode Error!")
+        return
 
 def Mean_w(TS):
     _, TS_datalist = TSjson_exp(TS)
