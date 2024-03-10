@@ -6,7 +6,7 @@
       :d="path.d"
       fill="none"
       stroke="rgb(210, 210, 208)"
-      stroke-width="1.5"
+      stroke-width="0.8"
     />
   </svg>
 </template>
