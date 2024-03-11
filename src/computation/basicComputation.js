@@ -1,4 +1,5 @@
 import * as d3 from "d3" 
+import { cloneDeep } from "lodash";
 
 
 export const transformData = (rawData) => {
@@ -57,8 +58,8 @@ export const getMin = (manySeries) => {
 export const groupData = (seriesCollection) => {
     // console.log("CHECK input data")
     // console.log(seriesCollection)
-    const groupedData = seriesCollection.reduce((acc, item) => {
-        const groupIndex = acc.findIndex(group => group.level === item.level)
+    const groupedData = seriesCollection.sort((a, b) => a.level - b.level).reduce((acc, item) => {
+        const groupIndex = acc.findIndex(group => group.level == item.level)
         if (groupIndex !== -1) {
           acc[groupIndex].data[item.node_name] = item.seriesData
         } else {
@@ -84,8 +85,5 @@ export const calculateSeriesAverage = (seriesData) => {
   
     return array.length > 0 ? total / array.length : 0;
     
-
-
-
-
 }
+

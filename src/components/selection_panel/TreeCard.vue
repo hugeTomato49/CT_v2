@@ -2,13 +2,13 @@
     <div class="w-full h-6/20 p-2 pt-0 round-md pb-3">
         <div class="w-full h-full py-2 px-5 entityCard" style="background-color: rgba(245, 245, 245, 0.6); ">
             <div class="w-full h-full flex flex-col">
-                <div class="w-full h-40px flex flex-row items-center" :style="{ 'border-bottom': '1px solid' + themeColor }">
-                    <div class="text-md cardTitle" :style="{ 'color': themeColor }"> Tree </div>
+                <div class="w-full h-30px flex flex-row items-center" :style="{ 'border-bottom': '1px solid' + themeColor }">
+                    <div class="text-sm cardTitle" :style="{ 'color': themeColor }"> Tree </div>
                     <div class="flex-1"></div>
                     <div class="flex flex-row">
-                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" :style="{color: themeColor}" class="mr-2"/>
-                        <font-awesome-icon :icon="['fas', 'gear']" :style="{color: themeColor}" class="mr-2"/>
-                        <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2"/>
+                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" :style="{color: themeColor}" class="mr-2" size="sm"/>
+                        <font-awesome-icon :icon="['fas', 'gear']" :style="{color: themeColor}" class="mr-2" size="sm"/>
+                        <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm"/>
                     </div>
                 </div>
                 <div class="w-full ">
@@ -25,6 +25,7 @@ import { useStore } from 'vuex'
 import { computed } from 'vue'
 export default {
     name: 'TreeCard',
+    props: ['id_list'],
     setup() {
         const store = useStore()
         const themeColor = computed(() => store.getters["tree/themeColor"])

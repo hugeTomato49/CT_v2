@@ -36,7 +36,8 @@ export const TS_Scales = (data, width, height) => {
     //suppose we have the same time range
     // console.log("check data")
     // console.log(data)
-    const max = getMax(data)
+    let max = getMax(data)
+    max = max * 1.15
     const min = getMin(data)
     // console.log(max)
     // console.log(min)

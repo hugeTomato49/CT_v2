@@ -10,6 +10,13 @@ const lineGenerator = (xScale, yScale) => {
 
 export const generatePath = (data,xScale, yScale) => {
 
+    // console.log(data)
+    // console.log(xScale)
+    // console.log(yScale)
+    
+
+
+
     return lineGenerator(xScale,yScale)(data)
 
   

@@ -33,7 +33,7 @@ export default {
     const plotHeight = computed(() => store.getters["scatterPlot/plotHeight"]);
     const alignLevel = computed(() => store.getters["align/alignLevel"]);
     const currentLevelNodes = computed(() => {
-      console.log("selected tree is", selectionTree.value);
+      // console.log("selected tree is", selectionTree.value);
       return selectionTree.value.filter((node) => node.level == props.level); // 直接使用level，不使用level.value
     });
     const flag = ref(0);

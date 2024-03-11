@@ -192,30 +192,30 @@ def getGroupedCoordinateCollection():
         
         return grouped_result
     
-# Unfinished
-# @app.route('/addLayer', methods=["POST"])
-def getMatchedTree():
-    # data = request.get_json()
-    # dataset = data.get("dataset","")
-    # target_id = data.get("target_id",[])
-    # timeRange = data.get("timeRange",[])
+# # Unfinished
+# # @app.route('/addLayer', methods=["POST"])
+# def getMatchedTree():
+#     # data = request.get_json()
+#     # dataset = data.get("dataset","")
+#     # target_id = data.get("target_id",[])
+#     # timeRange = data.get("timeRange",[])
 
-    # for test
-    dataset = "PV"
-    target_id = 2
-    timeRange = ["2022-12-15T00:00:00", "2022-12-28T23:59:59"]
+#     # for test
+#     dataset = "PV"
+#     target_id = 2
+#     timeRange = ["2022-12-15T00:00:00", "2022-12-28T23:59:59"]
 
-    if dataset == 'PV':
-        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
-        if os.path.exists(Tree_path):
-            with open(Tree_path, 'r') as file:
-                pv_tree_data = json.load(file)
-        folder_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path)
-        best_tree = getBT(timeRange, pv_tree_data, target_id, folder_path)
-        best_tree_result = {"result":best_tree}
-        return best_tree_result
+#     if dataset == 'PV':
+#         Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+#         if os.path.exists(Tree_path):
+#             with open(Tree_path, 'r') as file:
+#                 pv_tree_data = json.load(file)
+#         folder_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path)
+#         best_tree = getBT(timeRange, pv_tree_data, target_id, folder_path)
+#         best_tree_result = {"result":best_tree}
+#         return best_tree_result
 
-print(getMatchedTree())
+# print(getMatchedTree())
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)
