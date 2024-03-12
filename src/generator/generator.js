@@ -13,7 +13,8 @@ export const generatePath = (data,xScale, yScale) => {
     // console.log(data)
     // console.log(xScale)
     // console.log(yScale)
-    
+
+
 
 
 
@@ -21,4 +22,26 @@ export const generatePath = (data,xScale, yScale) => {
 
   
 }
+
+export const generateSelectedPath = (data,xScale, yScale) => {
+
+    data.forEach(d => {
+        d.Time = new Date(d.Time)
+    })
+
+
+
+  
+    // console.log(xScale('2022-12-19T16:00:00.000Z'))
+    // console.log(t)
+    // console.log(xScale(t))
+    // console.log(yScale(0))
+
+
+    
+    return lineGenerator(xScale,yScale)(data)
+
+  
+}
+
 

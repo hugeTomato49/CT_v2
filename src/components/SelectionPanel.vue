@@ -2,10 +2,10 @@
     <div 
     v-if="showState"
     class="w-full h-full">
-        <!-- <NodeCard 
+        <NodeCard 
         :id = '1'
         :level = '1'
-        /> -->
+        />
         <PathCard 
         :id_list = id_list
         :level_list = level_list
@@ -45,8 +45,8 @@ export default {
             showState.value = !showState.value
         }
 
-        const id_list =  ref([1,30])
-        const level_list =  ref([1,3])
+        const id_list =  ref([1,2])
+        const level_list =  ref([1,2])
 
         return {
             showState,

@@ -13,8 +13,7 @@
                 </div>
                 <div class="w-full">
                     <div 
-                    v-for="(id,index) in id_list"
-                    v-if="seriesData_list.length > 0"
+                    v-for="(id,index) in seriesData_list.map(series => series.id)"
                     :key="id"
                     class="w-full h-70px flex flex-row"
                     >
@@ -31,7 +30,7 @@
                                     :stroke="themeColor"
                                     fill="none"
                                     stroke-width="2.5"
-                                    :d="generatePath(JSON.parse(JSON.stringify(seriesData_list.find(series => series.id == id).data)), xScale, yScale_list[index])"
+                                    :d="generateSelectedPath(JSON.parse(JSON.stringify(seriesData_list.find(series => series.id == id).data)), xScale, yScale_list[index])"
                                     >
                                     </path>
                                 </svg>
@@ -53,8 +52,8 @@
 
 <script>
 import { useStore } from 'vuex'
-import { computed, ref, onMounted } from 'vue'
-import { generatePath } from '../../generator/generator'
+import { computed, ref, onMounted, watch } from 'vue'
+import { generateSelectedPath } from '../../generator/generator'
 export default {
     name: 'PathCard',
     props: ['id_list', 'level_list'],
@@ -72,6 +71,23 @@ export default {
 
         const levels = computed(() => store.getters["tree/levels"])
         const description = computed(() => store.getters["tree/description"])
+        const timeRange = computed(() => store.getters["tree/timeRange"])
+
+        watch(xScale, (newValue) => {
+            if (newValue !== null) {
+                const list = []
+                props.id_list.forEach(id => {
+                    let obj = {}
+                    obj["id"] = id
+                    obj["data"] = store.getters["tree/seriesCollection"].find(node => node.id == id).seriesData
+                    list.push(obj)
+                })
+                seriesData_list.value = list
+                console.log("FUCK")
+                console.log(xScale.value(store.getters["tree/timeRange"][1]))
+
+            }
+        });
 
         onMounted(() => {
             titleContainer.value = document.querySelector('#titleContainer')
@@ -80,31 +96,23 @@ export default {
             console.log(width.value)
             
 
-            if(store.getters["tree/seriesCollection"].length>0){
-                const list = []
-                props.id_list.forEach(id => {
-                    let obj = {}
-                    obj["id"] = id
-                    obj["data"] = JSON.parse(JSON.stringify(store.getters["tree/seriesCollection"].find(node => node.id == id).seriesData))
-                    list.push(obj)
-                })
-                seriesData_list.value = list
-                console.log("check data")
-                console.log(list)
-                console.log(seriesData_list.value)
 
-            }
             if(store.getters["size/xScale"].length > 0){
+                console.log("check width again")
+                console.log(width.value)
                 xScale.value = store.getters["size/xScale"].range([5, width.value-5])
-
-                
+                const timeRange = store.getters["tree/timeRange"]
+                console.log("check xScale")
+                console.log(timeRange[1])
+                console.log(xScale.value(timeRange[1]))    
             }
             if(store.getters["size/yScale"].length > 0){
                 yScale_list.value = props.level_list.map(level => store.getters["size/yScale"][level-1].range([height.value-10, 10]))
                 console.log("check yScale")
                 console.log(yScale_list.value[0](0))
 
-            }  
+            } 
+            
         })
 
         return {
@@ -114,7 +122,8 @@ export default {
             xScale,
             yScale_list,
             seriesData_list,
-            generatePath
+            generateSelectedPath,
+            timeRange
 
         }
 
