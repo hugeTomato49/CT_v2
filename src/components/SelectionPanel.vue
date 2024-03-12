@@ -9,10 +9,17 @@
         <PathCard 
         :id_list = id_list
         :level_list = level_list
+        :related= true
         />
         <TreeCard 
         :id_list=tree_id_list
         :level_list=tree_level_list
+        :related= false
+        />
+        <TreeCard 
+        :id_list=tree_id_list
+        :level_list=tree_level_list
+        :related= true
         />
   
     </div>

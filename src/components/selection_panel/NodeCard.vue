@@ -120,7 +120,7 @@ export default {
 }
 
 .meta {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
@@ -131,6 +131,7 @@ export default {
 }
 
 .description {
+  font-size: 0.55rem;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;

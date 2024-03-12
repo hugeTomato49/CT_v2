@@ -1,8 +1,8 @@
 <template>
     <div class="w-full p-2 pt-0 round-md pb-3">
-        <div class="w-full py-2 px-5 entityCard" style="background-color: rgba(245, 245, 245, 0.6); ">
+        <div class="w-full py-2 px-5 entityCard" :style="{'background-color': related ? '#4B99D0' : 'rgba(245, 245, 245, 0.6)' }">
             <div class="w-full flex flex-col">
-                <div class="w-full h-30px flex flex-row items-center" :style="{ 'border-bottom': '1px solid' + themeColor }" id="titleContainer">
+                <div class="w-full h-30px flex flex-row items-center" :style="{ 'border-bottom': '1px solid' + themeColor }" id="treeTitleContainer">
                     <div class="text-sm cardTitle" :style="{ 'color': themeColor }"> Tree </div>
                     <div class="flex-1"></div>
                     <div class="flex flex-row">
@@ -58,7 +58,7 @@ import { generateSelectedPath } from '../../generator/generator'
 import * as d3 from "d3"
 export default {
     name: 'TreeCard',
-    props: ['id_list', 'level_list'],
+    props: ['id_list', 'level_list', 'related'],
     setup(props) {
         const titleContainer = ref(null)
         const width = ref(0)
@@ -69,7 +69,7 @@ export default {
         const seriesData_list = ref([])
 
         const store = useStore()
-        const themeColor = computed(() => store.getters["tree/themeColor"])
+        const themeColor = computed(() => props.related ? '#FFFFFF' : store.getters["tree/themeColor"])
 
         const levels = computed(() => store.getters["tree/levels"])
         const description = computed(() => store.getters["tree/description"])
@@ -95,7 +95,7 @@ export default {
         });
 
         onMounted(() => {
-            titleContainer.value = document.querySelector('#titleContainer')
+            titleContainer.value = document.querySelector('#treeTitleContainer')
             width.value =  titleContainer.value.offsetWidth * 11 / 14
             // console.log("check width")
             // console.log(width.value)
@@ -136,12 +136,7 @@ export default {
 
         
    
-        
-        return {
-            themeColor
-        }
-
-        
+    
     }
 }
 
