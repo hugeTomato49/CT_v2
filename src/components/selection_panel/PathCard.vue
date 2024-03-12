@@ -11,7 +11,7 @@
                         <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm"/>
                     </div>
                 </div>
-                <div class="w-full">
+                <div class="w-full max-h-210px overflow overflow-scroll">
                     <div 
                     v-for="(id,index) in seriesData_list.map(series => series.id)"
                     :key="id"
@@ -53,7 +53,9 @@
 <script>
 import { useStore } from 'vuex'
 import { computed, ref, onMounted, watch } from 'vue'
+import { cloneDeep } from 'lodash'
 import { generateSelectedPath } from '../../generator/generator'
+import * as d3 from "d3"
 export default {
     name: 'PathCard',
     props: ['id_list', 'level_list'],
@@ -79,37 +81,38 @@ export default {
                 props.id_list.forEach(id => {
                     let obj = {}
                     obj["id"] = id
-                    obj["data"] = store.getters["tree/seriesCollection"].find(node => node.id == id).seriesData
+                    obj["data"] = cloneDeep(store.getters["tree/seriesCollection"].find(node => node.id == id).seriesData)
                     list.push(obj)
                 })
                 seriesData_list.value = list
-                console.log("FUCK")
-                console.log(xScale.value(store.getters["tree/timeRange"][1]))
+
+                console.log("check data")
+                console.log(list)
+                
+
 
             }
         });
 
         onMounted(() => {
             titleContainer.value = document.querySelector('#titleContainer')
-            width.value =  titleContainer.value.offsetWidth
-            console.log("check width")
-            console.log(width.value)
+            width.value =  titleContainer.value.offsetWidth * 11 / 14
+            // console.log("check width")
+            // console.log(width.value)
             
 
 
             if(store.getters["size/xScale"].length > 0){
-                console.log("check width again")
-                console.log(width.value)
-                xScale.value = store.getters["size/xScale"].range([5, width.value-5])
+                xScale.value = d3.scaleTime().domain(store.getters["size/xScale"].domain()).range([5, width.value-5])
                 const timeRange = store.getters["tree/timeRange"]
-                console.log("check xScale")
-                console.log(timeRange[1])
-                console.log(xScale.value(timeRange[1]))    
+                // console.log("check xScale")
+                // console.log(timeRange[1])
+                // console.log(xScale.value(timeRange[1]))    
             }
             if(store.getters["size/yScale"].length > 0){
-                yScale_list.value = props.level_list.map(level => store.getters["size/yScale"][level-1].range([height.value-10, 10]))
-                console.log("check yScale")
-                console.log(yScale_list.value[0](0))
+                yScale_list.value = props.level_list.map(level => d3.scaleLinear().domain(store.getters["size/yScale"][level-1].domain()).range([height.value-5, 5]))
+                // console.log("check yScale")
+                // console.log(yScale_list.value[0](0))
 
             } 
             

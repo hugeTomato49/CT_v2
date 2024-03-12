@@ -1,8 +1,8 @@
 <template>
-    <div class="w-full h-6/20 p-2 pt-0 round-md pb-3">
-        <div class="w-full h-full py-2 px-5 entityCard" style="background-color: rgba(245, 245, 245, 0.6); ">
-            <div class="w-full h-full flex flex-col">
-                <div class="w-full h-30px flex flex-row items-center" :style="{ 'border-bottom': '1px solid' + themeColor }">
+    <div class="w-full p-2 pt-0 round-md pb-3">
+        <div class="w-full py-2 px-5 entityCard" style="background-color: rgba(245, 245, 245, 0.6); ">
+            <div class="w-full flex flex-col">
+                <div class="w-full h-30px flex flex-row items-center" :style="{ 'border-bottom': '1px solid' + themeColor }" id="titleContainer">
                     <div class="text-sm cardTitle" :style="{ 'color': themeColor }"> Tree </div>
                     <div class="flex-1"></div>
                     <div class="flex flex-row">
@@ -11,8 +11,38 @@
                         <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm"/>
                     </div>
                 </div>
-                <div class="w-full ">
+                <div class="w-full max-h-210px overflow overflow-scroll">
+                    <div 
+                    v-for="(id,index) in seriesData_list.map(series => series.id)"
+                    :key="id"
+                    class="w-full h-70px flex flex-row"
+                    >
+                        <div class="w-1/7 h-full p-0 flex flex-row items-center justify-center">
+                            <div class="w-full flex flex-col " :style="{ 'color': themeColor }">
+                                <div class="meta">Converter1</div>
+                                <div class="description text-xs">{{ description[level_list[index] - 1] }}</div>
+                            </div>
+                        </div>
+                        <div class="w-11/14 h-full  flex flex-row justify-center ">
+                            <div class="w-full h-full" :style="{ 'border-bottom': '1px solid' + themeColor }">
+                                <svg class="w-full h-full">
+                                    <path
+                                    :stroke="themeColor"
+                                    fill="none"
+                                    stroke-width="2.5"
+                                    :d="generateSelectedPath(JSON.parse(JSON.stringify(seriesData_list.find(series => series.id == id).data)), xScale, yScale_list[index])"
+                                    >
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="w-1/14 h-full ">
+                            
+                        </div>
+
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -22,17 +52,95 @@
 
 <script>
 import { useStore } from 'vuex'
-import { computed } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
+import { cloneDeep } from 'lodash'
+import { generateSelectedPath } from '../../generator/generator'
+import * as d3 from "d3"
 export default {
     name: 'TreeCard',
-    props: ['id_list'],
-    setup() {
+    props: ['id_list', 'level_list'],
+    setup(props) {
+        const titleContainer = ref(null)
+        const width = ref(0)
+        const height = ref(70)
+
+        const xScale = ref(null)
+        const yScale_list = ref([])
+        const seriesData_list = ref([])
+
         const store = useStore()
         const themeColor = computed(() => store.getters["tree/themeColor"])
+
+        const levels = computed(() => store.getters["tree/levels"])
+        const description = computed(() => store.getters["tree/description"])
+        const timeRange = computed(() => store.getters["tree/timeRange"])
+
+        watch(xScale, (newValue) => {
+            if (newValue !== null) {
+                const list = []
+                props.id_list.forEach(id => {
+                    let obj = {}
+                    obj["id"] = id
+                    obj["data"] = cloneDeep(store.getters["tree/seriesCollection"].find(node => node.id == id).seriesData)
+                    list.push(obj)
+                })
+                seriesData_list.value = list
+
+                console.log("check data")
+                console.log(list)
+                
+
+
+            }
+        });
+
+        onMounted(() => {
+            titleContainer.value = document.querySelector('#titleContainer')
+            width.value =  titleContainer.value.offsetWidth * 11 / 14
+            // console.log("check width")
+            // console.log(width.value)
+            
+
+
+            if(store.getters["size/xScale"].length > 0){
+                xScale.value = d3.scaleTime().domain(store.getters["size/xScale"].domain()).range([5, width.value-5])
+                const timeRange = store.getters["tree/timeRange"]
+                // console.log("check xScale")
+                // console.log(timeRange[1])
+                // console.log(xScale.value(timeRange[1]))    
+            }
+            if(store.getters["size/yScale"].length > 0){
+                yScale_list.value = props.level_list.map(level => d3.scaleLinear().domain(store.getters["size/yScale"][level-1].domain()).range([height.value-5, 5]))
+                // console.log("check yScale")
+                // console.log(yScale_list.value[0](0))
+
+            } 
+            
+        })
+
+        return {
+            themeColor,
+            levels,
+            description,
+            xScale,
+            yScale_list,
+            seriesData_list,
+            generateSelectedPath,
+            timeRange
+
+        }
+
+
+
+
+
+        
+   
         
         return {
             themeColor
         }
+
         
     }
 }

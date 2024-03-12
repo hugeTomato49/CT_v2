@@ -45,7 +45,9 @@
 <script>
 import { useStore } from 'vuex'
 import { computed, onMounted, ref, watchEffect, watch } from 'vue'
+import { cloneDeep } from "lodash"
 import { generatePath } from '../../generator/generator'
+import * as d3 from 'd3'
 export default {
     name: 'NodeCard',
     props: ['id', 'level'],
@@ -71,13 +73,13 @@ export default {
             height.value = seriesContainer.value.offsetHeight
 
             if(store.getters["tree/seriesCollection"].length>0){
-                seriesData.value = store.getters["tree/seriesCollection"].find(node => node.id == props.id).seriesData
+                seriesData.value = cloneDeep(store.getters["tree/seriesCollection"].find(node => node.id == props.id).seriesData)
             }
             if(store.getters["size/xScale"].length > 0){
-                xScale.value = store.getters["size/xScale"].range([5, width.value-5])
+                xScale.value = d3.scaleTime().domain(store.getters["size/xScale"].domain()).range([5, width.value-5])
             }
             if(store.getters["size/yScale"].length > 0){
-                yScale.value = store.getters["size/yScale"][props.level-1].range([height.value-10, 10])
+                yScale.value = d3.scaleLinear().domain(store.getters["size/yScale"][props.level-1].domain()).range([height.value-5, 5])
                 console.log("check scale")
                 console.log(yScale.value(0))
             }

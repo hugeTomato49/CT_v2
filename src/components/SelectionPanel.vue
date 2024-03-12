@@ -10,7 +10,10 @@
         :id_list = id_list
         :level_list = level_list
         />
-        <TreeCard />
+        <TreeCard 
+        :id_list=tree_id_list
+        :level_list=tree_level_list
+        />
   
     </div>
     <ConfigureButton 
@@ -45,14 +48,19 @@ export default {
             showState.value = !showState.value
         }
 
-        const id_list =  ref([1,2])
-        const level_list =  ref([1,2])
+        const id_list =  ref(['2','30'])
+        const level_list =  ref(['2','3'])
+        const tree_id_list = ref([1,5,7,8,9])
+        const tree_level_list = ref([1,2,2,2,2])
 
         return {
             showState,
             toggleShowState,
             id_list,
-            level_list
+            level_list,
+            tree_id_list,
+            tree_level_list
+
         }
 
 
