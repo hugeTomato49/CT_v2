@@ -115,6 +115,7 @@ export default {
 
         const toggleFoldState = () => {
             foldState.value = !foldState.value
+            store.dispatch("align/updateSectionState")
         }
 
         const sortSection = () => {

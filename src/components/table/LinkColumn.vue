@@ -27,11 +27,12 @@ export default {
     //document.getElementByClassName 获取table的绝对坐标作为参考系坐标 并且利用vuex中的rowHeight, plotWidth, columnWidth等必要的尺寸计算线两个端点在svg中的坐标, svg的宽度是20px
     //和开会讨论不同的是，用rowHeight代替cardHeight
     const store = useStore();
-    const selectionTree = computed(() => store.getters["tree/selectionTree"]);
+    const selectionTree = computed(() => store.getters["tree/selectionTree"])
 
-    const plotWidth = computed(() => store.getters["scatterPlot/plotWidth"]);
-    const plotHeight = computed(() => store.getters["scatterPlot/plotHeight"]);
-    const alignLevel = computed(() => store.getters["align/alignLevel"]);
+    const plotWidth = computed(() => store.getters["scatterPlot/plotWidth"])
+    const plotHeight = computed(() => store.getters["scatterPlot/plotHeight"])
+    const alignLevel = computed(() => store.getters["align/alignLevel"])
+    const sectionState = computed(() => store.getters["align/sectionState"])
     const currentLevelNodes = computed(() => {
       // console.log("selected tree is", selectionTree.value);
       return selectionTree.value.filter((node) => node.level == props.level); // 直接使用level，不使用level.value
@@ -52,7 +53,7 @@ export default {
             const controlY1 = parentCoords.y;
             const controlX2 = (parentCoords.x + childCoords.x) / 2;
             const controlY2 = childCoords.y;
-            if (alignLevel.value > 0) {
+            if (alignLevel.value > 0 && sectionState.value > 0) {
               paths.push({
                 d: `M ${parentCoords.x},${parentCoords.y} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${childCoords.x},${childCoords.y}`,
                 key: `c-${parentNode.id}-${childId}`,
