@@ -7,7 +7,7 @@ from compute.dr import mds_to2d, t_sne_to2d
 from compute.groupTree import constructGT, getGroupedPoints
 from compute.basic import getAverageSeriesData
 from compute.getBestTree import getBT
-from compute.comprehensive import getBoundary
+from compute.comprehensive import getBoundary, getSDALL
 
 app = Flask(__name__)
 
@@ -208,6 +208,22 @@ def getScale():
                 pv_tree_data = json.load(file) 
         return getBoundary(pv_tree_data, PV_data_folder_path, timeRange)
 
+@app.route('/SD', methods=["POST"])
+def getSD():
+    data = request.get_json()
+    dataset = data.get("dataset", "")
+
+    if dataset == 'PV':
+        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+        if os.path.exists(Tree_path):
+            with open(Tree_path, 'r') as file:
+                pv_tree_data = json.load(file) 
+        result = getSDALL(pv_tree_data, PV_data_folder_path)
+        file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, "PV_SD.json")
+        if not os.path.exists(file_path):
+            with open(file_path, 'r') as file:
+                pv_tree_data = json.load(file) 
+        return result
 
 # Unfinished
 # @app.route('/addLayer', methods=["POST"])
