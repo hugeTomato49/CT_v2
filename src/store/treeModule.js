@@ -76,7 +76,7 @@ const actions = {
         })
         commit("UPDATE_SERIES_COLLECTION", newSeriesCollection)
         // if(state.groupState == false && newSeriesCollection.length == 1)
-        if(state.groupState == false) {
+        if(state.groupState == false && newSeriesCollection.length == 1) {
           dispatch('size/updateScale', newSeriesCollection, {root : true})
         } 
       })

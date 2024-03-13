@@ -110,7 +110,7 @@ export default {
                 // console.log(xScale.value(timeRange[1]))    
             }
             if(store.getters["size/yScale"].length > 0){
-                yScale_list.value = props.level_list.map(level => d3.scaleLinear().domain(store.getters["size/yScale"][level-1].domain()).range([height.value-5, 5]))
+                yScale_list.value = props.level_list.map(level => d3.scaleLinear().domain(store.getters["size/yScale"][level-1].domain()).range([height.value-10, 5]))
                 // console.log("check yScale")
                 // console.log(yScale_list.value[0](0))
 
