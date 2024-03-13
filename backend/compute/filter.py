@@ -1,8 +1,21 @@
+'''
+@Description: 
+@Author: 
+@Date: 2024-02-27 16:06:23
+@LastEditTime: 2024-03-13 19:10:11
+@LastEditors: Nemo
+'''
+import os
+import json
 from datetime import datetime, timedelta
 
-def filterDataByTimeRange(data, timeRange):
+def filterDataByTimeRange(data, timeRange=[]):
+    # default timeRange return original data
+    if not timeRange:
+        return data
     # Parse the start and end times from the timeRange list and adjust them
     # Replace "Z" with "+00:00" to properly handle the timezone
+
     start_time_original = datetime.fromisoformat(timeRange[0].replace("Z", "+00:00"))
     end_time_original = datetime.fromisoformat(timeRange[1].replace("Z", "+00:00"))
     
@@ -22,3 +35,15 @@ def filterDataByTimeRange(data, timeRange):
     ]
 
     return filtered_data
+
+def getTSdata(nodeName, folder_path, timeRange=[]):
+    if '-' not in nodeName:
+        data_file_path = os.path.join(os.path.dirname(__file__),folder_path, nodeName+'.json')
+        with open(data_file_path, 'r') as file:
+            data_file = filterDataByTimeRange(json.load(file)['data'], timeRange)
+    else:
+        data_folder_path = list(nodeName.split("-"))[-2]
+        data_file_path = os.path.join(os.path.dirname(__file__),folder_path, data_folder_path, nodeName+'.json')
+        with open(data_file_path, 'r') as file:
+            data_file = filterDataByTimeRange(json.load(file)['data'], timeRange)
+    return data_file
