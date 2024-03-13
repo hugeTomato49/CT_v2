@@ -2,7 +2,7 @@
 @Description: a file define the pearson correlation coefficient function.
 @Author: Nemo
 @Date: 2024-01-31 15:19:43
-@LastEditTime: 2024-03-09 22:07:05
+@LastEditTime: 2024-03-13 19:51:15
 @LastEditors: Nemo
 '''
 import pandas as pd
@@ -66,3 +66,13 @@ def Mean_w(TS):
     TS_datalist = TS_datalist[:, 1].astype(float)
     Mean = np.mean(TS_datalist)
     return Mean
+
+def GetMax(TS):
+    _, TS_datalist = TSjson_exp(TS)
+    TS_datalist = TS_datalist[:, 1]
+    return TS_datalist.max()
+
+def GetMin(TS):
+    _, TS_datalist = TSjson_exp(TS)
+    TS_datalist = TS_datalist[:, 1]
+    return TS_datalist.min()

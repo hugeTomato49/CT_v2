@@ -7,6 +7,7 @@ from compute.dr import mds_to2d, t_sne_to2d
 from compute.groupTree import constructGT, getGroupedPoints
 from compute.basic import getAverageSeriesData
 from compute.getBestTree import getBT
+from compute.comprehensive import getBoundary
 
 app = Flask(__name__)
 
@@ -192,6 +193,21 @@ def getGroupedCoordinateCollection():
         
         return grouped_result
     
+
+@app.route('/scale', methods=["POST"])
+def getScale():
+    data = request.get_json()
+    dataset = data.get("dataset", "")
+    timeRange = data.get("timeRange",[])
+
+    if dataset == 'PV':
+        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+        if os.path.exists(Tree_path):
+            with open(Tree_path, 'r') as file:
+                pv_tree_data = json.load(file) 
+        return getBoundary(pv_tree_data, PV_data_folder_path, timeRange)
+
+
 # Unfinished
 # @app.route('/addLayer', methods=["POST"])
 def getMatchedTree():
@@ -215,7 +231,7 @@ def getMatchedTree():
         best_tree_result = {"result":best_tree}
         return best_tree_result
 
-print(getMatchedTree())
+# print(getMatchedTree())
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)
