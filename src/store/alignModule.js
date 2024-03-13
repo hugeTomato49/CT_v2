@@ -2,6 +2,7 @@ import { ifEmphasize } from "../computation/treeComputation"
 
 const state = {
     alignState: false,
+    sectionState: 1,
     alignLevel: 1, //in default, align to the root node of the selectionTree
     alignID : [1], //在section遍历alignID, 然后在section里面过滤节点
     largestNumber: [] //对应每一个alignID下的最大高度是多少
@@ -27,12 +28,14 @@ const actions = {
     updateAlignState({commit}, value){
         commit('UPDATE_ALIGN_STATE',value)
     },
+    updateSectionState({state}){
+        state.sectionState = state.sectionState + 1
+    },
     updateAlignLevel({commit}, value){
         commit('UPDATE_ALIGN_LEVEL',value)    
     },
     updateAlignID({commit}, value){
         commit('UPDATE_ALIGN_ID', value)
-
     },
     updateLargestNumber({commit}, value){
         commit('UPDATE_LARGEST_NUMBER',value)
@@ -51,6 +54,7 @@ const actions = {
 }
 const getters = {
     alignState: state => state.alignState,
+    sectionState: state => state.sectionState,
     alignLevel: state => state.alignLevel,
     alignID: state => state.alignID,
     largestNumber: state => state.largestNumber 

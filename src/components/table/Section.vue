@@ -33,6 +33,7 @@
                         <ConfigureButton 
                         class="mr-1"
                         buttonName='sort'
+                        @click="sortSection()"
                          />
                          <ConfigureButton 
                          buttonName='hide'
@@ -114,12 +115,20 @@ export default {
 
         const toggleFoldState = () => {
             foldState.value = !foldState.value
+            store.dispatch("align/updateSectionState")
+        }
+
+        const sortSection = () => {
+            store.dispatch("tree/sortSelectionTree", {"id_list":props.node_id_list, "mode":'asc'})
+
         }
 
         const hideSeriesNumber = computed(() => {
             const hide_node_list = props.node_id_list.filter(id => !ifEmphasize(selectionTree.value, id, props.level, level_id_list.value))
             return hide_node_list.length
         })
+
+
         
 
         return {
@@ -136,6 +145,7 @@ export default {
             alignLevel,
             toggleConfigureShow,
             toggleFoldState,
+            sortSection,
             ifEmphasize,
             hideSeriesNumber
         }

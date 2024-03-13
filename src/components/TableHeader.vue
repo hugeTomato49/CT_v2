@@ -30,10 +30,10 @@
               @click="toggleAlign(level_id_list[index])"
               />
               <font-awesome-icon 
-              :icon="['fas', 'arrow-up-wide-short']" 
+              :icon="['fas', 'arrow-down-short-wide']" 
               class="mr-2 cursor-pointer"
               style="color: #ffffff;" 
-              @click="sortColumn(level_id_list[index],'desc')"
+              @click="sortColumn(level_id_list[index],'asc')"
               />
               <font-awesome-icon 
               :icon="['fas', 'object-ungroup']" 
@@ -294,7 +294,8 @@ export default {
     }
 
     const sortColumn = (level,mode) => {
-      store.dispatch("tree/sortSelectionTree", {"level":level, "mode":mode})
+      const id_list = selectionTree.value.filter(node => node.level == level).map(node => node.id)
+      store.dispatch("tree/sortSelectionTree", {"id_list":id_list, "mode":mode})
 
     }
 

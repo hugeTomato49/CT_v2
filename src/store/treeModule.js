@@ -12,7 +12,7 @@ const state = {
     seriesCollection: [],
     dataset: 'PV',
     levels: ['Transformer', 'Converter', 'Line'],
-    description: ['generation -kw/h', 'generation -kw/h', 'current -mA', 'current -mA'],
+    description: ['-kw/h', '-kw/h', '-mA', '-mA'],
     level_id_list: [],
     timeRange: [],
     colorBar: ["#4B99D0", "#4B99D0", "#4B99D0","#4B99D0", "#4B99D0","#4B99D0"],
@@ -37,7 +37,9 @@ const mutations = {
         state.seriesCollection = payload
     },
     UPDATE_TIME_RANGE(state, payload){
-      state.timeRange = payload
+      // console.log("check timeRange")
+      // console.log(payload)
+      state.timeRange = payload 
     },
     UPDATE_LEVEL_ID_LIST(state, payload) {
       state.level_id_list = payload
@@ -78,35 +80,38 @@ const actions = {
         } 
       })
     },
-    sortSelectionTree({state,commit}, obj){
-      let nodesToSort = [...state.selectionTree]
-      const otherLevelNodes = nodesToSort.filter(node => node.level !== obj.level)
-      nodesToSort = nodesToSort.filter(node => node.level === obj.level)
-
-      nodesToSort = nodesToSort.map(node => {
-        const seriesNode = state.seriesCollection.find(item => item.id === node.id)
-        const average = seriesNode ? calculateSeriesAverage(seriesNode.seriesData) : 0
-        return { ...node, average }
-      })
-
-      
-
-      if (obj.mode == "desc") {
-        nodesToSort.sort((a, b) => b.average - a.average)
-      } else if (mode == "asc") {
-        nodesToSort.sort((a, b) => a.average - b.average)
-      }
-
-      const updatedNodes = nodesToSort.map(({ average, ...node }) => node)
-      const updatedSelectionTree = [...otherLevelNodes, ...updatedNodes]
-      console.log("ENTER")
-      console.log(updatedNodes)
-      console.log(updatedSelectionTree)
-
-      commit('UPDATE_SELECTION_TREE', updatedSelectionTree)
-
+    sortSelectionTree({state, commit}, obj){
+        let updatedSelectionTree = [...state.selectionTree];
+        const averageMap = new Map();
+        state.selectionTree.forEach(node => {
+            if (obj.id_list.includes(node.id)) {
+                const seriesNode = state.seriesCollection.find(item => item.id === node.id);
+                const average = seriesNode ? calculateSeriesAverage(seriesNode.seriesData) : 0;
+                averageMap.set(node.id, average);
+            }
+        });
+  
+        updatedSelectionTree = updatedSelectionTree.map(node => {
+            if (obj.id_list.includes(node.id)) {
+                return {...node, average: averageMap.get(node.id)};
+            }
+            return node;
+        });
+    
+        if (obj.mode === "desc") {
+            updatedSelectionTree.sort((a, b) => obj.id_list.includes(a.id) && obj.id_list.includes(b.id) ? b.average - a.average : 0);
+        } else if (obj.mode === "asc") {
+            updatedSelectionTree.sort((a, b) => obj.id_list.includes(a.id) && obj.id_list.includes(b.id) ? a.average - b.average : 0);
+        }
+    
+        updatedSelectionTree = updatedSelectionTree.map(({ average, ...node }) => node);
+    
+        console.log("ENTER");
+        console.log(updatedSelectionTree);
+    
+        commit('UPDATE_SELECTION_TREE', updatedSelectionTree);
     },
-    updateTimeRange({commit, dispatch}, newTimeRange) {
+    updateTimeRange({state, commit, dispatch}, newTimeRange) {
       commit('UPDATE_TIME_RANGE', newTimeRange)
       dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
       dispatch('scatterPlot/getCoordinateCollection',null, {root:true})
@@ -225,7 +230,7 @@ const getters = {
     levels: state => state.levels,
     level_id_list: state => state.level_id_list,
     description: state => state.description,
-    timeRange: state => state.timeRange.PV_Tree,
+    timeRange: state => state.timeRange,
     colorBar: state => state.colorBar,
     groupState: state => state.groupState,
     themeColor: state => state.themeColor

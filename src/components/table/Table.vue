@@ -121,8 +121,8 @@ export default {
                 })
                 heightCollection[align_id] = maxHeight;
             })
-            console.log("CHECK THE NEXT ONE")
-            console.log(heightCollection)
+            // console.log("CHECK THE NEXT ONE")
+            // console.log(heightCollection)
             return heightCollection;
         });
 
