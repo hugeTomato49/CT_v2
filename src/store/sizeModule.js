@@ -1,6 +1,7 @@
 import * as d3 from "d3"
 import { groupData } from "../computation/basicComputation"
 import { TS_Scales, getXScale, getYScale } from "../scale/scale" 
+import axios from "axios"
 
 const state = {
     rowHeight: 0,
@@ -44,27 +45,27 @@ const actions = {
     },
     updateScale({state, commit, rootState}, seriesCollection) {
 
-        // const timeRange = rootState.tree.timeRange
-        // const dataset = rootState.tree.dataset
-        // axios.post('/api/scale', {"timeRange": timeRange, "dataset": dataset}).then((response) => {
-        //     const result = response.data.result
-        //     const x_scale = getXScale(seriesCollection[0], state.cardWidth)
-        //     const y_scale_list = result.map(r => getYScale(r.max, r.min, state.cardHeight))
-        //     commit('UPDATE_X_SCALE', x_scale)
-        //     commit('UPDATE_Y_SCALE', y_scale_list)  
-        // })
+        const timeRange = rootState.tree.timeRange
+        const dataset = rootState.tree.dataset
+        axios.post('/api/scale', {"timeRange": timeRange, "dataset": dataset}).then((response) => {
+            const result = response.data.result
+            const x_scale = getXScale(seriesCollection[0], state.cardWidth)
+            const y_scale_list = result.map(r => getYScale(r.max, r.min, state.cardHeight))
+            commit('UPDATE_X_SCALE', x_scale)
+            commit('UPDATE_Y_SCALE', y_scale_list)  
+        })
 
-        const data_list = groupData(seriesCollection)
-        if(rootState.tree.groupState == true){
-            console.log("check data_list")
-            console.log(data_list)
-        }
+        // const data_list = groupData(seriesCollection)
+        // if(rootState.tree.groupState == true){
+        //     console.log("check data_list")
+        //     console.log(data_list)
+        // }
 
-        const x_scale = TS_Scales(data_list[0], state.cardWidth, state.cardHeight).xScale
-        const y_scale_list = data_list.map(data => TS_Scales(data, state.cardWidth, state.cardHeight).yScale)
+        // const x_scale = TS_Scales(data_list[0], state.cardWidth, state.cardHeight).xScale
+        // const y_scale_list = data_list.map(data => TS_Scales(data, state.cardWidth, state.cardHeight).yScale)
 
-        commit('UPDATE_X_SCALE', x_scale)
-        commit('UPDATE_Y_SCALE', y_scale_list)  
+        // commit('UPDATE_X_SCALE', x_scale)
+        // commit('UPDATE_Y_SCALE', y_scale_list)  
     } 
 
 
