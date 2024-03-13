@@ -52,9 +52,9 @@ export default {
 
     function renderChart(width, height) {
       d3.select(chart.value).selectAll("svg").remove();
-      console.log("width is", width);
-      console.log("height is", height);
-      console.log("flag is", flag.value)
+      // console.log("width is", width);
+      // console.log("height is", height);
+      // console.log("flag is", flag.value)
         const svg = d3
         .select(chart.value)
         .append("svg")
@@ -64,11 +64,11 @@ export default {
         .attr("transform", "translate(-80,0)");
       
       const cluster = d3.cluster().size([height , width * 1.3]);
-      console.log("oringinal tree is", originalTree.value);
+      //console.log("oringinal tree is", originalTree.value);
       const root = d3.hierarchy(convertedTree.value, function (d) {
         return d.children;
       });
-      console.log("root is", root);
+      //console.log("root is", root);
       cluster(root);
 
       svg

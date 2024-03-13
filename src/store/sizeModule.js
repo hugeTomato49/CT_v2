@@ -44,14 +44,25 @@ const actions = {
         commit('UPDATE_CARD_WIDTH', width)
     },
     updateScale({state, commit, rootState}, seriesCollection) {
+        // console.log("check seriesCollection")
+        // console.log(seriesCollection)
 
         const timeRange = rootState.tree.timeRange
         const dataset = rootState.tree.dataset
+
+        const x_scale = getXScale(seriesCollection[0], state.cardWidth)
+        commit('UPDATE_X_SCALE', x_scale)
+
+        if(seriesCollection.length == 1){
+            const max = Math.max(...seriesCollection[0].seriesData.map(item => item.value))
+            const min = Math.min(...seriesCollection[0].seriesData.map(item => item.value))
+            commit('UPDATE_Y_SCALE',[getYScale(max, min, state.cardHeight)]) 
+        }
+
         axios.post('/api/scale', {"timeRange": timeRange, "dataset": dataset}).then((response) => {
             const result = response.data.result
-            const x_scale = getXScale(seriesCollection[0], state.cardWidth)
+
             const y_scale_list = result.map(r => getYScale(r.max, r.min, state.cardHeight))
-            commit('UPDATE_X_SCALE', x_scale)
             commit('UPDATE_Y_SCALE', y_scale_list)  
         })
 
