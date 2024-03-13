@@ -97,15 +97,21 @@ export const PLOT_Scale = (data, width, height) => {
 
 
 export const getXScale = (data, width) => {
+    console.log("check data")
+    console.log(data)
     return d3.scaleTime()
-    .domain(d3.extent(Object.values(data)[0], d => d.Time))
+    .domain(d3.extent(data.seriesData, d => d.Time))
     .range([0, width])
 
 }
 
 
 export const getYScale = (max, min, height) => {
+    console.log("check max")
+    console.log(max)
+    console.log("check min")
+    console.log(min)
     return d3.scaleLinear()
     .domain([min, max])
-    .range([height-2, 5])
+    .range([height-4, 5])
 }
