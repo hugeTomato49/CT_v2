@@ -219,7 +219,10 @@ def getSD():
             with open(Tree_path, 'r') as file:
                 pv_tree_data = json.load(file) 
         result = getSDALL(pv_tree_data, PV_data_folder_path)
-
+        file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, "PV_SD.json")
+        if not os.path.exists(file_path):
+            with open(file_path, 'r') as file:
+                pv_tree_data = json.load(file) 
         return result
 
 # Unfinished
