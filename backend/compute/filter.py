@@ -2,7 +2,7 @@
 @Description: 
 @Author: 
 @Date: 2024-02-27 16:06:23
-@LastEditTime: 2024-03-13 19:10:11
+@LastEditTime: 2024-03-13 20:23:34
 @LastEditors: Nemo
 '''
 import os
@@ -38,12 +38,12 @@ def filterDataByTimeRange(data, timeRange=[]):
 
 def getTSdata(nodeName, folder_path, timeRange=[]):
     if '-' not in nodeName:
-        data_file_path = os.path.join(os.path.dirname(__file__),folder_path, nodeName+'.json')
+        data_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),folder_path, nodeName+'.json')
         with open(data_file_path, 'r') as file:
             data_file = filterDataByTimeRange(json.load(file)['data'], timeRange)
     else:
         data_folder_path = list(nodeName.split("-"))[-2]
-        data_file_path = os.path.join(os.path.dirname(__file__),folder_path, data_folder_path, nodeName+'.json')
+        data_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),folder_path, data_folder_path, nodeName+'.json')
         with open(data_file_path, 'r') as file:
             data_file = filterDataByTimeRange(json.load(file)['data'], timeRange)
     return data_file
