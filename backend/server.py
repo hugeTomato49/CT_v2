@@ -77,6 +77,7 @@ def getSeriesCollection():
                         object['seriesData_copy'] = object['seriesData']
                 else:
                     data_folder_path = list(matching_dict["node_name"].split("-"))[-2]
+                    # 封装以下
                     data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_folder_path, data_file_name)
                     with open(data_file_path, 'r') as file:
                         object['seriesData'] = json.load(file)["data"]

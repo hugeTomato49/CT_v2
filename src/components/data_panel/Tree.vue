@@ -98,6 +98,7 @@ export default {
         })
         .style("fill", "none")
         .attr("stroke", "#ccc")
+        .attr("stroke-width", 0.4)
         .attr("id", (d) => "treePath-" + d.parent.data.id+ "-" + d.data.id);// 设置每个 path 的 ID，为父节点-子节点，例如 "treePath-0-1",
 
       svg
@@ -110,8 +111,8 @@ export default {
         })
         .append("circle")
         .attr("r", 1.5)
-        .style("fill", "#4B99D0")
-        .attr("stroke", "black")
+        .style("fill", "#DFDFDF")
+        .attr("stroke", "none")
         .style("stroke-width", 0.1)
         .attr("id", (d) => "treeCircle-" + d.data.id); // 设置每个 circle 的 ID，例如 "treeCircle-0",
     }

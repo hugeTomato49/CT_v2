@@ -75,6 +75,7 @@ const actions = {
           }
         })
         commit("UPDATE_SERIES_COLLECTION", newSeriesCollection)
+        // if(state.groupState == false && newSeriesCollection.length == 1)
         if(state.groupState == false) {
           dispatch('size/updateScale', newSeriesCollection, {root : true})
         } 
@@ -216,7 +217,6 @@ const actions = {
         const {plotX, plotY} = addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id)
         commit('scatterPlot/UPDATE_PLOT_X_SCALE', plotX, { root: true }) //plot_x_scale
         commit('scatterPlot/UPDATE_PLOT_Y_SCALE', plotY, { root: true }) //plot_y_scale
-        //dispatch("size/updateScale", state.seriesCollection, {root:true})
       })
     }
     
