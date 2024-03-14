@@ -11,7 +11,7 @@
                         <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm"/>
                     </div>
                 </div>
-                <div class="w-full h-70px flex flex-row">
+                <div class="w-full h-50px flex flex-row">
                     <div class="w-1/7 h-full p-0 flex flex-row items-center justify-center">
                         <div class="w-full flex flex-col " :style="{ 'color': themeColor }">
                             <div class="meta">Converter1</div>
@@ -79,7 +79,7 @@ export default {
                 xScale.value = d3.scaleTime().domain(store.getters["size/xScale"].domain()).range([5, width.value-5])
             }
             if(store.getters["size/yScale"].length > 0){
-                yScale.value = d3.scaleLinear().domain(store.getters["size/yScale"][props.level-1].domain()).range([height.value-5, 5])
+                yScale.value = d3.scaleLinear().domain(store.getters["size/yScale"][props.level-1].domain()).range([height.value-5, 12])
                 console.log("check scale")
                 console.log(yScale.value(0))
             }
@@ -120,7 +120,7 @@ export default {
 }
 
 .meta {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;

@@ -11,11 +11,11 @@
                         <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm"/>
                     </div>
                 </div>
-                <div class="w-full max-h-210px overflow overflow-scroll">
+                <div class="w-full max-h-200px overflow overflow-scroll">
                     <div 
                     v-for="(id,index) in seriesData_list.map(series => series.id)"
                     :key="id"
-                    class="w-full h-70px flex flex-row"
+                    class="w-full h-50px flex flex-row"
                     >
                         <div class="w-1/7 h-full p-0 flex flex-row items-center justify-center">
                             <div class="w-full flex flex-col " :style="{ 'color': themeColor }">
@@ -62,7 +62,7 @@ export default {
     setup(props) {
         const titleContainer = ref(null)
         const width = ref(0)
-        const height = ref(70)
+        const height = ref(50)
 
         const xScale = ref(null)
         const yScale_list = ref([])
@@ -110,7 +110,7 @@ export default {
                 // console.log(xScale.value(timeRange[1]))    
             }
             if(store.getters["size/yScale"].length > 0){
-                yScale_list.value = props.level_list.map(level => d3.scaleLinear().domain(store.getters["size/yScale"][level-1].domain()).range([height.value-5, 5]))
+                yScale_list.value = props.level_list.map(level => d3.scaleLinear().domain(store.getters["size/yScale"][level-1].domain()).range([height.value-5, 12]))
                 // console.log("check yScale")
                 // console.log(yScale_list.value[0](0))
 
