@@ -8,7 +8,7 @@
                     <div class="flex flex-row">
                         <font-awesome-icon :icon="['fas', 'magnifying-glass']" :style="{color: themeColor}" class="mr-2" size="sm"/>
                         <font-awesome-icon :icon="['fas', 'gear']" :style="{color: themeColor}" class="mr-2" size="sm"/>
-                        <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm"/>
+                        <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm" @click="deletePathEntity"/>
                     </div>
                 </div>
                 <div class="w-full max-h-150px overflow overflow-scroll">
@@ -52,13 +52,13 @@
 
 <script>
 import { useStore } from 'vuex'
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch, watchEffect } from 'vue'
 import { cloneDeep } from 'lodash'
 import { generateSelectedPath } from '../../generator/generator'
 import * as d3 from "d3"
 export default {
     name: 'PathCard',
-    props: ['id_list', 'level_list', 'related'],
+    props: ['id_list', 'level_list', 'related', 'entityID'],
     setup(props) {
         const titleContainer = ref(null)
         const width = ref(0)
@@ -74,6 +74,11 @@ export default {
         const levels = computed(() => store.getters["tree/levels"])
         const description = computed(() => store.getters["tree/description"])
         const timeRange = computed(() => store.getters["tree/timeRange"])
+
+        const deletePathEntity = () => {
+            console.log("delete is ", props.entityID)
+            store.dispatch('selection/deleteEntity', props.entityID);
+        };
 
         watch(xScale, (newValue) => {
             if (newValue !== null) {
@@ -126,7 +131,8 @@ export default {
             yScale_list,
             seriesData_list,
             generateSelectedPath,
-            timeRange
+            timeRange,
+            deletePathEntity
 
         }
 
