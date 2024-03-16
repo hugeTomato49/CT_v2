@@ -2,7 +2,7 @@
 @Description: 
 @Author: 
 @Date: 2024-03-13 19:51:25
-@LastEditTime: 2024-03-13 21:25:48
+@LastEditTime: 2024-03-14 21:04:19
 @LastEditors: Nemo
 '''
 from compute.TSfuncCal import GetMax, GetMin
@@ -23,7 +23,7 @@ def getBoundary(pv_tree_data, folder_path, timeRange=[]):
         else:
             if node_max > level_max[node['level']-1]:
                 level_max[node['level']-1] = node_max
-            if node_min > level_min[node['level']-1]:
+            if node_min < level_min[node['level']-1]:
                 level_min[node['level']-1] = node_min
     # print(level_max)
     # print(level_min)
