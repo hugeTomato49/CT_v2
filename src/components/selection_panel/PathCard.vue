@@ -6,9 +6,9 @@
                     <div class="text-sm cardTitle" :style="{ 'color': themeColor }"> Path </div>
                     <div class="flex-1"></div>
                     <div class="flex flex-row">
-                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" :style="{color: themeColor}" class="mr-2" size="sm"/>
-                        <font-awesome-icon :icon="['fas', 'gear']" :style="{color: themeColor}" class="mr-2" size="sm"/>
-                        <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm" @click="deletePathEntity"/>
+                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" :style="{color: themeColor}" class="mr-2 cursor-pointer" size="sm"/>
+                        <font-awesome-icon :icon="['fas', 'gear']" :style="{color: themeColor}" class="mr-2 cursor-pointer" size="sm"/>
+                        <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2 cursor-pointer" size="sm" @click="deletePathEntity"/>
                     </div>
                 </div>
                 <div class="w-full max-h-150px overflow overflow-scroll">
@@ -20,7 +20,8 @@
                         <div class="w-1/7 h-full p-0 flex flex-row items-center justify-center">
                             <div class="w-full flex flex-col " :style="{ 'color': themeColor }">
                                 <div class="meta">Converter1</div>
-                                <div class="description text-xs">{{ description[level_list[index] - 1] }}</div>
+                                <div><font-awesome-icon :icon="['fas', 'trash-can']" size="xs" style="color:#f87171"/> </div>
+                                
                             </div>
                         </div>
                         <div class="w-11/14 h-full  flex flex-row justify-center ">
@@ -72,7 +73,7 @@ export default {
         const themeColor = computed(() => props.related ? '#FFFFFF' : store.getters["tree/themeColor"])
 
         const levels = computed(() => store.getters["tree/levels"])
-        const description = computed(() => store.getters["tree/description"])
+        const selectionTree = computed(() => store.getters["tree/selectionTree"])
         const timeRange = computed(() => store.getters["tree/timeRange"])
 
         const deletePathEntity = () => {
@@ -125,8 +126,6 @@ export default {
 
         return {
             themeColor,
-            levels,
-            description,
             xScale,
             yScale_list,
             seriesData_list,

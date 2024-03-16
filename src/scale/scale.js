@@ -100,7 +100,7 @@ export const getXScale = (data, width) => {
     console.log("check data")
     console.log(data)
     return d3.scaleTime()
-    .domain(d3.extent(data.seriesData, d => d.Time))
+    .domain(d3.extent(data, d => d.Time))
     .range([0, width])
 
 }

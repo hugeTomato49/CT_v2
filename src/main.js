@@ -23,7 +23,9 @@ import {
     faArrowUpWideShort, 
     faArrowDownWideShort, 
     faArrowDownShortWide,
-    faToggleOn 
+    faToggleOn, 
+    faXmark,
+    faTrashCan
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -36,18 +38,21 @@ library.add(
     faMagnifyingGlass, 
     faGear, 
     faCircleXmark, 
+    faXmark,
     faArrowUpWideShort, 
     faArrowDownWideShort, 
     faArrowDownShortWide,
-    faToggleOn
+    faToggleOn,
+    faTrashCan
 )
 
 const app = createApp(App)
 app
 .use(PerfectScrollbar)
 .use(store)
+.use(Antd)
 .component('font-awesome-icon', FontAwesomeIcon)
 .mount("#app")
-.use(Antd).mount('#app');
+
 
 

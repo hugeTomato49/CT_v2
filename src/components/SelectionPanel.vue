@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showState" class="w-full h-full">
+  <div class="w-full h-full">
     <NodeCard
       v-for="entity in nodeEntities"
       :key="entity.id"
@@ -24,7 +24,6 @@
       :related="false"
     />
   </div>
-  <ConfigureButton buttonName="show" @click="toggleShowState()" />
 </template>
 
 <script>
@@ -45,7 +44,6 @@ export default {
   },
   setup() {
     const store = useStore();
-    const showState = ref(false);
     const entityCollection = computed(
       () => store.getters["selection/entityCollection"]
     );
@@ -59,22 +57,14 @@ export default {
       return entityCollection.value.filter((entity) => entity.type === "Tree");
     });
 
-    const toggleShowState = () => {
-      showState.value = !showState.value;
-    };
 
-    const id_list = ref(["2", "30"]);
-    const level_list = ref(["2", "3"]);
-    const tree_id_list = ref([1, 5, 7, 8, 9]);
-    const tree_level_list = ref([1, 2, 2, 2, 2]);
+
+    // const id_list = ref(["2", "30"]);
+    // const level_list = ref(["2", "3"]);
+    // const tree_id_list = ref([1, 5, 7, 8, 9]);
+    // const tree_level_list = ref([1, 2, 2, 2, 2]);
 
     return {
-      showState,
-      toggleShowState,
-      id_list,
-      level_list,
-      tree_id_list,
-      tree_level_list,
       nodeEntities,
       pathEntities,
       treeEntities,
