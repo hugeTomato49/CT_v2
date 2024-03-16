@@ -5,6 +5,7 @@ import scrollModule from "./scrollModule"
 import scatterPlotModule from "./scatterPlotModule"
 import alignModule from "./alignModule"
 import selectionModule from "./selectionModule"
+import timeModule from "./timeModule"
 
 const store = createStore({
     modules: {
@@ -13,7 +14,8 @@ const store = createStore({
         scroll: scrollModule,
         scatterPlot: scatterPlotModule,
         align: alignModule,
-        selection: selectionModule
+        selection: selectionModule,
+        time: timeModule
     }
 })
 

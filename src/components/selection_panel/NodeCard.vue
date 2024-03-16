@@ -19,7 +19,6 @@
                     <div class="w-1/7 h-full p-0 flex flex-row items-center justify-center">
                         <div class="w-full flex flex-col " :style="{ 'color': themeColor }">
                             <div class="meta">Converter1</div>
-                            <div class="description text-xs">{{ description[level - 1] }}</div>
                         </div>
                     </div>
                     <div class="w-11/14 h-full  flex flex-row justify-center ">

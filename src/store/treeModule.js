@@ -57,6 +57,9 @@ const actions = {
             // console.log("CHECK")
             // console.log(response.data.PV_Tree)
             dispatch('addToSelectionTree',cloneDeep(state.originalTree.slice(0,1)))
+            dispatch("time/updateSD", response.data.SD, {root: true})
+            console.log("check SD")
+            console.log(response.data.SD)
         })
     },
     updateSelectionTree({state, commit, dispatch}, currentSelectionTree){

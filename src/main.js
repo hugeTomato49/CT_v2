@@ -23,7 +23,9 @@ import {
     faArrowUpWideShort, 
     faArrowDownWideShort, 
     faArrowDownShortWide,
-    faToggleOn 
+    faToggleOn, 
+    faXmark,
+    faTrashCan
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -36,10 +38,12 @@ library.add(
     faMagnifyingGlass, 
     faGear, 
     faCircleXmark, 
+    faXmark,
     faArrowUpWideShort, 
     faArrowDownWideShort, 
     faArrowDownShortWide,
-    faToggleOn
+    faToggleOn,
+    faTrashCan
 )
 
 const app = createApp(App)
