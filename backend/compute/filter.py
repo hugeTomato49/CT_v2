@@ -2,12 +2,13 @@
 @Description: 
 @Author: 
 @Date: 2024-02-27 16:06:23
-@LastEditTime: 2024-03-13 20:23:34
+@LastEditTime: 2024-03-16 17:15:41
 @LastEditors: Nemo
 '''
 import os
 import json
 from datetime import datetime, timedelta
+from compute.TSfuncCal import Normalization
 
 def filterDataByTimeRange(data, timeRange=[]):
     # default timeRange return original data
@@ -47,3 +48,12 @@ def getTSdata(nodeName, folder_path, timeRange=[]):
         with open(data_file_path, 'r') as file:
             data_file = filterDataByTimeRange(json.load(file)['data'], timeRange)
     return data_file
+
+def getNormalListData(pv_tree_data, folder_path, boundarys, nodelist, timeRange=[]):
+    normalized_children_data = []
+    for child_id in nodelist:
+        child_node = pv_tree_data[child_id-1]
+        child_data = {'data':getTSdata(child_node['node_name'], folder_path, timeRange)}
+        normalized_child_data = Normalization(child_data, boundarys[child_node['level']-1]['max'], boundarys[child_node['level']-1]['min'])
+        normalized_children_data.append(normalized_child_data)
+    return normalized_children_data

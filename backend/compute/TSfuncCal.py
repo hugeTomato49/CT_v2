@@ -2,7 +2,7 @@
 @Description: a file define the pearson correlation coefficient function.
 @Author: Nemo
 @Date: 2024-01-31 15:19:43
-@LastEditTime: 2024-03-13 19:51:15
+@LastEditTime: 2024-03-16 17:16:25
 @LastEditors: Nemo
 '''
 import pandas as pd
@@ -76,3 +76,9 @@ def GetMin(TS):
     _, TS_datalist = TSjson_exp(TS)
     TS_datalist = TS_datalist[:, 1]
     return TS_datalist.min()
+
+def Normalization(TS, level_max, level_min):
+    _, TS_datalist = TSjson_exp(TS)
+    TS_datalist = TS_datalist[:, 1]
+    TS_datalist = (TS_datalist-level_min)/(level_max-level_min)
+    return TS_datalist
