@@ -4,6 +4,7 @@ import sizeModule from "./sizeModule"
 import scrollModule from "./scrollModule"
 import scatterPlotModule from "./scatterPlotModule"
 import alignModule from "./alignModule"
+import selectionModule from "./selectionModule"
 
 const store = createStore({
     modules: {
@@ -11,7 +12,8 @@ const store = createStore({
         size: sizeModule,
         scroll: scrollModule,
         scatterPlot: scatterPlotModule,
-        align: alignModule
+        align: alignModule,
+        selection: selectionModule
     }
 })
 

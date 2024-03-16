@@ -1,37 +1,44 @@
 <template>
-    <div 
-    :class="['w-full p-0.8 hover:opacity-100', {'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list)}, {'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list)}]" 
-    :id="'card' + node_id"
-    :style="{ height: rowHeight + 'px' }" 
-    @mouseover="handleMouseOver(node_id)"
-    @mouseout="handleMouseOut(node_id)"
-    @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
-    @dblclick="filterCurrentCard(node_id)"
-    >
-        <div 
-        :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]" 
-        id="cardContainer">
-            <svg class="w-full h-full bg-stone-100">
-                <text x="5" y="12" class="node-name text-ms">{{ node_name }}</text>
-                <g ref="brushRef"></g>
-                <path
-                :stroke="colorBar[level-1]"
-                fill="none"
-                stroke-width="2"
-                :d="generatePath(seriesData,xScale,yScale)"
-                >
-                </path>
-            </svg>
+    <a-dropdown :trigger="['contextmenu']">
+        <div :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
+            @mouseout="handleMouseOut(node_id)"
+            @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
+            @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
+            <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+                id="cardContainer">
+                <svg class="w-full h-full bg-stone-100">
+                    <text x="5" y="12" class="node-name text-ms">{{ node_name }}</text>
+                    <g ref="brushRef"></g>
+                    <path :stroke="colorBar[level - 1]" fill="none" stroke-width="2"
+                        :d="generatePath(seriesData, xScale, yScale)">
+                    </path>
+                </svg>
+            </div>
         </div>
-    </div>
+        <template #overlay>
+            <div>
+                <a-menu class="bg-black">
+                    <a-menu-item key="1" @click="onClickNode">Node</a-menu-item>
+                    <a-menu-item key="2" @click="onClickPath">Path</a-menu-item>
+                    <a-menu-item key="3" @click="onClickLayer">Layer</a-menu-item>
+                    <a-menu-item key="3" @click="onClickTree">Tree</a-menu-item>
+                </a-menu>
+            </div>
+        </template>
+    </a-dropdown>
+
 </template>
-    
+
 
 <script>
 import { useStore } from 'vuex';
 import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
+import { Dropdown, Menu } from 'ant-design-vue'
+import { DownOutlined } from '@ant-design/icons-vue'
 import { generatePath } from "../../generator/generator"
+import { findPath, findLevelList, buildSubtree, getSubtreeIds } from "../../select/entitySelection"
 import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
 import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
@@ -39,18 +46,24 @@ import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEm
 export default {
     name: 'TSCard',
     props: ['seriesData', 'level', 'node_id', 'node_name', 'groupedNode'],
+    components: {
+        'a-dropdown': Dropdown,
+        'a-menu': Menu,
+        'a-menu-item': Menu.Item,
+        DownOutlined,
+    },
     setup(props) {
         const store = useStore()
         const selectionTree = computed(() => store.getters["tree/selectionTree"])
-        const level_id_list = computed(()=> store.getters["tree/level_id_list"])
-        const colorBar = computed(()=>store.getters["tree/colorBar"])
-        const rowHeight = computed(()=>store.getters['size/rowHeight'])
-        const cardHeight = computed(()=>store.getters['size/cardHeight'])
-        const cardWidth = computed(()=>store.getters['size/cardWidth'])
+        const level_id_list = computed(() => store.getters["tree/level_id_list"])
+        const colorBar = computed(() => store.getters["tree/colorBar"])
+        const rowHeight = computed(() => store.getters['size/rowHeight'])
+        const cardHeight = computed(() => store.getters['size/cardHeight'])
+        const cardWidth = computed(() => store.getters['size/cardWidth'])
 
 
-        const xScale = computed(()=>store.getters['size/xScale'])
-        const yScale = computed(()=>store.getters['size/yScale'][props.level-1])
+        const xScale = computed(() => store.getters['size/xScale'])
+        const yScale = computed(() => store.getters['size/yScale'][props.level - 1])
 
         const originalTree = computed(() => store.getters["tree/originalTree"])
         const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"])
@@ -63,8 +76,8 @@ export default {
         const brushRef = ref(null)
 
         const setupBrush = () => {
-            const brush = d3.brushX() 
-                .extent([[0, 0], [cardWidth.value, cardHeight.value]]) 
+            const brush = d3.brushX()
+                .extent([[0, 0], [cardWidth.value, cardHeight.value]])
                 .on('end', brushed)
             d3.select(brushRef.value).call(brush);
 
@@ -102,33 +115,71 @@ export default {
         }
 
         const handleMouseOver = (id) => {
-            if(ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+            if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
                 deHighlightEmphasizeCards()
             }
             const id_list = findChildrenIds(id, originalTree.value)
             highlightNodes(id_list)
-            store.dispatch('scatterPlot/updateBezierPaths',      
+            store.dispatch('scatterPlot/updateBezierPaths',
                 highlightLinks(
-                id,
-                originalTree.value,
-                coordinateCollection.value,
-                plot_X_Scale.value,
-                plot_Y_Scale.value,
-                columnWidth.value
-            ))
+                    id,
+                    originalTree.value,
+                    coordinateCollection.value,
+                    plot_X_Scale.value,
+                    plot_Y_Scale.value,
+                    columnWidth.value
+                ))
 
         };
 
         const handleMouseOut = (id) => {
-            if(ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)){
+            if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
                 highlightEmphaizeCards()
             }
             const id_list = findChildrenIds(id, originalTree.value)
             deHighlightNodes(id_list)
-            store.dispatch('scatterPlot/updateBezierPaths',[])
+            store.dispatch('scatterPlot/updateBezierPaths', [])
         };
-        
-        onMounted(()=>{
+
+        const onClickNode = () => {
+            console.log(`Click on Node `, props.node_id);
+            store.dispatch("selection/addEntity", { type: 'Node', id: props.node_id, level: props.level });
+        }
+
+        const onClickPath = () => {
+            console.log(`Click on Path`);
+            const paths = findPath(props.node_id, selectionTree.value);
+            const levelList = paths.length > 0 ? findLevelList(selectionTree.value, paths[0]) : [];
+            paths.forEach((path) => {
+                const pathEntity = {
+                    type: 'Path', // 用于识别实体类型
+                    path, // 当前路径
+                    levelList, // 与此路径相关的级别列表
+                };
+                // 将路径实体添加到 Vuex store
+                store.dispatch('selection/addEntity', pathEntity);
+            });
+        }
+
+        const onClickLayer = () => {
+            console.log(`Click on Layer`);
+        }
+
+        const onClickTree = () => {
+            console.log(`Click on Tree`);
+            const subtree = buildSubtree(selectionTree.value, props.node_id); // 构建子树
+            const subtreeIds = getSubtreeIds(subtree); // 获取子树的所有节点ID列表
+            const levelList = findLevelList(selectionTree.value, subtreeIds);
+            const treeEntity = {
+                type: 'Tree', // 用于识别实体类型
+                subtreeIds, // 当前路径
+                levelList, // 与此路径相关的级别列表
+            };
+            // 将路径实体添加到 Vuex store
+            store.dispatch('selection/addEntity', treeEntity);
+        }
+
+        onMounted(() => {
             cardContainer.value = document.querySelector("#cardContainer")
             store.dispatch('size/updateCardWidth', cardContainer.value?.offsetWidth)
             store.dispatch('size/updateCardHeight', cardContainer.value?.offsetHeight)
@@ -150,7 +201,11 @@ export default {
             level_id_list,
             filterCurrentCard,
             handleMouseOver,
-            handleMouseOut
+            handleMouseOut,
+            onClickNode,
+            onClickPath,
+            onClickLayer,
+            onClickTree
         }
     }
 }
@@ -172,19 +227,14 @@ export default {
 }
 
 .node-name {
-    font-size: 6px; 
-    fill: #4B99D0; 
+    font-size: 6px;
+    fill: #4B99D0;
     font-family: "Inter", sans-serif;
     font-optical-sizing: auto;
     font-weight: 600;
     font-style: "semibold italic";
     font-variation-settings:
-    "slnt" 0;
+        "slnt" 0;
 
 }
-
-
-
 </style>
-
-

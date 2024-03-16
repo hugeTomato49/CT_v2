@@ -29,8 +29,8 @@ export const generateSelectedPath = (data,xScale, yScale) => {
         d.Time = new Date(d.Time)
     })
 
-    console.log("check data in function")
-    console.log(data)
+    // console.log("check data in function")
+    // console.log(data)
 
 
 
