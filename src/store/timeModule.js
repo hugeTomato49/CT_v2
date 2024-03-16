@@ -11,6 +11,8 @@ const mutations = {
 const actions = {
     updateSD({state}, SD_result){
         state.SD = SD_result
+        // console.log("update")
+        // console.log(state.SD)
     }
 
 }
