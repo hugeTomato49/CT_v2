@@ -50,7 +50,7 @@ const actions = {
         const timeRange = rootState.tree.timeRange
         const dataset = rootState.tree.dataset
 
-        const x_scale = getXScale(seriesCollection[0], state.cardWidth)
+        const x_scale = getXScale(seriesCollection[0].seriesData, state.cardWidth)
         commit('UPDATE_X_SCALE', x_scale)
 
         if(seriesCollection.length == 1){

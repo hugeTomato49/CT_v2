@@ -61,7 +61,7 @@ export const highlightLink = (id) => {
 export const highlightEmphasize = () => {
     const emphasizeLinks = document.getElementsByClassName("emphasizeLink")
     Array.from(emphasizeLinks).forEach(link => {
-        link.style.stroke = "rgba(243,194,18,0.8)"
+        link.style.stroke = "rgba(243,194,18,1)"
     })
 
     const emphasizeNodes = document.getElementsByClassName("emphasizeNode")
@@ -83,13 +83,13 @@ export const highlightEmphasize = () => {
 export const deHightLigtEmphasize = () => {
     const emphasizeLinks = document.getElementsByClassName("emphasizeLink")
     Array.from(emphasizeLinks).forEach(link => {
-        link.style.stroke = "rgba(243,194,18, 0.3)"
+        link.style.stroke = "rgba(243,194,18, 0.2)"
     })
 
     const emphasizeNodes = document.getElementsByClassName("emphasizeNode")
     Array.from(emphasizeNodes).forEach(node => {
         node.style.fillOpacity = 0.6
-        node.style.stroke ="rgba(245, 245, 245,0.4)"
+        node.style.stroke ="rgba(245, 245, 245,0.2)"
     })
 
     const foldNodes = document.getElementsByClassName("foldNode")

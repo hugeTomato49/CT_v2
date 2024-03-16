@@ -6,9 +6,9 @@
                     <div class="text-sm cardTitle" :style="{ 'color': themeColor }"> Path </div>
                     <div class="flex-1"></div>
                     <div class="flex flex-row">
-                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" :style="{color: themeColor}" class="mr-2" size="sm"/>
-                        <font-awesome-icon :icon="['fas', 'gear']" :style="{color: themeColor}" class="mr-2" size="sm"/>
-                        <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2" size="sm" @click="deletePathEntity"/>
+                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" :style="{color: themeColor}" class="mr-2 cursor-pointer" size="sm"/>
+                        <font-awesome-icon :icon="['fas', 'gear']" :style="{color: themeColor}" class="mr-2 cursor-pointer" size="sm"/>
+                        <font-awesome-icon :icon="['fas', 'circle-xmark']" :style="{color: themeColor}" class="mr-2 cursor-pointer" size="sm" @click="deletePathEntity"/>
                     </div>
                 </div>
                 <div class="w-full max-h-150px overflow overflow-scroll">

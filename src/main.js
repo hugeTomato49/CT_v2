@@ -46,8 +46,9 @@ const app = createApp(App)
 app
 .use(PerfectScrollbar)
 .use(store)
+.use(Antd)
 .component('font-awesome-icon', FontAwesomeIcon)
 .mount("#app")
-.use(Antd).mount('#app');
+
 
 
