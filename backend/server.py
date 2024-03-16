@@ -28,8 +28,11 @@ def getPVTree():
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
             pv_tree_data = json.load(file) 
-        # print(pv_tree_data)
+        
         SD_result = getSDALL(pv_tree_data, PV_data_folder_path)
+        SD_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, "PV_SD.json")
+        with open(SD_file_path, 'w') as json_file:
+            json.dump(SD_result, json_file)
         return {"PV_Tree": pv_tree_data, "SD": SD_result}
     else:
         return make_response(jsonify({"error": "File not found"}), 404)
@@ -215,16 +218,11 @@ def getSD():
     dataset = data.get("dataset", "")
 
     if dataset == 'PV':
-        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
-        if os.path.exists(Tree_path):
-            with open(Tree_path, 'r') as file:
-                pv_tree_data = json.load(file) 
-        result = getSDALL(pv_tree_data, PV_data_folder_path)
-        file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, "PV_SD.json")
-        if not os.path.exists(file_path):
-            with open(file_path, 'r') as file:
-                pv_tree_data = json.load(file) 
-        return result
+        SD_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, "PV_SD.json")
+        if os.path.exists(SD_file_path):
+            with open(SD_file_path, 'r') as file:
+                SD_result = json.load(file) 
+        return SD_result
 
 # Unfinished
 # @app.route('/addLayer', methods=["POST"])
