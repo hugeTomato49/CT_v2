@@ -29,7 +29,8 @@ def getPVTree():
         with open(file_path, 'r') as file:
             pv_tree_data = json.load(file) 
         # print(pv_tree_data)
-        return {"PV_Tree": pv_tree_data}
+        SD_result = getSDALL(pv_tree_data, PV_data_folder_path)
+        return {"PV_Tree": pv_tree_data, "SD": SD_result}
     else:
         return make_response(jsonify({"error": "File not found"}), 404)
 
@@ -248,7 +249,7 @@ def getSD():
 #         best_tree_result = {"result":best_tree}
 #         return best_tree_result
 
-# # print(getMatchedTree())
+# print(getMatchedTree())
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)
