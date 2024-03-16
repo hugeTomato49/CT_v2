@@ -224,35 +224,35 @@ def getSD():
                 SD_result = json.load(file) 
         return SD_result
 
-@app.route('', methods=["POST"])    # get interface
-def getRelateTree():
-    data = request.get_json()
-    dataset = data.get("dataset", "")
-    target_tree_id = data.get("??") # get data
-    timeRange = data.get("timeRange",[])
+# @app.route('', methods=["POST"])    # get interface
+# def getRelateTree():
+#     data = request.get_json()
+#     dataset = data.get("dataset", "")
+#     target_tree_id = data.get("??") # get data
+#     timeRange = data.get("timeRange",[])
 
-    if dataset == "PV":
-        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
-        if os.path.exists(Tree_path):
-            with open(Tree_path, 'r') as file:
-                pv_tree_data = json.load(file) 
-        relate_trees = getBestTree(pv_tree_data, PV_data_folder_path, target_tree_id, timeRange)
-        return relate_trees
+#     if dataset == "PV":
+#         Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+#         if os.path.exists(Tree_path):
+#             with open(Tree_path, 'r') as file:
+#                 pv_tree_data = json.load(file) 
+#         relate_trees = getBestTree(pv_tree_data, PV_data_folder_path, target_tree_id, timeRange)
+#         return relate_trees
     
-@app.route('', methods=["POST"])    # get interface
-def getRelatePath():
-    data = request.get_json()
-    dataset = data.get("dataset", "")
-    target_path_id = data.get("??", []) # get data
-    timeRange = data.get("timeRange",[])
+# @app.route('', methods=["POST"])    # get interface
+# def getRelatePath():
+#     data = request.get_json()
+#     dataset = data.get("dataset", "")
+#     target_path_id = data.get("??", []) # get data
+#     timeRange = data.get("timeRange",[])
 
-    if dataset == "PV":
-        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
-        if os.path.exists(Tree_path):
-            with open(Tree_path, 'r') as file:
-                pv_tree_data = json.load(file) 
-        relate_trees = getBestPath(pv_tree_data, PV_data_folder_path, target_path_id, timeRange)
-        return relate_trees
+#     if dataset == "PV":
+#         Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+#         if os.path.exists(Tree_path):
+#             with open(Tree_path, 'r') as file:
+#                 pv_tree_data = json.load(file) 
+#         relate_trees = getBestPath(pv_tree_data, PV_data_folder_path, target_path_id, timeRange)
+#         return relate_trees
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)
