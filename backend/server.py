@@ -6,8 +6,8 @@ from compute.filter import filterDataByTimeRange
 from compute.dr import mds_to2d, t_sne_to2d
 from compute.groupTree import constructGT, getGroupedPoints
 from compute.basic import getAverageSeriesData
-from compute.getBestTree import getBT
 from compute.comprehensive import getBoundary, getSDALL
+from compute.relate import getBestPath, getBestTree
 
 app = Flask(__name__)
 
@@ -224,30 +224,35 @@ def getSD():
                 SD_result = json.load(file) 
         return SD_result
 
-# Unfinished
-# @app.route('/addLayer', methods=["POST"])
-# def getMatchedTree():
-    # data = request.get_json()
-    # dataset = data.get("dataset","")
-    # target_id = data.get("target_id",[])
-    # timeRange = data.get("timeRange",[])
+@app.route('', methods=["POST"])    # get interface
+def getRelateTree():
+    data = request.get_json()
+    dataset = data.get("dataset", "")
+    target_tree_id = data.get("??") # get data
+    timeRange = data.get("timeRange",[])
 
-#     # for test
-#     dataset = "PV"
-#     target_id = 2
-#     timeRange = ["2022-12-15T00:00:00", "2022-12-28T23:59:59"]
+    if dataset == "PV":
+        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+        if os.path.exists(Tree_path):
+            with open(Tree_path, 'r') as file:
+                pv_tree_data = json.load(file) 
+        relate_trees = getBestTree(pv_tree_data, PV_data_folder_path, target_tree_id, timeRange)
+        return relate_trees
+    
+@app.route('', methods=["POST"])    # get interface
+def getRelatePath():
+    data = request.get_json()
+    dataset = data.get("dataset", "")
+    target_path_id = data.get("??", []) # get data
+    timeRange = data.get("timeRange",[])
 
-#     if dataset == 'PV':
-#         Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
-#         if os.path.exists(Tree_path):
-#             with open(Tree_path, 'r') as file:
-#                 pv_tree_data = json.load(file)
-#         folder_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path)
-#         best_tree = getBT(timeRange, pv_tree_data, target_id, folder_path)
-#         best_tree_result = {"result":best_tree}
-#         return best_tree_result
-
-# print(getMatchedTree())
+    if dataset == "PV":
+        Tree_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, PV_tree_file_name)
+        if os.path.exists(Tree_path):
+            with open(Tree_path, 'r') as file:
+                pv_tree_data = json.load(file) 
+        relate_trees = getBestPath(pv_tree_data, PV_data_folder_path, target_path_id, timeRange)
+        return relate_trees
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)
