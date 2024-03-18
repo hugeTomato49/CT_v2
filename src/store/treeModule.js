@@ -40,6 +40,7 @@ const mutations = {
       // console.log("check timeRange")
       // console.log(payload)
       state.timeRange = payload 
+
     },
     UPDATE_LEVEL_ID_LIST(state, payload) {
       state.level_id_list = payload
@@ -116,6 +117,7 @@ const actions = {
         commit('UPDATE_SELECTION_TREE', updatedSelectionTree);
     },
     updateTimeRange({state, commit, dispatch}, newTimeRange) {
+      newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
       commit('UPDATE_TIME_RANGE', newTimeRange)
       dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
       dispatch('scatterPlot/getCoordinateCollection',null, {root:true})
