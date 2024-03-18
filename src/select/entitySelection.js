@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export const findPath = (targetId, selectionTree) => {
     // 辅助函数，通过ID获取节点
     const getNodeById = (id) => selectionTree.find(node => node.id === id);
@@ -76,9 +75,4 @@ export const getSubtreeIds= (subtree) => {
 
     traverse(subtree); // 开始遍历子树
     return ids;
-=======
-export const findSiblings = (id, selectionTree) => {
-    
-    
->>>>>>> 659dd1a (-)
 }

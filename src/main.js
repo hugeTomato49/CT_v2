@@ -25,7 +25,8 @@ import {
     faArrowDownShortWide,
     faToggleOn, 
     faXmark,
-    faTrashCan
+    faTrashCan,
+    faDrawPolygon
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -43,7 +44,8 @@ library.add(
     faArrowDownWideShort, 
     faArrowDownShortWide,
     faToggleOn,
-    faTrashCan
+    faTrashCan,
+    faDrawPolygon
 )
 
 const app = createApp(App)
