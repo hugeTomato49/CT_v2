@@ -56,10 +56,6 @@
         <div class="w-full h-full flex flex-row" id="plotContainer">
           <div class="h-full" :style="{ width: dynamicWidth + 'px' }">
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
-              <g>
-              </g>
-              <g>
-              </g>
               <path
                 v-for="pathObj in selectNodePaths"
                 :key="pathObj.key"

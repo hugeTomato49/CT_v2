@@ -19,8 +19,8 @@
                     >
                         <div class="w-1/7 h-full p-0 flex flex-row items-center justify-center">
                             <div class="w-full flex flex-col " :style="{ 'color': themeColor }">
-                                <div class="meta">Converter1</div>
-                                <div><font-awesome-icon :icon="['fas', 'trash-can']" size="xs" style="color:#f87171"/> </div>
+                                <div class="meta">{{ getCategoryBySeriesId(id) }}</div>
+                                <div @click="deleteTree(id)"><font-awesome-icon :icon="['fas', 'trash-can']" size="xs" style="color:#f87171"/> </div>
                             </div>
                         </div>
                         <div class="w-11/14 h-full  flex flex-row justify-center ">
@@ -78,23 +78,42 @@ export default {
         const deleteTreeEntity = () => {
             store.dispatch('selection/deleteEntity', props.entityID);
         };
+        const deleteTree = (id) => {
+            const deleteItem = { entityID: props.entityID, id: id }
+            console.log("delete id is", deleteItem)
+            store.dispatch('selection/deleteIdFromEntity', deleteItem);
+        };
+        const getCategoryBySeriesId = (id) => {
+            // 根据id在props.id_list里找到下标
+            const index = props.id_list.findIndex(itemId => itemId === id);
+            // 根据下标找到props.level_list对应的值
+            const level = props.level_list[index];
+            // 根据新下标从store.state.levels里找到类别字符串
+            return levels.value[level - 1]; // 假设level_list的级别是从1开始的
+        };
+        const updateYScales = () => {
+            if (store.getters["size/yScale"].length > 0) {
+                yScale_list.value = props.level_list.map(level =>
+                    d3.scaleLinear()
+                        .domain(store.getters["size/yScale"][level - 1].domain())
+                        .range([height.value - 5, 12])
+                );
+            }
+        };
+        watch([xScale, () => props.id_list], ([newXScale, newIdList]) => {
+            if (newXScale !== null) {
+                const list = [];
+                updateYScales();
+                newIdList.forEach(id => { // 使用新的id列表
+                    let obj = {};
+                    obj["id"] = id;
+                    obj["data"] = cloneDeep(store.getters["tree/seriesCollection"].find(node => node.id == id)?.seriesData);
+                    list.push(obj);
+                });
+                seriesData_list.value = list;
 
-        watch(xScale, (newValue) => {
-            if (newValue !== null) {
-                const list = []
-                props.id_list.forEach(id => {
-                    let obj = {}
-                    obj["id"] = id
-                    obj["data"] = cloneDeep(store.getters["tree/seriesCollection"].find(node => node.id == id).seriesData)
-                    list.push(obj)
-                })
-                seriesData_list.value = list
-
-                console.log("check data")
-                console.log(list)
-                
-
-
+                console.log("check data");
+                console.log(list);
             }
         });
 
@@ -131,7 +150,9 @@ export default {
             seriesData_list,
             generateSelectedPath,
             timeRange,
-            deleteTreeEntity
+            deleteTreeEntity,
+            deleteTree,
+            getCategoryBySeriesId
 
         }
 
