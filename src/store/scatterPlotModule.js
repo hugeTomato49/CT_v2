@@ -8,7 +8,9 @@ const state = {
     plot_X_Scale: [],
     plot_Y_Scale: [],
     coordinateCollection: [],
-    bezierPaths: []
+    bezierPaths: [],
+    linkVisible: false,
+    highlightVisible: false
 
 
 }
@@ -52,46 +54,24 @@ const actions = {
                 commit('UPDATE_COORDINATE_COLLECTION', response.data.coordinateCollection)
                 dispatch('updatePlotScale')
             })
-        }
-
-        
+        }     
     },
     updatePlotScale({ state, commit }) {
-        // still step 1: update scale
         const coordinateCollection = state.coordinateCollection
-        //the format of coordinateCollection: 
-        // {
-        //  level_id1: 
-        //      [{node_id:?, x:?, y:?}, ...]},
-        //  level_id2: 
-        //      [{node_id:?, x:?, y:?}, ...]},
-        //  ...
-        // }
-        // write a function in scale/scale.js using coordinates of each level, and plotHeight, plotWidth
-        // import function to return multiple scales(每一个level一个xy scale), commit UPDATE_PLOT_X_SCALE and Y ...
-        const plotWidth = state.plotWidth; // 画布宽度
-        const plotHeight = state.plotHeight; // 画布高度
+        const plotWidth = state.plotWidth; 
+        const plotHeight = state.plotHeight; 
 
-        // 初始化存储比例尺的数组
         let plot_X_Scale = [];
         let plot_Y_Scale = [];
 
-        // 为 coordinateCollection 中的每个级别计算比例尺
         Object.keys(coordinateCollection).forEach(level_id => {
             const coordinates = coordinateCollection[level_id];
-            // 使用 PLOT_Scale 函数为当前级别计算比例尺
             const { xScale, yScale } = PLOT_Scale(coordinates, plotWidth, plotHeight);
-
-            // 将计算出的比例尺存储在相应的数组中
             plot_X_Scale.push({ level_id: level_id, xScale: xScale });
             plot_Y_Scale.push({ level_id: level_id, yScale: yScale });
-            // console.log("width is", plotWidth)
-            // console.log("yScale is", plot_Y_Scale)
             
         });
-        // 提交包含所有级别 x 比例尺的数组
         commit('UPDATE_PLOT_X_SCALE', plot_X_Scale);
-        // 提交包含所有级别 y 比例尺的数组
         commit('UPDATE_PLOT_Y_SCALE', plot_Y_Scale);
     },
     updatePlotLinks({ commit }, id){
@@ -108,6 +88,12 @@ const actions = {
     },
     updateColumnWidth({commit}, width) {
         commit('UPDATE_COLUMN_WIDTH', width)
+    },
+    toggleLinkVisible({state}) {
+        state.linkVisible = !state.linkVisible
+    },
+    toggleHighlightVisible({state}) {
+        state.highlightVisible = !state.highlightVisible
     }
 }
 const getters = {
@@ -117,7 +103,9 @@ const getters = {
     plot_X_Scale: state => state.plot_X_Scale,
     plot_Y_Scale: state => state.plot_Y_Scale,
     coordinateCollection: state => state.coordinateCollection,
-    bezierPaths: state => state.bezierPaths
+    bezierPaths: state => state.bezierPaths,
+    linkVisible: state => state.linkVisible,
+    highlightVisible: state => state.highlightVisible
 }
 
 const scatterPlotModule = {

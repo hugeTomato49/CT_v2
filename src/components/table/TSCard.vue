@@ -1,14 +1,17 @@
 <template>
     <a-dropdown :trigger="['contextmenu']">
         <div :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
+            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" 
+            @mouseover="handleMouseOver(node_id)"
             @mouseout="handleMouseOut(node_id)"
             @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
             @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
-            <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+            <div 
+                :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
                 id="cardContainer">
                 <svg class="w-full h-full bg-stone-100">
                     <text x="5" y="12" class="node-name text-ms">{{ node_name }}</text>
+                    <text x="98%" y="12" class="node-name text-ms" v-if="averageValue > 0" text-anchor="end">{{ averageValue.toFixed(2) }}</text>
                     <g ref="brushRef"></g>
                     <path :stroke="colorBar[level - 1]" fill="none" stroke-width="2"
                         :d="generatePath(seriesData, xScale, yScale)">
@@ -33,12 +36,13 @@
 
 <script>
 import { useStore } from 'vuex';
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watchEffect } from 'vue'
 import * as d3 from 'd3'
 import { Dropdown, Menu } from 'ant-design-vue'
 import { DownOutlined } from '@ant-design/icons-vue'
 import { generatePath } from "../../generator/generator"
 import { findPath, findLevelList, buildSubtree, getSubtreeIds } from "../../select/entitySelection"
+import { calculateSeriesAverage } from "../../computation/basicComputation"
 import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
 import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
@@ -61,7 +65,8 @@ export default {
         const cardHeight = computed(() => store.getters['size/cardHeight'])
         const cardWidth = computed(() => store.getters['size/cardWidth'])
 
-
+        const timeRange = computed(() => store.getters['tree/timeRange'])
+        
         const xScale = computed(() => store.getters['size/xScale'])
         const yScale = computed(() => store.getters['size/yScale'][props.level - 1])
 
@@ -71,9 +76,18 @@ export default {
         const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"])
         const columnWidth = computed(() => store.getters["scatterPlot/columnWidth"])
 
+        const highlightVisible = computed(() => store.getters["scatterPlot/highlightVisible"])
+
 
 
         const brushRef = ref(null)
+        const averageValue = ref(0)
+
+        watchEffect(() => {
+            if(timeRange.value.length > []){
+                averageValue.value = calculateSeriesAverage(props.seriesData)
+            }
+        })
 
         const setupBrush = () => {
             const brush = d3.brushX()
@@ -97,8 +111,6 @@ export default {
 
         const unfold = (id) => {
             store.dispatch('tree/selectNodeAndChildren', id)
-
-
         }
 
         const fold = (id) => {
@@ -115,31 +127,34 @@ export default {
         }
 
         const handleMouseOver = (id) => {
-            if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
+            if(highlightVisible.value){
+                if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
                 deHighlightEmphasizeCards()
-            }
-            const id_list = findChildrenIds(id, originalTree.value)
-            highlightNodes(id_list)
-            store.dispatch('scatterPlot/updateBezierPaths',
-                highlightLinks(
-                    id,
-                    originalTree.value,
-                    coordinateCollection.value,
-                    plot_X_Scale.value,
-                    plot_Y_Scale.value,
-                    columnWidth.value
+                }
+                const id_list = findChildrenIds(id, originalTree.value)
+                highlightNodes(id_list)
+                store.dispatch('scatterPlot/updateBezierPaths',
+                    highlightLinks(
+                        id,
+                        originalTree.value,
+                        coordinateCollection.value,
+                        plot_X_Scale.value,
+                        plot_Y_Scale.value,
+                        columnWidth.value
                 ))
-
+            }
         };
 
         const handleMouseOut = (id) => {
-            if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
+            if(highlightVisible.value){
+                if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
                 highlightEmphaizeCards()
-            }
-            const id_list = findChildrenIds(id, originalTree.value)
-            deHighlightNodes(id_list)
-            store.dispatch('scatterPlot/updateBezierPaths', [])
-        };
+                }
+                const id_list = findChildrenIds(id, originalTree.value)
+                deHighlightNodes(id_list)
+                store.dispatch('scatterPlot/updateBezierPaths', [])
+            }   
+        }
 
         const onClickNode = () => {
             console.log(`Click on Node `, props.node_id);
@@ -205,7 +220,8 @@ export default {
             onClickNode,
             onClickPath,
             onClickLayer,
-            onClickTree
+            onClickTree,
+            averageValue
         }
     }
 }

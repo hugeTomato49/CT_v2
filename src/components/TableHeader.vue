@@ -62,9 +62,10 @@
               </g>
               <path
                 v-for="pathObj in selectNodePaths"
+                v-if="linkVisible"
                 :key="pathObj.key"
                 :d="pathObj.d"
-                stroke="rgba(243,194,18,0.8)"
+                stroke="rgba(243,194,18)"
                 stroke-width="2"
                 fill="none"
                 class="emphasizeLink cursor-pointer"
@@ -188,10 +189,11 @@ export default {
   setup() {
     const headerContainer = ref(null);
     const plotContainer = ref(null);
+
     const store = useStore();
-    const columnPercentage = computed(
-      () => store.getters["size/columnPercentage"]
-    );
+    const columnPercentage = computed(() => store.getters["size/columnPercentage"]);
+
+    const linkVisible = computed(() => store.getters["scatterPlot/linkVisible"])
 
     const colorBar = computed(() => store.getters["tree/colorBar"])
     const dataset = computed(() => store.getters["tree/dataset"])
@@ -201,6 +203,12 @@ export default {
     const level_id_list = computed(() => store.getters["tree/level_id_list"])
     const level_name_list = computed(() =>level_id_list.value.map((id) => levels.value[id - 1]))
     const alignState = computed(() => store.getters["align/alignState"])
+
+    const bezierPaths = computed(() => store.getters["scatterPlot/bezierPaths"])
+    const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"]);
+    const plot_Y_Scale = computed(() => store.getters["scatterPlot/plot_Y_Scale"]);
+    const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"]);
+
 
     const dynamicWidth = computed(() => {
       if (headerContainer.value && level_name_list.value) {
@@ -213,10 +221,6 @@ export default {
       return 0;
     });
 
-    const bezierPaths = computed(() => store.getters["scatterPlot/bezierPaths"])
-    const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"]);
-    const plot_Y_Scale = computed(() => store.getters["scatterPlot/plot_Y_Scale"]);
-    const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"]);
     const selectNodePaths = computed(() => {
       let allPaths = []
       const newTree = selectionTree.value.filter(node => ifEmphasize(selectionTree.value, node.id, node.level, level_id_list.value))
@@ -230,13 +234,13 @@ export default {
             plot_Y_Scale.value,
             headerContainer.value.offsetWidth * columnPercentage.value,
             level_id_list.value
-          ); // 根据节点ID计算路径
-          allPaths = allPaths.concat(pathsForNode); // 将结果合并到总数组中
+          ); 
+          allPaths = allPaths.concat(pathsForNode); 
         }
       });
-      // console.log(allPaths.length)
       return allPaths;
-    });
+    })
+
     const circlesData = computed(() => {
       return calculateCircles(
         level_id_list.value,
@@ -378,7 +382,8 @@ export default {
       hasNode,
       ifEmphasize,
       alignState,
-      toggleAlign
+      toggleAlign,
+      linkVisible
 
     };
   },

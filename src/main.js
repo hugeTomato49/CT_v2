@@ -25,12 +25,15 @@ import {
     faArrowDownShortWide,
     faToggleOn, 
     faXmark,
-    faTrashCan
+    faTrashCan,
+    faEye,
+    faEyeSlash
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
     faNetworkWired, 
-    faRoute, faLayerGroup, 
+    faRoute, 
+    faLayerGroup, 
     faCircle, 
     faAngleRight, 
     faPlus, 
@@ -43,7 +46,9 @@ library.add(
     faArrowDownWideShort, 
     faArrowDownShortWide,
     faToggleOn,
-    faTrashCan
+    faTrashCan,
+    faEye,
+    faEyeSlash
 )
 
 const app = createApp(App)
