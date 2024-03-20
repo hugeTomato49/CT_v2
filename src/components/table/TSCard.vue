@@ -183,11 +183,11 @@ export default {
         const onClickTree = () => {
             console.log(`Click on Tree`);
             const subtree = buildSubtree(selectionTree.value, props.node_id); // 构建子树
-            const subtreeIds = getSubtreeIds(subtree); // 获取子树的所有节点ID列表
-            const levelList = findLevelList(selectionTree.value, subtreeIds);
+            const path = getSubtreeIds(subtree); // 获取子树的所有节点ID列表
+            const levelList = findLevelList(selectionTree.value, path);
             const treeEntity = {
                 type: 'Tree', // 用于识别实体类型
-                subtreeIds, // 当前路径
+                path, // 当前路径
                 levelList, // 与此路径相关的级别列表
             };
             // 将路径实体添加到 Vuex store

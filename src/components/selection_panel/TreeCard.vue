@@ -19,8 +19,8 @@
                     >
                         <div class="w-1/7 h-full p-0 flex flex-row items-center justify-center">
                             <div class="w-full flex flex-col " :style="{ 'color': themeColor }">
-                                <div class="meta">Converter1</div>
-                                <div><font-awesome-icon :icon="['fas', 'trash-can']" size="xs" style="color:#f87171"/> </div>
+                                <div class="meta">{{ getCategoryBySeriesId(id) }}</div>
+                                <div @click="deleteTree(id)"><font-awesome-icon :icon="['fas', 'trash-can']" size="xs" style="color:#f87171"/> </div>
                             </div>
                         </div>
                         <div class="w-11/14 h-full  flex flex-row justify-center ">
@@ -72,29 +72,59 @@ export default {
         const themeColor = computed(() => props.related ? '#FFFFFF' : store.getters["tree/themeColor"])
 
         const levels = computed(() => store.getters["tree/levels"])
+        const selectionTree = computed(() => store.getters["tree/selectionTree"])
         const description = computed(() => store.getters["tree/description"])
         const timeRange = computed(() => store.getters["tree/timeRange"])
 
         const deleteTreeEntity = () => {
             store.dispatch('selection/deleteEntity', props.entityID);
         };
+        const deleteTree = (id) => {
+            const deleteItem = { entityID: props.entityID, id: id }
+            console.log("delete id is", deleteItem)
+            store.dispatch('selection/deleteIdFromEntity', deleteItem);
+        };
+        const extractLastNumber = (str) => {
+            const matches = str.match(/(\d+)(?!.*\d)/);
+            return matches ? matches[0] : null;
+        };
+        const getCategoryBySeriesId = (id) => {
+            const index = props.id_list.findIndex(itemId => itemId === id);
+            const level = props.level_list[index];
+            const categoryName = levels.value[level - 1]; // 从 Vuex 获取类别名称
+            const firstChar = categoryName[0]
 
-        watch(xScale, (newValue) => {
-            if (newValue !== null) {
-                const list = []
-                props.id_list.forEach(id => {
-                    let obj = {}
-                    obj["id"] = id
-                    obj["data"] = cloneDeep(store.getters["tree/seriesCollection"].find(node => node.id == id).seriesData)
-                    list.push(obj)
-                })
-                seriesData_list.value = list
+            // 在 selectionTree 中查找对应的节点
+            const node = selectionTree.value.find(node => node.id === id);
+            const nodeName = node ? node.node_name : '';
+            const number = extractLastNumber(nodeName); // 提取编号
 
-                console.log("check data")
-                console.log(list)
-                
+            // 组合类别名称和编号
+            return `${firstChar}${number}`;
+        };
+        const updateYScales = () => {
+            if (store.getters["size/yScale"].length > 0) {
+                yScale_list.value = props.level_list.map(level =>
+                    d3.scaleLinear()
+                        .domain(store.getters["size/yScale"][level - 1].domain())
+                        .range([height.value - 5, 12])
+                );
+            }
+        };
+        watch([xScale, () => props.id_list], ([newXScale, newIdList]) => {
+            if (newXScale !== null) {
+                const list = [];
+                updateYScales();
+                newIdList.forEach(id => { // 使用新的id列表
+                    let obj = {};
+                    obj["id"] = id;
+                    obj["data"] = cloneDeep(store.getters["tree/seriesCollection"].find(node => node.id == id)?.seriesData);
+                    list.push(obj);
+                });
+                seriesData_list.value = list;
 
-
+                console.log("check data");
+                console.log(list);
             }
         });
 
@@ -131,7 +161,9 @@ export default {
             seriesData_list,
             generateSelectedPath,
             timeRange,
-            deleteTreeEntity
+            deleteTreeEntity,
+            deleteTree,
+            getCategoryBySeriesId
 
         }
 

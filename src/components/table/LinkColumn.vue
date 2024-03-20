@@ -53,7 +53,7 @@ export default {
             const controlY1 = parentCoords.y;
             const controlX2 = (parentCoords.x + childCoords.x) / 2;
             const controlY2 = childCoords.y;
-            if (alignLevel.value > 0 ) {
+            if (alignLevel.value > 0 || sectionState.value != -1) {
               paths.push({
                 d: `M ${parentCoords.x},${parentCoords.y} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${childCoords.x},${childCoords.y}`,
                 key: `c-${parentNode.id}-${childId}`,
@@ -128,6 +128,8 @@ export default {
       currentLevelNodes,
       pre_cardPaths,
       flag,
+      sectionState,
+      alignLevel
     };
   },
 };
