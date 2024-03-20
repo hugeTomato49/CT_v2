@@ -26,8 +26,12 @@ import {
     faToggleOn, 
     faXmark,
     faTrashCan,
+<<<<<<< HEAD
     faEye,
     faEyeSlash
+=======
+    faDrawPolygon
+>>>>>>> fa5b655cfaff11a71a69594dc7803f4f7dc83fca
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -47,8 +51,12 @@ library.add(
     faArrowDownShortWide,
     faToggleOn,
     faTrashCan,
+<<<<<<< HEAD
     faEye,
     faEyeSlash
+=======
+    faDrawPolygon
+>>>>>>> fa5b655cfaff11a71a69594dc7803f4f7dc83fca
 )
 
 const app = createApp(App)

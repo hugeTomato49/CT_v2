@@ -36,6 +36,11 @@
               @click="sortColumn(level_id_list[index],'asc')"
               />
               <font-awesome-icon 
+              :icon="['fas', 'draw-polygon']" 
+              class="mr-2 cursor-pointer"
+              style="color: #ffffff;" 
+              />
+              <font-awesome-icon 
               :icon="['fas', 'object-ungroup']" 
               class="cursor-pointer mr-2"
               style="color: #ffffff;" 
