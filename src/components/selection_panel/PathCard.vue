@@ -96,6 +96,7 @@ export default {
             const index = props.id_list.findIndex(itemId => itemId === id);
             const level = props.level_list[index];
             const categoryName = levels.value[level - 1]; // 从 Vuex 获取类别名称
+            const firstChar = categoryName[0]
 
             // 在 selectionTree 中查找对应的节点
             const node = selectionTree.value.find(node => node.id === id);
@@ -103,7 +104,7 @@ export default {
             const number = extractLastNumber(nodeName); // 提取编号
 
             // 组合类别名称和编号
-            return `${categoryName} ${number}`;
+            return `${firstChar}${number}`;
         };
         const updateYScales = () => {
             if (store.getters["size/yScale"].length > 0) {

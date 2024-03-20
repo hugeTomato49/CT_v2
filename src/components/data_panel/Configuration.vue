@@ -1,27 +1,27 @@
 <template>
   <div class="container w-full h-full ">
     <div class="data-set w-full h-1/2">
-      <div class="content-center align-middle text-[30px] text-[#4B99D0] text-center">
+      <div class="title text-lg  text-[#4B99D0] text-center">
         <text>DataSet</text>
         <div class="border-solid border-1 border-light-800 mt-2"></div>
       </div>
-      <div class="flex-row">
-        <div></div>
-        <div></div>
+      <div class="flex flex-row w-full h-1/2 justify-around mt-5">
+        <div class="w-5/12 h-1/2 border-solid border-light-700 border-2"></div>
+        <div class="w-5/12 h-1/2 border-solid border-light-700 border-2"></div>
       </div>
       <!-- dataSet 内容 -->
     </div>
-    <div class="configuration w-full h-1/2 flex-column">
-      <div class="w-full text-[30px] text-[#4B99D0] text-center" >
+    <div class="title configuration w-full h-1/2 flex-column">
+      <div class="w-full text-lg text-[#4B99D0] text-center" >
         <text>Configuration</text>
         <div class="border-solid border-1 border-light-800 mt-2"></div>
       </div>
-      <div class="flex flex-row w-full">
+      <div class="flex flex-row w-full mt-6 ml-3">
         <div class="w-1/10 text-[#4B99D0] text-2xl">K</div>
-        <div class="w-4/5">
+        <div class="w-4/5 ml-2">
           <a-row>
             <a-col :span="12">
-              <a-slider v-model:value="inputValue" :min="1" :max="20" />
+              <a-slider v-model:value="inputValue" :min="1" :max="50" />
             </a-col>
             <a-col :span="4">
               <a-input-number
@@ -29,6 +29,7 @@
                 :min="1"
                 :max="20"
                 style="margin-left: 16px"
+                class="text-base"
                 onChangeComplete="onChange"
               />
             </a-col>
@@ -68,4 +69,12 @@ export default {
 
 
 <style>
+.title {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: "regular";
+    font-variation-settings:
+        "slnt" 0;
+}
 </style>

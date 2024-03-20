@@ -72,6 +72,7 @@ export default {
         const themeColor = computed(() => props.related ? '#FFFFFF' : store.getters["tree/themeColor"])
 
         const levels = computed(() => store.getters["tree/levels"])
+        const selectionTree = computed(() => store.getters["tree/selectionTree"])
         const description = computed(() => store.getters["tree/description"])
         const timeRange = computed(() => store.getters["tree/timeRange"])
 
@@ -83,13 +84,23 @@ export default {
             console.log("delete id is", deleteItem)
             store.dispatch('selection/deleteIdFromEntity', deleteItem);
         };
+        const extractLastNumber = (str) => {
+            const matches = str.match(/(\d+)(?!.*\d)/);
+            return matches ? matches[0] : null;
+        };
         const getCategoryBySeriesId = (id) => {
-            // 根据id在props.id_list里找到下标
             const index = props.id_list.findIndex(itemId => itemId === id);
-            // 根据下标找到props.level_list对应的值
             const level = props.level_list[index];
-            // 根据新下标从store.state.levels里找到类别字符串
-            return levels.value[level - 1]; // 假设level_list的级别是从1开始的
+            const categoryName = levels.value[level - 1]; // 从 Vuex 获取类别名称
+            const firstChar = categoryName[0]
+
+            // 在 selectionTree 中查找对应的节点
+            const node = selectionTree.value.find(node => node.id === id);
+            const nodeName = node ? node.node_name : '';
+            const number = extractLastNumber(nodeName); // 提取编号
+
+            // 组合类别名称和编号
+            return `${firstChar}${number}`;
         };
         const updateYScales = () => {
             if (store.getters["size/yScale"].length > 0) {
