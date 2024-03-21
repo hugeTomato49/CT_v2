@@ -26,12 +26,15 @@ import {
     faToggleOn, 
     faXmark,
     faTrashCan,
+    faEye,
+    faEyeSlash,
     faDrawPolygon
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
     faNetworkWired, 
-    faRoute, faLayerGroup, 
+    faRoute, 
+    faLayerGroup, 
     faCircle, 
     faAngleRight, 
     faPlus, 
@@ -45,6 +48,8 @@ library.add(
     faArrowDownShortWide,
     faToggleOn,
     faTrashCan,
+    faEye,
+    faEyeSlash,
     faDrawPolygon
 )
 

@@ -89,7 +89,7 @@ export const deHightLigtEmphasize = () => {
     const emphasizeNodes = document.getElementsByClassName("emphasizeNode")
     Array.from(emphasizeNodes).forEach(node => {
         node.style.fillOpacity = 0.6
-        node.style.stroke ="rgba(245, 245, 245,0.2)"
+        node.style.stroke ="rgba(245, 245, 245,0.08)"
     })
 
     const foldNodes = document.getElementsByClassName("foldNode")

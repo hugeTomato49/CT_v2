@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full p-3">
+  <div class="w-full h-full p-2">
     <div ref="chart" class="w-full h-full" id="TContainer"></div>
   </div>
 </template>

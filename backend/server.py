@@ -29,7 +29,7 @@ def getPVTree():
         with open(file_path, 'r') as file:
             pv_tree_data = json.load(file) 
         
-        SD_result = getSDALL(pv_tree_data, PV_data_folder_path)
+        SD_result = getSDALL(pv_tree_data, PV_data_folder_path) # max_level可以调，四级就是4
         SD_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, "PV_SD.json")
         with open(SD_file_path, 'w') as json_file:
             json.dump(SD_result, json_file)

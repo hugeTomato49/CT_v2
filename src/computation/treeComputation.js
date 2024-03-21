@@ -74,7 +74,7 @@ export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Sca
                 const circles = coordinates.map((coordinate) => ({
                     cx: xScaleObj.xScale(coordinate.x),
                     cy: yScaleObj.yScale(coordinate.y),
-                    r: 10,
+                    r: 9,
                     key: coordinate.id,
                     stroke: "#F5F5F5",
                     strokeWidth: hasNode(selectionTree, coordinate.id)  ? 2 : 0,

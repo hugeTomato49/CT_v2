@@ -11,6 +11,7 @@ const state = {
     selectionTree : [], 
     seriesCollection: [],
     dataset: 'PV',
+    // levels: ['State', 'Area', 'Store'],
     levels: ['Transformer', 'Converter', 'Line'],
     description: ['-kw/h', '-kw/h', '-mA', '-mA'],
     level_id_list: [],

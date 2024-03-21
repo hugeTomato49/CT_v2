@@ -15,9 +15,11 @@
                     v-if = "level_id >= alignLevel"
                     v-for="(align_id, index) in alignID"
                     :key="align_id"
-                    :style="{ height: heightForEachAlignID[align_id] + 'px' }"
                     >
-                        <div class="w-full h-full flex flex-col">
+                        <div 
+                        class="w-full h-full flex flex-col"
+                        :style="{ height: heightForEachAlignID[align_id] + 'px' }"
+                        >
                             <Section
                             v-for="(parent_id, index) in groupLevelByParentId(level_id, selectionTree, align_id, alignLevel)"
                             :key = parent_id
@@ -121,8 +123,8 @@ export default {
                 })
                 heightCollection[align_id] = maxHeight;
             })
-            // console.log("CHECK THE NEXT ONE")
-            // console.log(heightCollection)
+            console.log("check alignHeightCollection")
+            console.log(heightCollection)
             return heightCollection;
         });
 
