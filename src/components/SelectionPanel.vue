@@ -18,7 +18,7 @@
     <TreeCard
       v-for="(entity) in treeEntities"
       :key="entity.entityID"
-      :id_list="entity.subtreeIds"
+      :id_list="entity.path"
       :level_list="entity.levelList"
       :entityID="entity.entityID"
       :related="false"

@@ -21,6 +21,9 @@ const mutations =  {
     },
     UPDATE_LARGEST_NUMBER(state, payload){
         state.largestNumber = payload
+    },
+    UPDATE_SECTION_STATE(state){
+        state.sectionState = state.sectionState + 1
     }
 }
 
@@ -28,8 +31,9 @@ const actions = {
     updateAlignState({commit}, value){
         commit('UPDATE_ALIGN_STATE',value)
     },
-    updateSectionState({state}){
-        state.sectionState = state.sectionState + 1
+    updateSectionState({commit}){
+        // state.sectionState = state.sectionState + 1
+        commit('UPDATE_SECTION_STATE')
     },
     updateAlignLevel({commit}, value){
         commit('UPDATE_ALIGN_LEVEL',value)    
