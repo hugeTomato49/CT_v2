@@ -39,7 +39,7 @@
                 :icon="['fas', 'draw-polygon']"
                 class="mr-2 cursor-pointer"
                 style="color: #ffffff"
-                @click="finishDrawing(level_id_list[index])"
+                @click="processSelectedCircles(level_id_list[index])"
               />
               <font-awesome-icon
                 :icon="['fas', 'object-ungroup']"
@@ -63,10 +63,42 @@
           <div
             class="h-full"
             :style="{ width: dynamicWidth + 'px' }"
-            @click="addPoint"
+            @mousedown="startDrawing"
+            @mousemove="drawing"
+            @mouseup="finishLine"
+            @dblclick.prevent="finishDrawing"
           >
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
-              <polyline :points="pointsToString" fill="none" stroke="black" />
+              
+              <!-- 实时绘制的线段 -->
+              <line
+                v-if="tempEndPoint && points.length > 0"
+                :x1="points.slice(-1)[0][0]"
+                :y1="points.slice(-1)[0][1]"
+                :x2="tempEndPoint[0]"
+                :y2="tempEndPoint[1]"
+                stroke="#DF1C33"
+                style="stroke-width: 4;"
+              />
+              <polygon
+                v-if="points.length >= 3"
+                :points="pointsToString"
+                fill="red"
+                fill-opacity="0.2"
+                stroke="#DF1C33"
+                stroke-width="4"
+              />
+              <polyline :points="pointsToString" fill="none" stroke="#DF1C33" store-width="4"/>
+              <circle
+                v-for="(point, index) in points"
+                :key=point[0]
+                :cx="point[0]"
+                :cy="point[1]"
+                r="4"
+                fill="white"
+                stroke="#DF1C33"
+              />
+              <!-- <polyline :points="pointsToString" fill="none" stroke="black" /> -->
               <!-- <polygon 之前的有颜色的框框，要用的话注释回去即可，不需要可删掉
                 v-if="finalPointsToString"
                 :points="finalPointsToString"
@@ -104,7 +136,6 @@
                   headerContainer?.offsetWidth * columnPercentage * index +
                   ', 0)'
                 "
-                @dblclick.prevent="finishDrawing(level_id_list[index])"
               >
                 <rect
                   x="0"
@@ -228,9 +259,13 @@ export default {
     const plotContainer = ref(null);
 
     const store = useStore();
-    const columnPercentage = computed(() => store.getters["size/columnPercentage"]);
+    const columnPercentage = computed(
+      () => store.getters["size/columnPercentage"]
+    );
 
-    const linkVisible = computed(() => store.getters["scatterPlot/linkVisible"])
+    const linkVisible = computed(
+      () => store.getters["scatterPlot/linkVisible"]
+    );
 
     const colorBar = computed(() => store.getters["tree/colorBar"]);
     const dataset = computed(() => store.getters["tree/dataset"]);
@@ -243,11 +278,18 @@ export default {
     );
     const alignState = computed(() => store.getters["align/alignState"]);
 
-    const bezierPaths = computed(() => store.getters["scatterPlot/bezierPaths"])
-    const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"]);
-    const plot_Y_Scale = computed(() => store.getters["scatterPlot/plot_Y_Scale"]);
-    const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"]);
-
+    const bezierPaths = computed(
+      () => store.getters["scatterPlot/bezierPaths"]
+    );
+    const plot_X_Scale = computed(
+      () => store.getters["scatterPlot/plot_X_Scale"]
+    );
+    const plot_Y_Scale = computed(
+      () => store.getters["scatterPlot/plot_Y_Scale"]
+    );
+    const coordinateCollection = computed(
+      () => store.getters["scatterPlot/coordinateCollection"]
+    );
 
     const dynamicWidth = computed(() => {
       if (headerContainer.value && level_name_list.value) {
@@ -280,12 +322,12 @@ export default {
             plot_Y_Scale.value,
             headerContainer.value.offsetWidth * columnPercentage.value,
             level_id_list.value
-          ); 
-          allPaths = allPaths.concat(pathsForNode); 
+          );
+          allPaths = allPaths.concat(pathsForNode);
         }
       });
       return allPaths;
-    })
+    });
 
     const circlesData = computed(() => {
       return calculateCircles(
@@ -387,32 +429,44 @@ export default {
     };
     //lasso function
 
-    const points = ref([]);
-    const finalPoints = ref([]);
-    const canDraw = ref(false);
+    const canDraw = ref(false); // 控制是否可以开始绘制
+    const points = ref([]); // 存储多边形的顶点
+    const tempEndPoint = ref(null); // 存储实时拖动时的临时终点
 
-    const addPoint = (event) => {
-      if (!canDraw.value) return; // 如果未启用绘制，则不添加点
-      points.value.push([event.offsetX, event.offsetY]);
-    };
-
-    const finishDrawing = (level_id) => {
-      if (points.value.length > 2 && canDraw.value) {
-        // 确保有足够的点来构成多边形并且绘制模式已经开启
-        points.value.push(points.value[0]); // 将最后一个点连接到第一个点完成多边形
-        // 收集多边形内所有圆的 ID
-        processSelectedCircles(level_id);
-        finalPoints.value = [...points.value, points.value[0]]; // 闭合多边形
-        canDraw.value = false; // 关闭绘制模式
-        points.value = []; // 重置点以便开始新的绘制
-      } else {
-        // 这里是在绘制模式没有开启（即没有正在绘制多边形）时，切换绘制模式的状态
-        canDraw.value = !canDraw.value;
-        finalPoints.value = [];
-        points.value = []; // 重置点以便开始新的绘制
+    function startDrawing(event) {
+      // 如果还未开始绘制或者刚刚完成了绘制，初始化第一个点
+      if (!canDraw.value || points.value.length === 0) {
+        canDraw.value = true;
+        tempEndPoint.value = null; // 重置临时终点
+        points.value.push([event.offsetX, event.offsetY]);
+        event.preventDefault();
       }
-    };
-    
+    }
+
+    function drawing(event) {
+      // 如果正在绘制，更新临时终点以实时显示线段
+      if (canDraw.value) {
+        tempEndPoint.value = [event.offsetX, event.offsetY];
+        event.preventDefault();
+      }
+    }
+
+    function finishLine(event) {
+      // 如果已有起点，则确定线段并准备开始新线段
+      if (canDraw.value && points.value.length > 0) {
+        points.value.push([event.offsetX, event.offsetY]);
+        tempEndPoint.value = null; // 确定线段后重置临时终点
+      }
+    }
+
+    function finishDrawing() {
+      // 双击结束绘制，完成多边形
+      if (points.value.length > 2) {
+        canDraw.value = false;
+        points.value.push(points.value[0]); // 将最后一个点连接到第一个点
+      }
+    }
+
     //选中之后的过滤函数
     const processSelectedCircles = (level_id) => {
       let selectedCircleIds = [];
@@ -429,6 +483,7 @@ export default {
       const filteredSelectedCircleIds = selectedCircleIds.filter((id) =>
         isIdInSelectionTree(id, selectionTree.value)
       );
+      console.log("Filtered selected circles:", filteredSelectedCircleIds);
       const hasAnySelectedNodeChildren = filteredSelectedCircleIds.some((id) =>
         lassoHasChildren(id, selectionTree.value)
       );
@@ -465,15 +520,11 @@ export default {
           }
         });
       }
-
-      // console.log("Filtered selected circles:", filteredSelectedCircleIds);
+      points.value = [];
     };
     const pointsToString = computed(() => {
       return points.value.map((point) => point.join(",")).join(" ");
     });
-    const finalPointsToString = computed(() =>
-      finalPoints.value.map((point) => point.join(",")).join(" ")
-    );
 
     onMounted(() => {
       headerContainer.value = document.querySelector("#headerContainer");
@@ -521,12 +572,15 @@ export default {
       alignState,
       toggleAlign,
       linkVisible,
-      addPoint,
       pointsToString,
-      finalPointsToString,
+      startDrawing,
+      drawing,
+      finishLine,
       finishDrawing,
       canDraw,
       points,
+      tempEndPoint,
+      processSelectedCircles,
     };
   },
 };
