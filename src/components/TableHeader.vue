@@ -424,7 +424,6 @@ export default {
         headerContainer.value.offsetWidth *
         columnPercentage.value *
         (level_id - 1);
-      console.log("circles data is:", circlesData.value[level_id]);
       for (let circle of circlesData.value[level_id]) {
         if (isPointInPolygon([circle.cx, circle.cy], points.value, offset)) {
           selectedCircleIds.push(circle.key);
@@ -471,7 +470,7 @@ export default {
         });
       }
 
-      console.log("Filtered selected circles:", filteredSelectedCircleIds);
+      // console.log("Filtered selected circles:", filteredSelectedCircleIds);
     };
     const pointsToString = computed(() => {
       return points.value.map((point) => point.join(",")).join(" ");
