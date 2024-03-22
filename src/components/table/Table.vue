@@ -116,7 +116,7 @@ export default {
                 level_id_list.value.filter(level => level >= alignLevel.value).forEach(level_id => {
                     let TSCardNumber = selectionTree.value.filter(node => node.level == level_id).filter(node => findAlignAncester(node.id, selectionTree.value, alignLevel.value) == align_id).length
                     let ConfigureNumber = [...new Set(selectionTree.value.filter(node => node.level == level_id).filter(node => findAlignAncester(node.id, selectionTree.value, alignLevel.value) == align_id).map(node => node.parent_id))].length
-                    let overallHeight = TSCardNumber * rowHeight.value + ConfigureNumber * 40 //超参
+                    let overallHeight = TSCardNumber * rowHeight.value + ConfigureNumber * 10 //超参
                     if(overallHeight > maxHeight){
                         maxHeight = overallHeight
                     }

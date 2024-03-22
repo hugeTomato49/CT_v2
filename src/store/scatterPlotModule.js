@@ -10,7 +10,10 @@ const state = {
     coordinateCollection: [],
     bezierPaths: [],
     linkVisible: false,
-    highlightVisible: false
+    highlightVisible: false,
+    clusterNumber: 5,
+    clusterVisible: false,
+    
 
 
 }
@@ -94,6 +97,13 @@ const actions = {
     },
     toggleHighlightVisible({state}) {
         state.highlightVisible = !state.highlightVisible
+    },
+    updateClusterNumber({state}, number) {
+        console.log("update!")
+        state.clusterNumber = number
+    },
+    toggleClusterVisible({state}) {
+        state.clusterVisible = !state.clusterVisible
     }
 }
 const getters = {
@@ -105,7 +115,9 @@ const getters = {
     coordinateCollection: state => state.coordinateCollection,
     bezierPaths: state => state.bezierPaths,
     linkVisible: state => state.linkVisible,
-    highlightVisible: state => state.highlightVisible
+    highlightVisible: state => state.highlightVisible,
+    updateClusterNumber: state => state.clusterNumber,
+    clusterVisible: state => state.clusterVisible
 }
 
 const scatterPlotModule = {

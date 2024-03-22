@@ -167,56 +167,57 @@
                   @mouseout="handleMouseOut(circle.key, level_id_list[index])"
                 ></circle>
                 <circle
-                  v-for="circle in circlesData[level_id_list[index]].filter(
-                    (circle) =>
-                      hasNode(selectionTree, circle.key) &&
-                      !ifEmphasize(
-                        selectionTree,
-                        circle.key,
-                        level_id_list[index],
-                        level_id_list
-                      )
-                  )"
-                  class="node cursor-pointer foldNode"
-                  :id="'node' + circle.key"
-                  :key="circle.key"
-                  :cx="circle.cx"
-                  :cy="circle.cy"
-                  :r="circle.r"
-                  :fill="colorBar[index]"
-                  :fill-opacity="circle.fillOpacity"
-                  :stroke="circle.stroke"
-                  :stroke-width="circle.strokeWidth"
-                  @click="handleNodeClick(circle.key)"
-                  @dblclick="filterCurrentNode(circle.key)"
-                  @mouseover="handleMouseOver(circle.key, level_id_list[index])"
-                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"
-                ></circle>
-                <circle
-                  v-for="circle in circlesData[level_id_list[index]].filter(
-                    (circle) =>
-                      ifEmphasize(
-                        selectionTree,
-                        circle.key,
-                        level_id_list[index],
-                        level_id_list
-                      )
-                  )"
-                  class="node cursor-pointer emphasizeNode"
-                  :id="'node' + circle.key"
-                  :key="circle.key"
-                  :cx="circle.cx"
-                  :cy="circle.cy"
-                  :r="circle.r"
-                  :fill="colorBar[index]"
-                  :fill-opacity="circle.fillOpacity"
-                  :stroke="circle.stroke"
-                  :stroke-width="circle.strokeWidth"
-                  @mouseover="handleMouseOver(circle.key, level_id_list[index])"
-                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"
-                  @click="handleNodeClick(circle.key)"
-                  @dblclick="filterCurrentNode(circle.key)"
-                ></circle>
+                v-for="circle in circlesData[level_id_list[index]].filter(
+                  (circle) =>
+                    hasNode(selectionTree, circle.key) &&
+                    !ifEmphasize(
+                      selectionTree,
+                      circle.key,
+                      level_id_list[index],
+                      level_id_list
+                    )
+                )"
+                class="node cursor-pointer foldNode"
+                :id="'node' + circle.key"
+                :key="circle.key"
+                :cx="circle.cx"
+                :cy="circle.cy"
+                :r="circle.r"
+                :fill="colorBar[index]"
+                :fill-opacity="clusterVisible ? 0.05 : circle.fillOpacity"
+                :stroke="clusterVisible ? 'none' : circle.stroke"
+                :stroke-width="circle.strokeWidth"
+                @click="handleNodeClick(circle.key)"
+                @dblclick="filterCurrentNode(circle.key)"
+                @mouseover="handleMouseOver(circle.key, level_id_list[index])"
+                @mouseout="handleMouseOut(circle.key, level_id_list[index])"
+              ></circle>
+              <circle
+                v-for="circle in circlesData[level_id_list[index]].filter(
+                  (circle) =>
+                    ifEmphasize(
+                      selectionTree,
+                      circle.key,
+                      level_id_list[index],
+                      level_id_list
+                    )
+                )"
+                class="node cursor-pointer emphasizeNode"
+                :id="'node' + circle.key"
+                :key="circle.key"
+                :cx="circle.cx"
+                :cy="circle.cy"
+                :r="circle.r"
+                :fill="colorBar[index]"
+                :fill-opacity="clusterVisible ? 0.05 : circle.fillOpacity"
+                :stroke="clusterVisible ? 'none' : circle.stroke"
+                :stroke-width="circle.strokeWidth"
+                @mouseover="handleMouseOver(circle.key, level_id_list[index])"
+                @mouseout="handleMouseOut(circle.key, level_id_list[index])"
+                @click="handleNodeClick(circle.key)"
+                @dblclick="filterCurrentNode(circle.key)"
+              ></circle>
+
               </g>
             </svg>
           </div>
@@ -277,6 +278,8 @@ export default {
       level_id_list.value.map((id) => levels.value[id - 1])
     );
     const alignState = computed(() => store.getters["align/alignState"]);
+
+    const clusterVisible = computed(() => store.getters["scatterPlot/clusterVisible"])
 
     const bezierPaths = computed(
       () => store.getters["scatterPlot/bezierPaths"]
@@ -581,6 +584,7 @@ export default {
       points,
       tempEndPoint,
       processSelectedCircles,
+      clusterVisible
     };
   },
 };
