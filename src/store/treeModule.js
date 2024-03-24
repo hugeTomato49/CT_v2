@@ -11,7 +11,7 @@ const state = {
     selectionTree : [], 
     seriesCollection: [],
     dataset: 'PV',
-    // levels: ['State', 'Area', 'Store'],
+    //levels: ['Index', 'Sector', 'Stock'],
     levels: ['Transformer', 'Converter', 'Line'],
     description: ['-kw/h', '-kw/h', '-mA', '-mA'],
     level_id_list: [],
@@ -23,6 +23,8 @@ const state = {
 
 const mutations = {
     UPDATE_ORIGINAL_TREE(state, payload){
+        console.log("check originalTree")
+        console.log(payload)
         state.originalTree = payload
     },
     UPDATE_SELECTION_TREE(state, payload){
@@ -119,6 +121,9 @@ const actions = {
     },
     updateTimeRange({state, commit, dispatch}, newTimeRange) {
       newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
+      console.log("check newTimeRange")
+      console.log(newTimeRange)
+
       commit('UPDATE_TIME_RANGE', newTimeRange)
       dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
       dispatch('scatterPlot/getCoordinateCollection',null, {root:true})

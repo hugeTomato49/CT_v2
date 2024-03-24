@@ -1,6 +1,7 @@
 const state = {
     SD: [],
     wholeTimeRange: ['2022-11-27','2023-3-27']
+    //wholeTimeRange: ['2023-1-3', '2023-12-29']
 
 }
 
