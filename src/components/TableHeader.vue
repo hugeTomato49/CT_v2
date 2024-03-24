@@ -98,13 +98,6 @@
                 fill="white"
                 stroke="#DF1C33"
               />
-              <!-- <polyline :points="pointsToString" fill="none" stroke="black" /> -->
-              <!-- <polygon 之前的有颜色的框框，要用的话注释回去即可，不需要可删掉
-                v-if="finalPointsToString"
-                :points="finalPointsToString"
-                fill="red"
-                fill-opacity="0.5"
-              /> -->
               <path
                 v-for="pathObj in selectNodePaths"
                 v-if="linkVisible"
