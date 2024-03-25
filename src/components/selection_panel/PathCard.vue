@@ -38,7 +38,7 @@
                             </div>
                         </div>
                         <div class="w-1/14 h-full ">
-
+                            <DonutChart v-if=" index > 0" :correlation="calculateCorrelation(seriesData_list[index - 1], seriesData_list[index])" />
                         </div>
 
                     </div>
@@ -55,11 +55,16 @@
 import { useStore } from 'vuex'
 import { computed, ref, onMounted, watch, watchEffect } from 'vue'
 import { cloneDeep } from 'lodash'
+import DonutChart from './DonutChart.vue'
 import { generateSelectedPath } from '../../generator/generator'
+import { calculatePearsonCorrelation } from '../../select/entitySelection'
 import * as d3 from "d3"
 export default {
     name: 'PathCard',
     props: ['id_list', 'level_list', 'related', 'entityID'],
+    components:{
+        DonutChart 
+    },
     setup(props) {
         const titleContainer = ref(null)
         const width = ref(0)
@@ -106,6 +111,12 @@ export default {
             // 组合类别名称和编号
             return `${firstChar}${number}`;
         };
+        const calculateCorrelation = ( series1, series2 ) => {
+            console.log("series1 is" , series1)
+            console.log("series2 is" , series2)
+            console.log("correaltion is" , calculatePearsonCorrelation(series1, series2))
+            return calculatePearsonCorrelation(series1, series2);
+        };
         const updateYScales = () => {
             if (store.getters["size/yScale"].length > 0) {
                 yScale_list.value = props.level_list.map(level =>
@@ -116,14 +127,17 @@ export default {
             }
         };
         watch([xScale, () => props.id_list], ([newXScale, newIdList]) => {
+            let seriesId = 0
             if (newXScale !== null) {
                 const list = [];
                 updateYScales();
                 newIdList.forEach(id => { // 使用新的id列表
                     let obj = {};
+                    obj["seriesId"] = seriesId
                     obj["id"] = id;
                     obj["data"] = cloneDeep(store.getters["tree/seriesCollection"].find(node => node.id == id)?.seriesData);
                     list.push(obj);
+                    seriesId++;
                 });
                 seriesData_list.value = list;
 
@@ -166,15 +180,9 @@ export default {
             timeRange,
             deletePathEntity,
             deletePath,
-            getCategoryBySeriesId
+            getCategoryBySeriesId,
+            calculateCorrelation
         }
-
-
-
-
-
-
-
     }
 }
 

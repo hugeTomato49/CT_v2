@@ -79,7 +79,7 @@
 
 <script>
 import { useStore } from "vuex";
-import { computed, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { Slider, InputNumber } from "ant-design-vue";
 export default {
   name: "Configuration",
@@ -92,10 +92,10 @@ export default {
   setup() {
     const store = useStore();
     const inputValue = ref(5);
-    const onChange = () => {
-        console.log("input value is", inputValue.value)
-        store.dispatch("scatterPlot/updateClusterNumber", inputValue.value)
-    }
+    watchEffect(() => {
+      console.log("input value is", inputValue.value)
+      store.dispatch("scatterPlot/updateClusterNumber", inputValue.value)
+    })
 
     const themeColor = computed(() => store.getters["tree/themeColor"])
 
@@ -118,7 +118,6 @@ export default {
 
     return {
       inputValue,
-      onChange,
       themeColor,
       linkVisible,
       toggleLinkVisible,
