@@ -107,7 +107,13 @@ export default {
             selectionTree.value.some((node) => node.id === d.parent.data.id);
           return inSelectionTree ? "#4B99D0" : "#ccc";
         })
-        .attr("stroke-width", 0.4)
+        .attr("stroke-width", function (d) {
+          // 检查当前线条连接的节点是否都在 selectionTree 中
+          const inSelectionTree =
+            selectionTree.value.some((node) => node.id === d.data.id) &&
+            selectionTree.value.some((node) => node.id === d.parent.data.id);
+          return inSelectionTree ? "1.2" : "0.5";
+        })
         .attr("id", (d) => "treePath-" + d.parent.data.id + "-" + d.data.id); // 设置每个 path 的 ID，为父节点-子节点，例如 "treePath-0-1",
 
       svg

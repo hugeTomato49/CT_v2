@@ -3,15 +3,26 @@ import { ifEmphasize } from "../computation/treeComputation"
 const state = {
     //list of obj: [{entityID: 1, type: "tree", "id_list": [], "level_list": []}, {entityID: 2, type: "node", "id": 1, "level":1}]
     entityCollection: [],
-    entityID: 1
+    entityID: 1,
+    nodeVisiable: 1,
+    pathVisiable: 1,
+    treeVisiable: 1
 }
 
 const mutations = {
     //不用mutations, 直接actions, 改变entityCollection
     deleteIdFromEntity(state, { index, idIndex }) {
         state.entityCollection[index].path.splice(idIndex, 1);
+    },
+    SET_NODE_VISUAL(state, value) {
+        state.nodeVisiable = value;
+    },
+    SET_PATH_VISUAL(state, value) {
+        state.pathVisiable = value;
+    },
+    SET_TREE_VISUAL(state, value) {
+        state.treeVisiable = value;
     }
-
 }
 
 const actions = {
@@ -31,39 +42,33 @@ const actions = {
     },
     deleteIdFromEntity({ commit, state }, deleteItem) {
         const index = state.entityCollection.findIndex(entity => entity.entityID === deleteItem.entityID);
-        console.log("id is",deleteItem.id)
+        console.log("id is", deleteItem.id)
         console.log("entity id is", deleteItem.entityID)
-        console.log("index is",index)
+        console.log("index is", index)
         if (index !== -1) {
             const levelIndex = state.entityCollection[index].path.findIndex(id => id === deleteItem.id);
             state.entityCollection[index].path = state.entityCollection[index].path.filter(item => item !== deleteItem.id)
-            
-            console.log("level index is",levelIndex)
+
+            console.log("level index is", levelIndex)
             state.entityCollection[index].levelList.splice(levelIndex, 1)
         }
-        console.log("entity collectino is", state.entityCollection)
-        // const entity = state.entityCollection.find(e => e.entityID === deleteItem.entityID);
-        // if (!entity) {
-        //     console.log('Entity not found');
-        //     return; // 如果没有找到对应的entity，直接返回
-        // }
-
-        // // 找到id在id_list中的索引
-        // const index = entity.path.findIndex(id => id === deleteItem.id);
-        // if (index === -1) {
-        //     console.log('ID not found in id_list');
-        //     return; // 如果没有找到对应的id，直接返回
-        // }
-
-        // // 从id_list和level_list中删除相应的元素
-        // entity.path.splice(index, 1); // 删除id_list中的元素
-        // entity.levelList.splice(index, 1); // 删除level_list中相同位置的元素
-        // const newIndex = state.entityCollection.findIndex(entity => entity.entityID === deleteItem.entityID)
-        // state.entityCollection[newIndex] = entity
+        // console.log("entity collectino is", state.entityCollection)
+    },
+    updateNodeVisiable({ commit }, value) {
+        commit('SET_NODE_VISUAL', value);
+    },
+    updatePathVisiable({ commit }, value) {
+        commit('SET_PATH_VISUAL', value);
+    },
+    updateTreeVisiable({ commit }, value) {
+        commit('SET_TREE_VISUAL', value);
     }
 }
 const getters = {
-    entityCollection: state => state.entityCollection
+    entityCollection: state => state.entityCollection,
+    nodeVisiable:state => state.nodeVisiable,
+    pathVisiable:state => state.pathVisiable,
+    treeVisiable:state => state.treeVisiable
 }
 
 const selectionModule = {

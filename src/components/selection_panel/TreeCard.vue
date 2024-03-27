@@ -37,7 +37,7 @@
                             </div>
                         </div>
                         <div class="w-1/14 h-full ">
-                            
+                            <DonutChart v-if=" index > 0" :correlation="calculateCorrelation(seriesData_list[0], seriesData_list[index])"></DonutChart>
                         </div>
 
                     </div>
@@ -54,11 +54,16 @@
 import { useStore } from 'vuex'
 import { computed, ref, onMounted, watch } from 'vue'
 import { cloneDeep } from 'lodash'
+import DonutChart from './DonutChart.vue'
 import { generateSelectedPath } from '../../generator/generator'
+import { calculatePearsonCorrelation } from '../../select/entitySelection'
 import * as d3 from "d3"
 export default {
     name: 'TreeCard',
     props: ['id_list', 'level_list', 'related', 'entityID'],
+    components:{
+        DonutChart 
+    },
     setup(props) {
         const titleContainer = ref(null)
         const width = ref(0)
@@ -73,6 +78,7 @@ export default {
 
         const levels = computed(() => store.getters["tree/levels"])
         const selectionTree = computed(() => store.getters["tree/selectionTree"])
+        const originalTree = computed(() => store.getters["tree/originalTree"]);
         const description = computed(() => store.getters["tree/description"])
         const timeRange = computed(() => store.getters["tree/timeRange"])
 
@@ -85,22 +91,24 @@ export default {
             store.dispatch('selection/deleteIdFromEntity', deleteItem);
         };
         const extractLastNumber = (str) => {
-            const matches = str.match(/(\d+)(?!.*\d)/);
-            return matches ? matches[0] : null;
+            const regex = /(?:-|^)([^-]+)$/;
+      const match = str.match(regex);
+      const result = match ? match[1] : ""; // 如果有匹配的话，结果在match的第二个元素中
+      return result;
         };
         const getCategoryBySeriesId = (id) => {
-            const index = props.id_list.findIndex(itemId => itemId === id);
-            const level = props.level_list[index];
-            const categoryName = levels.value[level - 1]; // 从 Vuex 获取类别名称
-            const firstChar = categoryName[0]
+
 
             // 在 selectionTree 中查找对应的节点
-            const node = selectionTree.value.find(node => node.id === id);
+            const node = originalTree.value.find(node => node.id === id);
             const nodeName = node ? node.node_name : '';
             const number = extractLastNumber(nodeName); // 提取编号
 
             // 组合类别名称和编号
-            return `${firstChar}${number}`;
+            return `${number}`;
+        };
+        const calculateCorrelation = ( series1, series2 ) => {
+            return calculatePearsonCorrelation(series1, series2);
         };
         const updateYScales = () => {
             if (store.getters["size/yScale"].length > 0) {
@@ -163,8 +171,8 @@ export default {
             timeRange,
             deleteTreeEntity,
             deleteTree,
-            getCategoryBySeriesId
-
+            getCategoryBySeriesId,
+            calculateCorrelation
         }
 
 
