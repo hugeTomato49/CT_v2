@@ -172,7 +172,7 @@ export default {
 }
 
 .meta {
-  font-size: 0.6rem;
+  font-size: 0.8rem;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;

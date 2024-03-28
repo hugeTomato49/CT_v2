@@ -3,9 +3,9 @@
         <div class="w-full h-full" id="TimelineContainer">
             <div 
             v-if="barChartVisible"
-            class="h-20px w-full" >
+            class="h-40px w-full" >
                 <svg class="w-full h-full">
-                    <rect 
+                    <!-- <rect 
                     v-for="(d, index) in SD_Data" 
                     :key="d.Time"
                     :x="xScale(new Date(d.Time))"
@@ -14,7 +14,8 @@
                     :height="height - yScale(d.Value)" 
                     :fill="new Date(d.Time) >= new Date(timeRange[0]) && new Date(d.Time) <= new Date(timeRange[1]) ? themeColor : '#DFDFDF'"  
                     stroke="none"
-                    />
+                    /> -->
+
 
                 </svg>
             </div>
@@ -46,10 +47,31 @@ export default {
         const seriesCollection = computed(() => store.getters["tree/seriesCollection"])
         const timeRange = computed(() => store.getters["tree/timeRange"])
         const wholeTimeRange = computed(() => store.getters["time/wholeTimeRange"])
+    
 
         const TimelineContainer = ref(null)
         const width = ref(0)
-        const height = ref(20)
+        const height = ref(40)
+
+        
+        const xScale = computed(() => {
+            return d3.scaleTime().domain([new Date(wholeTimeRange.value[0]), new Date(wholeTimeRange.value[1])]).range([0, width.value])
+        })
+
+        //seriesData_copy
+
+
+        // yScale
+
+
+        //color
+        const colors = ref([])
+
+        
+
+        
+
+
 
         
         
@@ -65,9 +87,6 @@ export default {
 
  
 
-        const xScale = computed(() => {
-            return d3.scaleTime().domain([new Date(wholeTimeRange.value[0]), new Date(wholeTimeRange.value[1])]).range([0, width.value])
-        })
 
         const yScale = computed(() => {
             if(SD_Data.value.length > 0){

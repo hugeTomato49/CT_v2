@@ -10,7 +10,7 @@ const state = {
     xScale: [],
     yScale: [],
     columnPercentage: 0.25,
-    rowNum: 16
+    rowNum: 18
 
 }
 

@@ -47,15 +47,17 @@
             <div
               class="w-1/7 h-full p-0 flex flex-row items-center justify-center"
             >
-              <div class="w-full flex flex-col" :style="{ color: themeColor }">
-                <div class="meta">{{ getCategoryBySeriesId(id) }}</div>
+              <div class="w-full flex flex-row" :style="{ color: themeColor }">
+                
                 <div @click="deletePath(id)">
                   <font-awesome-icon
                     :icon="['fas', 'trash-can']"
-                    size="xs"
+                    size="lg"
                     style="color: #f87171"
+                    class="cursor-pointer"
                   />
                 </div>
+                <div class="meta flex flex-row items-center justify-center ml-2"><div>{{ getCategoryBySeriesId(id) }}</div></div>
               </div>
             </div>
             <div class="w-11/14 h-full flex flex-row justify-center">
