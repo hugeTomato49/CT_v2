@@ -3,8 +3,12 @@ import * as d3 from "d3"
 const lineGenerator = (xScale, yScale) => {
 
     return d3.line()
-    .x(d => xScale(d.Time))
-    .y(d => yScale(d.value))
+    .x(d => {
+        return xScale(new Date(d.Time));
+    })
+    .y(d => {
+        return yScale(d.value);
+    });
     // .curve(d3.curveBasis)
 }
 
@@ -13,11 +17,6 @@ export const generatePath = (data,xScale, yScale) => {
     // console.log(data)
     // console.log(xScale)
     // console.log(yScale)
-
-
-
-
-
     return lineGenerator(xScale,yScale)(data)
 
   

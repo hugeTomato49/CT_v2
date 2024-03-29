@@ -6,27 +6,20 @@
       <div class="text-[#4B99D0] ml-6">{{ entityName }}</div>
     </div>
     <div class="w-1/2 h-full mt-1 flex flex-row">
-      <svg class="w-1/4 h-full" viewBox="0 0 16 16" >
-        <circle cx="8" cy="2" r="7" fill="#D2E6F8" />
+      <svg class="w-full h-full" viewBox="0 0 16 16" >
+        <circle cx="6" cy="5" r="4" fill="#D2E6F8" />
         <text
-          x="8"
-          y="2"
+          x="6"
+          y="5"
           :fill="themeColor"
           class="circleNumber"
           text-anchor="middle"
           alignment-baseline="central"
-          font-size="10"
+          font-size="6"
         >
           {{ number }}
         </text>
       </svg>
-      <div class="w-1/2 h-full ml-2">
-        <div @click="toggleVisibility" class="cursor-pointer">
-          <font-awesome-icon
-            :icon="entityVisiable == 1 ? ['fas', 'eye'] : ['fas', 'eye-slash']"
-          />
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -41,26 +34,8 @@ export default {
   setup(props) {
     const store = useStore();
     const themeColor = computed(() => store.getters["tree/themeColor"]);
-    const toggleVisibility = () => {
-      const currentValue = props.entityVisiable; // 假设所有初始值相同
-      const newValue = !currentValue; // 切换值
-      // 更新 Vuex 状态
-      switch (props.entityName) {
-        case "Node":
-          store.dispatch("selection/updateNodeVisiable", newValue);
-          break;
-        case "Path":
-          store.dispatch("selection/updatePathVisiable", newValue);
-          break;
-        case "Tree":
-          store.dispatch("selection/updateTreeVisiable", newValue);
-          break;
-        default:
-          // 可以处理无效的 entityName 或不做任何事
-          console.warn("Unknown entityName:", props.entityName);
-      }
-    };
-    return { themeColor, toggleVisibility,};
+    
+    return { themeColor,};
   },
 };
 </script>

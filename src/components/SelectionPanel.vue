@@ -1,20 +1,21 @@
 <template>
   <div class="w-full h-full">
     <div class="w-full h-full flex flex-row justify-between" :style="{ height: headerHeight + 'px' }">
-      <EntityHeader entityName="Node" :number="nodeEntities.length" :entityVisiable="nodeVisiable"> </EntityHeader>
-      <EntityHeader entityName="Path" :number="pathEntities.length" :entityVisiable="pathVisiable"> </EntityHeader>
-      <EntityHeader entityName="Tree" :number="treeEntities.length" :entityVisiable="treeVisiable"> </EntityHeader>
+      <EntityHeader entityName="Node" :number="nodeEntities.length" > </EntityHeader>
+      <EntityHeader entityName="Path" :number="pathEntities.length" > </EntityHeader>
+      <EntityHeader entityName="Layer" number=0 > </EntityHeader>
+      <EntityHeader entityName="Tree" :number="treeEntities.length" > </EntityHeader>
     </div>
     <div class="w-full mt-2 mb-3 px-2"><div class="border-solid border-1 border-light-800"></div></div>
-    <div v-if="nodeVisiable">
+    <div >
       <NodeCard v-for="entity in nodeEntities" :key="entity.id" :id="entity.id" :entityID="entity.entityID"
         :level="entity.level" />
     </div>
-    <div v-if="pathVisiable">
+    <div >
       <PathCard v-for="entity in pathEntities" :key="entity.entityID" :id_list="entity.path"
       :level_list="entity.levelList" :entityID="entity.entityID" :related="false" />
     </div>
-    <div v-if="treeVisiable">
+    <div >
       <TreeCard v-for="entity in treeEntities" :key="entity.entityID" :id_list="entity.path"
       :level_list="entity.levelList" :entityID="entity.entityID" :related="false" />
     </div>
@@ -44,9 +45,6 @@ export default {
     const entityCollection = computed(
       () => store.getters["selection/entityCollection"]
     );
-    const nodeVisiable = computed(() => store.getters["selection/nodeVisiable"])
-    const pathVisiable = computed(() => store.getters["selection/pathVisiable"])
-    const treeVisiable = computed(() => store.getters["selection/treeVisiable"])
     const nodeEntities = computed(() => {
       return entityCollection.value.filter((entity) => entity.type === "Node");
     });
@@ -74,9 +72,6 @@ export default {
       treeEntities,
       entityCollection,
       headerHeight,
-      nodeVisiable,
-      pathVisiable,
-      treeVisiable
     };
   },
 };

@@ -44,7 +44,7 @@ export default {
 
         const showBarChart = () => {
             barChartVisible.value = !barChartVisible.value; 
-            height.value = barChartVisible.value ? 40 : 5; 
+            height.value = barChartVisible.value ? 60 : 5; 
         }
 
         return {

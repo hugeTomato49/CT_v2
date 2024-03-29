@@ -37,7 +37,7 @@
                             </div>
                         </div>
                         <div class="w-1/14 h-full ">
-                            <DonutChart v-if=" index > 0" :correlation="calculateCorrelation(seriesData_list[0], seriesData_list[index])"></DonutChart>
+                            
                         </div>
 
                     </div>
@@ -54,7 +54,6 @@
 import { useStore } from 'vuex'
 import { computed, ref, onMounted, watch } from 'vue'
 import { cloneDeep } from 'lodash'
-import DonutChart from './DonutChart.vue'
 import { generateSelectedPath } from '../../generator/generator'
 import { calculatePearsonCorrelation } from '../../select/entitySelection'
 import * as d3 from "d3"
@@ -62,7 +61,6 @@ export default {
     name: 'TreeCard',
     props: ['id_list', 'level_list', 'related', 'entityID'],
     components:{
-        DonutChart 
     },
     setup(props) {
         const titleContainer = ref(null)
