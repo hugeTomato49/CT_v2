@@ -1,14 +1,14 @@
 <template>
   <div
-    class="w-full h-full flex justify-center items-center pl-1"
+    class="w-full h-full flex justify-center items-center pl-1 "
     id="Donut"
   >
     <svg class="w-full h-full mt-2">
       <!-- 绘制甜甜圈背景 -->
       <circle
         :cx="width  * 0.4"
-        :cy="height * 0.4"
-        :r="12"
+        :cy="height * 0.5"
+        :r="10"
         fill="transparent"
         stroke="#eee"
         stroke-width="6"
@@ -22,7 +22,7 @@
         stroke-linecap="round"
       />
       <!-- 添加一个圆心以形成甜甜圈形状 -->
-      <circle :cx="width * 0.4" :cy="height * 0.4" :r="6" fill="white" />
+      <circle :cx="width * 0.4" :cy="height * 0.5" :r="4" fill="white" />
     </svg>
   </div>
 </template>
@@ -43,9 +43,9 @@ export default {
       const percentage = Math.abs(props.correlation); // 使用相关性的绝对值
       const endAngle = percentage * 360; // 相关性从0到1映射到0到360度
       const endRadians = (endAngle - 90) * (Math.PI / 180); // 将角度转换为弧度
-      const radius = 12;
+      const radius = 10;
       const centerX = width.value * 0.4;
-      const centerY = height.value * 0.4;//这里用0.4更加符合div的中心，可能会有适应性方面的不同
+      const centerY = height.value * 0.5;//这里用0.4更加符合div的中心，可能会有适应性方面的不同
 
       // 大弧标志和终点计算，同样基于新的半径和圆心
       const largeArcFlag = percentage > 0.5 ? 1 : 0;

@@ -126,7 +126,13 @@ export default {
         })
         .append("circle")
         .attr("r", 1.5)
-        .style("fill", "#DFDFDF")
+        .style("fill", function (d) {
+          // 检查当前线条连接的节点是否都在 selectionTree 中
+          const inSelectionTree =
+            selectionTree.value.some((node) => node.id === d.data.id) &&
+            selectionTree.value.some((node) => node.id === d.parent.data.id);
+          return inSelectionTree ? "#4B99D0" : "#DFDFDF";
+        })
         .attr("stroke", "none")
         .style("stroke-width", 0.1)
         .attr("id", (d) => "treeCircle-" + d.data.id); // 设置每个 circle 的 ID，例如 "treeCircle-0",

@@ -4,9 +4,6 @@ const state = {
     //list of obj: [{entityID: 1, type: "tree", "id_list": [], "level_list": []}, {entityID: 2, type: "node", "id": 1, "level":1}]
     entityCollection: [],
     entityID: 1,
-    nodeVisiable: 1,
-    pathVisiable: 1,
-    treeVisiable: 1
 }
 
 const mutations = {
@@ -66,9 +63,6 @@ const actions = {
 }
 const getters = {
     entityCollection: state => state.entityCollection,
-    nodeVisiable:state => state.nodeVisiable,
-    pathVisiable:state => state.pathVisiable,
-    treeVisiable:state => state.treeVisiable
 }
 
 const selectionModule = {
