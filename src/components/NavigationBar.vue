@@ -19,8 +19,8 @@ export default {
 
 <style>
 .pacifico-regular {
-  font-family: "Pacifico", cursive;
-  font-weight: 400;
+    font-family: "Inter", sans-serif;
+  font-weight: 800;
   font-style: normal;
 }
 

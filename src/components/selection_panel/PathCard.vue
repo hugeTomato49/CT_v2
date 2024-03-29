@@ -60,7 +60,7 @@
                 <div class="meta flex flex-row items-center justify-center ml-2"><div>{{ getCategoryBySeriesId(id) }}</div></div>
               </div>
             </div>
-            <div class="w-11/14 h-full flex flex-row justify-center">
+            <div class="w-6/7 h-full flex flex-row justify-center">
               <div
                 class="w-full h-full"
                 :style="{ 'border-bottom': '1px solid' + themeColor }"
@@ -86,7 +86,7 @@
                 </svg>
               </div>
             </div>
-            <div class="w-1/14 h-full">
+            <!-- <div class="w-1/14 h-full">
               <DonutChart
                 v-if="index > 0"
                 :correlation="
@@ -96,7 +96,7 @@
                   )
                 "
               />
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -206,7 +206,7 @@ export default {
 
     onMounted(() => {
       titleContainer.value = document.querySelector("#pathTitleContainer");
-      width.value = (titleContainer.value.offsetWidth * 11) / 14;
+      width.value = (titleContainer.value.offsetWidth * 6) / 7;
 
       if (store.getters["size/xScale"].length > 0) {
         xScale.value = d3

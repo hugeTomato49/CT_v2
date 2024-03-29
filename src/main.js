@@ -28,7 +28,8 @@ import {
     faTrashCan,
     faEye,
     faEyeSlash,
-    faDrawPolygon
+    faDrawPolygon,
+    faChartSimple
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -50,7 +51,8 @@ library.add(
     faTrashCan,
     faEye,
     faEyeSlash,
-    faDrawPolygon
+    faDrawPolygon,
+    faChartSimple
 )
 
 const app = createApp(App)

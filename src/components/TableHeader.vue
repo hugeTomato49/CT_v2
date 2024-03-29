@@ -30,6 +30,16 @@
                 @click="toggleAlign(level_id_list[index])"
               />
               <font-awesome-icon
+                :icon="['fas', 'chart-simple']"
+                class="mr-2 cursor-pointer"
+                style="color: #ffffff"
+              />
+              <font-awesome-icon
+                :icon="['fas', 'arrow-up-wide-short']"
+                class="mr-2 cursor-pointer"
+                style="color: #ffffff"
+              />
+              <font-awesome-icon
                 :icon="['fas', 'arrow-down-short-wide']"
                 class="mr-2 cursor-pointer"
                 style="color: #ffffff"
@@ -42,7 +52,7 @@
                 @click="processSelectedCircles(level_id_list[index])"
               />
               <font-awesome-icon
-                :icon="['fas', 'object-ungroup']"
+                :icon="['fas', 'layer-group']"
                 class="cursor-pointer mr-2"
                 style="color: #ffffff"
                 @click="createLayers(level_id_list[index])"
