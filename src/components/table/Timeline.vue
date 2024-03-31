@@ -1,18 +1,8 @@
 <template>
     <div class="w-full h-full p-0.8 flex flex-col">
-        <div class="w-full h-full" id="TimelineContainer">
+        <div class="w-full h-full" id="TimelineContainer" >
             <div v-show="barChartVisible" class="h-60px w-full">
-                <svg class="w-full h-full">
-                    <!-- <rect 
-                    v-for="(d, index) in SD_Data" 
-                    :key="d.Time"
-                    :x="xScale(new Date(d.Time))"
-                    :y="yScale(d.Value)"
-                    :width="barWidth" 
-                    :height="height - yScale(d.Value)" 
-                    :fill="new Date(d.Time) >= new Date(timeRange[0]) && new Date(d.Time) <= new Date(timeRange[1]) ? themeColor : '#DFDFDF'"  
-                    stroke="none"
-                    /> -->
+                <svg class="w-full h-full { zoomed: isZoomed }" id="svg-container" @contextmenu.prevent="toggleZoom">
                     <g ref="brushRef"></g>
                     <path v-for="(data, index) in filteredSeriesData" :key="index"
                         :stroke="colorBar[index % colorBar.length]" fill="none" stroke-width="1.5"
@@ -46,6 +36,7 @@ export default {
     setup(props) {
         const store = useStore();
         const brushRef = ref(null);
+        const isZoomed = ref(false);
         const themeColor = computed(() => store.getters["tree/themeColor"]);
         const seriesCollection = computed(
             () => store.getters["tree/seriesCollection"]
@@ -96,7 +87,7 @@ export default {
                 .on('end', brushed);
 
             d3.select(brushRef.value).call(brush);
-            brushRef.value.brush = brush; 
+            brushRef.value.brush = brush;
         };
 
         // 定义处理刷子操作结束的函数
@@ -109,11 +100,9 @@ export default {
             }
         };
 
-        //seriesData_copy
-
-        // yScale
-
-        //color
+        const toggleZoom = () => {
+            store.commit('time/UPDATE_ZOOM');
+        };
 
         const SD_Data = computed(() => {
             // console.log("KKK")
@@ -172,11 +161,13 @@ export default {
             maxValue,
             minValue,
             brushRef,
-            wholeTimeRange
+            wholeTimeRange,
+            toggleZoom
         };
     },
 };
 </script>
 
 
-<style></style>
+<style>
+</style>

@@ -1,14 +1,14 @@
 const state = {
     SD: [],
-    wholeTimeRange: ['2022-11-27', '2023-3-27']
+    wholeTimeRange: ['2022-11-27', '2023-3-27'],
     //wholeTimeRange: ['2023-1-3', '2023-12-29']
-
+    zoomVisiable:0
 }
 
 const mutations = {
-    UPDATE_TIME_RANGE(state, payload) {
-        state.wholeTimeRange = payload
-    },
+    UPDATE_ZOOM(state){
+        state.zoomVisiable = !state.zoomVisiable
+    }
 }
 
 const actions = {
@@ -25,8 +25,8 @@ const actions = {
 }
 const getters = {
     SD: state => state.SD,
-    wholeTimeRange: state => state.wholeTimeRange
-
+    wholeTimeRange: state => state.wholeTimeRange,
+    zoomVisiable: state => state.zoomVisiable
 }
 
 const timeModule = {
