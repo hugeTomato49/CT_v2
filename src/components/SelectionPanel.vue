@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full h-full">
-    <div class="w-full h-full flex flex-row justify-between" :style="{ height: headerHeight + 'px' }">
+  <div class="w-full h-full ">
+    <div class="w-full h-full flex flex-row justify-between " :style="{ height: headerHeight + 'px' }">
       <EntityHeader entityName="Node" :number="nodeEntities.length" > </EntityHeader>
       <EntityHeader entityName="Path" :number="pathEntities.length" > </EntityHeader>
       <EntityHeader entityName="Layer" number=0 > </EntityHeader>

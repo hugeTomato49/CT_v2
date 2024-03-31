@@ -46,6 +46,7 @@ export default {
     setup(props) {
         const store = useStore();
         const brushRef = ref(null);
+        const isZoomed = ref(false);
         const themeColor = computed(() => store.getters["tree/themeColor"]);
         const seriesCollection = computed(
             () => store.getters["tree/seriesCollection"]
@@ -96,7 +97,7 @@ export default {
                 .on('end', brushed);
 
             d3.select(brushRef.value).call(brush);
-            brushRef.value.brush = brush; 
+            brushRef.value.brush = brush;
         };
 
         // 定义处理刷子操作结束的函数
@@ -109,11 +110,9 @@ export default {
             }
         };
 
-        //seriesData_copy
-
-        // yScale
-
-        //color
+        const toggleZoom = () => {
+            store.commit('time/UPDATE_ZOOM');
+        };
 
         const SD_Data = computed(() => {
             // console.log("KKK")
@@ -172,11 +171,13 @@ export default {
             maxValue,
             minValue,
             brushRef,
-            wholeTimeRange
+            wholeTimeRange,
+            toggleZoom
         };
     },
 };
 </script>
 
 
-<style></style>
+<style>
+</style>
