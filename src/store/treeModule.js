@@ -229,7 +229,15 @@ const actions = {
         commit('scatterPlot/UPDATE_PLOT_X_SCALE', plotX, { root: true }) //plot_x_scale
         commit('scatterPlot/UPDATE_PLOT_Y_SCALE', plotY, { root: true }) //plot_y_scale
       })
-    }
+    },
+    deleteNodes({state, commit, rootState}, deleteIds){
+      let selectionTree = cloneDeep(state.selectionTree)
+      selectionTree = selectionTree.filter(node => !deleteIds.includes(node.id))
+      const id = deleteIds[0]
+      const parent_node = selectionTree.find(node => node.children_id.includes(id))
+      parent_node.children_id = parent_node.children_id.filter(id => !deleteIds.includes(id))
+      state.selectionTree = selectionTree   
+    },
     
 }
 

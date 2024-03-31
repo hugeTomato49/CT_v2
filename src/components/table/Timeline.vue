@@ -1,7 +1,7 @@
 <template>
     <div class="w-full h-full p-0.8 flex flex-col">
         <div class="w-full h-full" id="TimelineContainer">
-            <div v-show="barChartVisible" class="h-60px w-full">
+            <div v-show="barChartVisible" class="h-40px w-full">
                 <svg class="w-full h-full">
                     <!-- <rect 
                     v-for="(d, index) in SD_Data" 
@@ -15,7 +15,7 @@
                     /> -->
                     <g ref="brushRef"></g>
                     <path v-for="(data, index) in filteredSeriesData" :key="index"
-                        :stroke="colorBar[index % colorBar.length]" fill="none" stroke-width="1.5"
+                        :stroke="colorBar[index % colorBar.length]" fill="none" stroke-width="1"
                         :d="generatePath(data, xScale, yScale)"></path>
                 </svg>
             </div>
@@ -55,7 +55,7 @@ export default {
 
         const TimelineContainer = ref(null);
         const width = ref(0);
-        const height = ref(60);
+        const height = ref(40);
         const filteredSeriesData = computed(() => {
             // 过滤出所有匹配当前level_id的seriesData_copy
             const data = seriesCollection.value

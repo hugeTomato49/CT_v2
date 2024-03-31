@@ -60,18 +60,7 @@
                   </div>
               </div>
           </div>
-          <div class="w-full flex flex-row justify-center mt-2">
-              <div class="w-full flex flex-row">
-                  <div class="name text-sm" :style="{ 'color': themeColor }">  View Cluster</div>
-                  <div class="flex-1"></div>
-                  <div v-if="clusterVisible" @click="toggleClusterVisible" class="cursor-pointer">
-                      <font-awesome-icon :icon="['fas', 'eye']" />
-                  </div>
-                  <div v-else="!clusterVisible" @click="toggleClusterVisible" class="cursor-pointer">
-                      <font-awesome-icon :icon="['fas', 'eye-slash']" />
-                  </div>
-              </div>
-          </div>
+          
       </div>   
     </div>
   </div>
@@ -91,7 +80,7 @@ export default {
   },
   setup() {
     const store = useStore();
-    const inputValue = ref(5);
+    const inputValue = ref(1);
     watchEffect(() => {
       console.log("input value is", inputValue.value)
       store.dispatch("scatterPlot/updateClusterNumber", inputValue.value)

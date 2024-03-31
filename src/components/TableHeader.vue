@@ -30,7 +30,7 @@
                 @click="toggleAlign(level_id_list[index])"
               />
               <font-awesome-icon
-                :icon="['fas', 'chart-simple']"
+                :icon="['fas', 'code-merge']"
                 class="mr-2 cursor-pointer"
                 style="color: #ffffff"
               />
@@ -60,11 +60,11 @@
             </div>
           </div>
           <div
-            class="h-full px-0.5px bg-stone-100 cursor-pointer flex flex-row justify-center items-center"
+            class="h-full px-0.5px  cursor-pointer flex flex-row justify-center items-center"
             :style="{ width: 30 + 'px' }"
-            @click="addColumn"
+            
           >
-            <font-awesome-icon :icon="['fas', 'plus']" style="color: #e2e3e4" />
+            
           </div>
         </div>
       </div>
@@ -526,6 +526,8 @@ export default {
           }
         });
       }
+      // const deleteIds = selectionTree.value.filter(node => node.level == level_id).filter(node => !filteredSelectedCircleIds.includes(node.id)).map(node => node.id)
+      // store.dispatch("tree/deleteNodes", deleteIds)
       points.value = [];
     };
     const pointsToString = computed(() => {
