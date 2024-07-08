@@ -81,7 +81,6 @@ export default {
 }
 
 .TableCss {
-  position: relative; /* 如果需要，可以根据实际情况调整 */
   z-index: 20; /* 确保 TableCss 不会被 Zoomcss 遮挡 */
 }
 </style>
