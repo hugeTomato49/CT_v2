@@ -5,16 +5,20 @@
 @LastEditTime: 2024-03-14 21:04:19
 @LastEditors: Nemo
 '''
-from compute.TSfuncCal import GetMax, GetMin
+from compute.TSfuncCal import GetMax, GetMin, Standardize
 from compute.filter import getTSdata
 from compute.jsonTransfer import TSjson_exp
 import numpy as np
-
-def getBoundary(pv_tree_data, folder_path, timeRange=[]):
+# resolve conflict for dataset
+def getBoundary(pv_tree_data, folder_path, timeRange=[], dataset="PV"):
     level_max=[]
     level_min=[]
     for node in pv_tree_data:
-        node_TS_data = {'data':getTSdata(node['node_name'], folder_path, timeRange)}
+        if dataset == 'Stock':
+            node_TS_data = {'data':Standardize(getTSdata(node['node_name']), folder_path, timeRange)}
+        else:
+            node_TS_data = {'data':getTSdata(node['node_name'], folder_path, timeRange)}
+
         node_max = GetMax(node_TS_data)
         node_min = GetMin(node_TS_data)
         if node['level'] > len(level_max):

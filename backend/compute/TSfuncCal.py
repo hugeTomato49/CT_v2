@@ -7,6 +7,8 @@
 '''
 import pandas as pd
 import numpy as np
+import json
+from io import StringIO
 from compute.jsonTransfer import TSjson_exp
 
 def Pearson_cal(TS1, TS2):
@@ -82,3 +84,19 @@ def Normalization(TS, level_max, level_min):
     TS_datalist = TS_datalist[:, 1]
     TS_datalist = (TS_datalist-level_min)/(level_max-level_min)
     return TS_datalist
+
+def Standardize(TS):
+    # Convert JSON to DataFrame for easier manipulation
+    json_str = json.dumps(TS)
+    df = pd.read_json(StringIO(json_str))
+
+    # (subtract the mean and divide by the standard deviation)
+    df['value'] = (df['value'] - df['value'].mean()) / df['value'].std()
+
+    result = df.to_json(orient='records', date_format='iso')
+    
+    # Convert the JSON string back to a list of dictionaries
+    standardized_TS = json.loads(result)
+    
+    return standardized_TS
+

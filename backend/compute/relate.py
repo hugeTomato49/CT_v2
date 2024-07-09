@@ -18,6 +18,7 @@ def getBestLayer(pv_tree_data, folder_path, target_layer_ids, timeRange=[], mode
     # to be implemented
     return
 
+# getBoundary is modified, mind parameters
 def getBestPath(pv_tree_data, folder_path, target_path_ids, timeRange=[], mode='similarity'):
     boundarys = getBoundary(pv_tree_data, folder_path, timeRange)['result']
 
