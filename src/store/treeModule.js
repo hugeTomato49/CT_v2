@@ -1,6 +1,7 @@
 import axios from "axios"
-import { cloneDeep, update } from 'lodash'
-import { transformData, filterDataByTimeRange, calculateSeriesAverage, calculateSeriesTrend } from "../computation/basicComputation"
+import { cloneDeep } from 'lodash'
+import { transformData, filterDataByTimeRange, calculateSeriesAverage, calculateSeriesTrend, calculateAverageSeries } from "../computation/basicComputation"
+import { merge_trees } from "../computation/treeManipulation"
 import { updateSelectionFromOriginal, addLevels, updateSeriesCollection } from "../update/updateTree"
 import { addPlotScale, addYScale } from "../update/updateScale"
 
@@ -10,7 +11,7 @@ const state = {
     originalTree : [],
     selectionTree : [], 
     seriesCollection: [],
-    dataset: 'PV',
+    dataset: 'Stock',
     levels: {
       'PV':['Transformer', 'Converter', 'Line'],
       'Stock':['Index','Sector','Stock'],
@@ -106,26 +107,19 @@ const actions = {
                 averageMap.set(node.id, average);
             }
         });
-  
         updatedSelectionTree = updatedSelectionTree.map(node => {
             if (obj.id_list.includes(node.id)) {
                 return {...node, average: averageMap.get(node.id)}
             }
             return node
-        });
-    
+        })
         if (obj.mode == "desc") {
             updatedSelectionTree.sort((a, b) => obj.id_list.includes(a.id) && obj.id_list.includes(b.id) ? b.average - a.average : 0)
         } 
         else if (obj.mode == "asc") {
             updatedSelectionTree.sort((a, b) => obj.id_list.includes(a.id) && obj.id_list.includes(b.id) ? a.average - b.average : 0)
         }
-    
         updatedSelectionTree = updatedSelectionTree.map(({ average, ...node }) => node)
-    
-        // console.log("ENTER");
-        // console.log(updatedSelectionTree);
-    
         commit('UPDATE_SELECTION_TREE', updatedSelectionTree);
     },
     updateTimeRange({state, commit, dispatch}, newTimeRange) {
@@ -244,6 +238,9 @@ const actions = {
         commit('scatterPlot/UPDATE_PLOT_Y_SCALE', plotY, { root: true }) //plot_y_scale
       })
     },
+    mergeTrees({state, commit, rootState}, obj){
+      merge_trees({state, commit, rootState}, obj)
+    },
     deleteNodes({state, commit, rootState}, deleteIds){
       let selectionTree = cloneDeep(state.selectionTree)
       selectionTree = selectionTree.filter(node => !deleteIds.includes(node.id))
@@ -251,8 +248,7 @@ const actions = {
       const parent_node = selectionTree.find(node => node.children_id.includes(id))
       parent_node.children_id = parent_node.children_id.filter(id => !deleteIds.includes(id))
       state.selectionTree = selectionTree   
-    },
-    
+    },   
 }
 
 const getters = {
@@ -267,9 +263,7 @@ const getters = {
     colorBar: state => state.colorBar,
     groupState: state => state.groupState,
     themeColor: state => state.themeColor
-
 }
-
 
 const treeModule  = {
     namespaced: true,

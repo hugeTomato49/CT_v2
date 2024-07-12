@@ -33,6 +33,7 @@
                 :icon="['fas', 'code-merge']"
                 class="mr-2 cursor-pointer"
                 style="color: #ffffff"
+                @click="mergeTrees(level_id_list[index])"
               />
               <font-awesome-icon
                 :icon="['fas', 'arrow-up-wide-short']"
@@ -407,6 +408,12 @@ export default {
       });
     };
 
+    const mergeTrees = (level_id) => {
+      const obj = {id1 : 9, id2: 12}
+      store.dispatch("tree/mergeTrees", obj)
+    }
+
+
     const createLayers = (level_id) => {
       const obj = { dataset: dataset.value, level_id: level_id };
       store.dispatch("tree/addLayer", obj);
@@ -574,6 +581,7 @@ export default {
       handleMouseOutLink,
       addColumn,
       sortColumn,
+      mergeTrees,
       createLayers,
       filterCurrentNode,
       hasNode,

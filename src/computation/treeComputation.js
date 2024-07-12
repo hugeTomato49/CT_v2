@@ -1,5 +1,3 @@
-import { select } from "d3"
-
 export const hasChildren = (selectionTree, id) => {
     const node = selectionTree.find(node => node.id == id)
     if (node === undefined) {

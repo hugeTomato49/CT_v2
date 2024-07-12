@@ -36,13 +36,10 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="w-1/14 h-full ">
-                            
+                        <div class="w-1/14 h-full ">     
                         </div>
-
                     </div>
-                </div>
-                
+                </div>   
             </div>
         </div>
     </div>
@@ -138,9 +135,6 @@ export default {
             width.value =  titleContainer.value.offsetWidth * 11 / 14
             // console.log("check width")
             // console.log(width.value)
-            
-
-
             if(store.getters["size/xScale"].length > 0){
                 xScale.value = d3.scaleTime().domain(store.getters["size/xScale"].domain()).range([5, width.value-5])
                 const timeRange = store.getters["tree/timeRange"]
@@ -170,14 +164,6 @@ export default {
             getCategoryBySeriesId,
             calculateCorrelation
         }
-
-
-
-
-
-        
-   
-    
     }
 }
 

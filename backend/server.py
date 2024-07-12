@@ -12,8 +12,8 @@ from compute.TSfuncCal import Standardize
 
 app = Flask(__name__)
 
-PV_data_folder_path = "data/PV"
-# PV_data_folder_path = "data/Stock"
+# PV_data_folder_path = "data/PV"
+PV_data_folder_path = "data/Stock"
 PV_tree_file_name = "PV_Tree.json"
 PV_tree_grouped_file_name = "PV_Tree_grouped.json"
 collection_json_path = os.path.join(os.path.dirname(__file__), 'tmp/origin_coordinateCollection.json')
@@ -212,7 +212,7 @@ def getGroupedCoordinateCollection():
     # print(origin_collection)
     tmp_result = origin_collection["coordinateCollection"][str(level)]
 
-    grouped_Tree = constructGT(Tree_path, tmp_result, level, n=5)
+    grouped_Tree = constructGT(Tree_path, tmp_result, level, n=2)
     grouped_Points = getGroupedPoints(grouped_Tree, tmp_result, level)
     for i in range(max_level+1, level, -1):
         collection[i] = origin_collection["coordinateCollection"][str(i-1)]

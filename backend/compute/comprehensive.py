@@ -15,7 +15,7 @@ def getBoundary(pv_tree_data, folder_path, timeRange=[], dataset="PV"):
     level_min=[]
     for node in pv_tree_data:
         if dataset == 'Stock':
-            node_TS_data = {'data':Standardize(getTSdata(node['node_name']), folder_path, timeRange)}
+            node_TS_data = {'data':Standardize(getTSdata(node['node_name'], folder_path, timeRange))}
         else:
             node_TS_data = {'data':getTSdata(node['node_name'], folder_path, timeRange)}
 
