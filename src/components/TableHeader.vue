@@ -38,6 +38,7 @@
                 :icon="['fas', 'arrow-up-wide-short']"
                 class="mr-2 cursor-pointer"
                 style="color: #ffffff"
+                @click="sortColumn(level_id_list[index], 'desc')"
               />
               <font-awesome-icon
                 :icon="['fas', 'arrow-down-short-wide']"

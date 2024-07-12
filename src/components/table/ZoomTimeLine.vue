@@ -27,13 +27,14 @@ export default {
         const store = useStore();
         const brushRef = ref(null);
         const isZoomed = ref(false);
-        const themeColor = computed(() => store.getters["tree/themeColor"]);
+        const themeColor = computed(() => store.getters["tree/themeColor"])
+        const dataset = computed(() => store.getters["tree/dataset"])
         const zoomVisiable = computed(() => store.getters["time/zoomVisiable"])
         const seriesCollection = computed(
             () => store.getters["tree/seriesCollection"]
         );
-        const timeRange = computed(() => store.getters["tree/timeRange"]);
-        const wholeTimeRange = computed(() => store.getters["time/wholeTimeRange"]);
+        const timeRange = computed(() => store.getters["tree/timeRange"])
+        const wholeTimeRange = computed(() => store.getters["time/wholeTimeRange"])
 
         const TimelineContainer = ref(null);
         const width = ref(0);
@@ -62,8 +63,8 @@ export default {
             return d3
                 .scaleTime()
                 .domain([
-                    new Date(wholeTimeRange.value[0]),
-                    new Date(wholeTimeRange.value[1]),
+                    new Date(wholeTimeRange.value[dataset.value][0]),
+                    new Date(wholeTimeRange.value[dataset.value][1]),
                 ])
                 .range([0, width.value * 2.5]);
         });

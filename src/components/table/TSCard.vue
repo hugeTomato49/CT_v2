@@ -11,7 +11,6 @@
                 id="cardContainer">
                 <svg class="w-full h-full bg-stone-100">
                     <text x="5" y="12" class="node-name text-ms">{{ node_name }}</text>
-                    <!-- <text x="98%" y="12" class="node-name text-ms" v-if="averageValue > 0" text-anchor="end">{{ averageValue.toFixed(2) }}</text> -->
                     <g ref="brushRef"></g>
                     <path :stroke="colorBar[level - 1]" fill="none" stroke-width="2"
                         :d="generatePath(seriesData, xScale, yScale)">

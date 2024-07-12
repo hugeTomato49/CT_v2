@@ -1,6 +1,6 @@
 import axios from "axios"
 import { cloneDeep, update } from 'lodash'
-import { transformData, filterDataByTimeRange, calculateSeriesAverage } from "../computation/basicComputation"
+import { transformData, filterDataByTimeRange, calculateSeriesAverage, calculateSeriesTrend } from "../computation/basicComputation"
 import { updateSelectionFromOriginal, addLevels, updateSeriesCollection } from "../update/updateTree"
 import { addPlotScale, addYScale } from "../update/updateScale"
 
@@ -25,8 +25,8 @@ const state = {
 
 const mutations = {
     UPDATE_ORIGINAL_TREE(state, payload){
-        console.log("check originalTree")
-        console.log(payload)
+        // console.log("check originalTree")
+        // console.log(payload)
         state.originalTree = payload
     },
     UPDATE_SELECTION_TREE(state, payload){
@@ -64,8 +64,8 @@ const actions = {
             // console.log(response.data.PV_Tree)
             dispatch('addToSelectionTree',cloneDeep(state.originalTree.slice(0,1)))
             dispatch("time/updateSD", response.data.SD, {root: true})
-            console.log("check SD")
-            console.log(response.data.SD)
+            // console.log("check SD")
+            // console.log(response.data.SD)
         })
     },
     updateSelectionTree({state, commit, dispatch}, currentSelectionTree){
@@ -95,36 +95,48 @@ const actions = {
         const averageMap = new Map();
         state.selectionTree.forEach(node => {
             if (obj.id_list.includes(node.id)) {
-                const seriesNode = state.seriesCollection.find(item => item.id === node.id);
-                const average = seriesNode ? calculateSeriesAverage(seriesNode.seriesData) : 0;
+                const seriesNode = state.seriesCollection.find(item => item.id === node.id)
+                let average = 0
+                if(state.dataset == 'PV'){
+                  average = seriesNode ? calculateSeriesAverage(seriesNode.seriesData) : 0
+                }
+                else if(state.dataset == 'Stock'){
+                  average = seriesNode ? calculateSeriesTrend(seriesNode.price) : 0
+                }
                 averageMap.set(node.id, average);
             }
         });
   
         updatedSelectionTree = updatedSelectionTree.map(node => {
             if (obj.id_list.includes(node.id)) {
-                return {...node, average: averageMap.get(node.id)};
+                return {...node, average: averageMap.get(node.id)}
             }
-            return node;
+            return node
         });
     
-        if (obj.mode === "desc") {
-            updatedSelectionTree.sort((a, b) => obj.id_list.includes(a.id) && obj.id_list.includes(b.id) ? b.average - a.average : 0);
-        } else if (obj.mode === "asc") {
-            updatedSelectionTree.sort((a, b) => obj.id_list.includes(a.id) && obj.id_list.includes(b.id) ? a.average - b.average : 0);
+        if (obj.mode == "desc") {
+            updatedSelectionTree.sort((a, b) => obj.id_list.includes(a.id) && obj.id_list.includes(b.id) ? b.average - a.average : 0)
+        } 
+        else if (obj.mode == "asc") {
+            updatedSelectionTree.sort((a, b) => obj.id_list.includes(a.id) && obj.id_list.includes(b.id) ? a.average - b.average : 0)
         }
     
-        updatedSelectionTree = updatedSelectionTree.map(({ average, ...node }) => node);
+        updatedSelectionTree = updatedSelectionTree.map(({ average, ...node }) => node)
     
-        console.log("ENTER");
-        console.log(updatedSelectionTree);
+        // console.log("ENTER");
+        // console.log(updatedSelectionTree);
     
         commit('UPDATE_SELECTION_TREE', updatedSelectionTree);
     },
     updateTimeRange({state, commit, dispatch}, newTimeRange) {
-      newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
-      console.log("check newTimeRange")
-      console.log(newTimeRange)
+      if(state.dataset == 'PV'){
+        newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
+      }
+      else if(state.dataset == 'Stock'){
+        newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
+      }
+      // console.log("check newTimeRange")
+      // console.log(newTimeRange)
 
       commit('UPDATE_TIME_RANGE', newTimeRange)
       dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
@@ -255,8 +267,6 @@ const getters = {
     colorBar: state => state.colorBar,
     groupState: state => state.groupState,
     themeColor: state => state.themeColor
-    
-
 
 }
 

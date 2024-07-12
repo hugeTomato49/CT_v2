@@ -1,7 +1,9 @@
 const state = {
     SD: [],
-    wholeTimeRange: ['2022-11-27', '2023-3-27'],
-    //wholeTimeRange: ['2023-1-3', '2023-12-29']
+    wholeTimeRange: {
+        'PV':['2022-11-27', '2023-3-27'],
+        'Stock':['2023-03-01', '2023-03-31']
+    },
     zoomVisiable:0
 }
 
@@ -16,12 +18,7 @@ const actions = {
         state.SD = SD_result
         // console.log("update")
         // console.log(state.SD)
-    },
-    updateTimeRange({ state, commit, dispatch }, newTimeRange) {
-        newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
-        commit('UPDATE_TIME_RANGE', newTimeRange)
-        // dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
-    },
+    }
 }
 const getters = {
     SD: state => state.SD,

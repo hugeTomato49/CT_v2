@@ -37,6 +37,7 @@ export default {
         const brushRef = ref(null);
         const isZoomed = ref(false);
         const themeColor = computed(() => store.getters["tree/themeColor"]);
+        const dataset = computed(() => store.getters["tree/dataset"]);
         const seriesCollection = computed(
             () => store.getters["tree/seriesCollection"]
         );
@@ -70,8 +71,8 @@ export default {
             return d3
                 .scaleTime()
                 .domain([
-                    new Date(wholeTimeRange.value[0]),
-                    new Date(wholeTimeRange.value[1]),
+                    new Date(wholeTimeRange.value[dataset.value][0]),
+                    new Date(wholeTimeRange.value[dataset.value][1]),
                 ])
                 .range([0, width.value]);
         });

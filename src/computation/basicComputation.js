@@ -81,9 +81,22 @@ export const groupData = (seriesCollection) => {
 export const calculateSeriesAverage = (seriesData) => {
     const array = seriesData.map(d => d.value)
     const total = array.reduce((sum, currentValue) => sum + currentValue, 0);
-    
-  
-    return array.length > 0 ? total / array.length : 0;
-    
+    return array.length > 0 ? total / array.length : 0;   
 }
+
+export const calculateSeriesTrend = (seriesData) => {
+    const array = seriesData.map(d => d.value)
+    return (array[array.length - 1] - array[0]) / array[0]
+}
+
+export const calculateAverageSeries = (seriesData1, seriesData2) => {
+    const averagedSeries = [];
+    for (let i = 0; i < seriesData1.length; i++) {
+        const averageValue = (seriesData1[i].value + seriesData2[i].value) / 2;
+        averagedSeries.push({ Time: seriesData1[i].Time, value: averageValue });
+    }
+    return averagedSeries;
+}
+
+
 
