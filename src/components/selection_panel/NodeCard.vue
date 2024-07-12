@@ -79,20 +79,21 @@ export default {
   props: ["id", "level", "entityID"],
   setup(props) {
     //define static value using ref
-    const seriesContainer = ref(null);
-    const width = ref(0);
-    const height = ref(0);
-    const xScale = ref(null);
-    const yScale = ref(null);
-    const seriesData = ref([]);
-    const selectionTree = computed(() => store.getters["tree/selectionTree"]);
-    const originalTree = computed(() => store.getters["tree/originalTree"]);
+    const seriesContainer = ref(null)
+    const width = ref(0)
+    const height = ref(0)
+    const xScale = ref(null)
+    const yScale = ref(null)
+    const seriesData = ref([])
+    const selectionTree = computed(() => store.getters["tree/selectionTree"])
+    const originalTree = computed(() => store.getters["tree/originalTree"])
 
     //store
-    const store = useStore();
-    const themeColor = computed(() => store.getters["tree/themeColor"]);
-    const levels = computed(() => store.getters["tree/levels"]);
-    const description = computed(() => store.getters["tree/description"]);
+    const store = useStore()
+    const themeColor = computed(() => store.getters["tree/themeColor"])
+    const levels = computed(() => store.getters["tree/levels"])
+    const dataset = computed(() => store.getters["tree/dataset"])
+    const description = computed(() => store.getters["tree/description"])
 
     const deleteNodeEntity = () => {
       store.dispatch("selection/deleteEntity", props.entityID);
@@ -104,7 +105,7 @@ export default {
       return result;
     };
     const getCategoryBySeriesId = (id) => {
-      const categoryName = levels.value[props.level - 1]; // 从 Vuex 获取类别名称
+      const categoryName = levels.value[dataset.value][props.level - 1]
       const firstChar = categoryName[0];
       // 在 selectionTree 中查找对应的节点
       const node = originalTree.value.find((node) => node.id === id);

@@ -11,8 +11,10 @@ const state = {
     selectionTree : [], 
     seriesCollection: [],
     dataset: 'PV',
-    //levels: ['Index', 'Sector', 'Stock'],
-    levels: ['Transformer', 'Converter', 'Line'],
+    levels: {
+      'PV':['Transformer', 'Converter', 'Line'],
+      'Stock':['Index','Sector','Stock'],
+    },
     description: ['-kw/h', '-kw/h', '-mA', '-mA'],
     level_id_list: [],
     timeRange: [],
@@ -222,7 +224,7 @@ const actions = {
         commit('UPDATE_ORIGINAL_TREE', response.data.newOriginalTree) // originalTree
         dispatch('updateSelectionTree', updateSelectionFromOriginal(state.selectionTree, state.originalTree, obj.level_id)) // selectionTree & seriesCollection
         commit('UPDATE_LEVEL_ID_LIST', [...new Set(state.selectionTree.map(node => node.level))].sort((a, b) => a - b)) // level_id_list
-        commit('UPDATE_LEVELS', addLevels(state.levels, obj.level_id)) // levels
+        commit('UPDATE_LEVELS', addLevels(state.levels, obj.level_id, state.dataset)) // levels
         commit('size/UPDATE_Y_SCALE', addYScale(rootState.size.yScale, obj.level_id), { root: true }) // yScale
         commit('scatterPlot/UPDATE_COORDINATE_COLLECTION', response.data.newCoordinateCollection, { root: true }) // coordinateCollection
         const {plotX, plotY} = addPlotScale(rootState.scatterPlot.plot_X_Scale, rootState.scatterPlot.plot_Y_Scale, obj.level_id)

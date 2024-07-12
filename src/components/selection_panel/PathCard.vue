@@ -132,7 +132,6 @@ export default {
       props.related ? "#FFFFFF" : store.getters["tree/themeColor"]
     );
 
-    const levels = computed(() => store.getters["tree/levels"]);
     const selectionTree = computed(() => store.getters["tree/selectionTree"]);
     const originalTree = computed(() => store.getters["tree/originalTree"]);
     const timeRange = computed(() => store.getters["tree/timeRange"]);

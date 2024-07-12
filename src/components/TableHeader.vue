@@ -278,7 +278,7 @@ export default {
     const levels = computed(() => store.getters["tree/levels"]);
     const level_id_list = computed(() => store.getters["tree/level_id_list"]);
     const level_name_list = computed(() =>
-      level_id_list.value.map((id) => levels.value[id - 1])
+      level_id_list.value.map((id) => levels.value[dataset.value][id - 1])
     );
     const alignState = computed(() => store.getters["align/alignState"]);
 
