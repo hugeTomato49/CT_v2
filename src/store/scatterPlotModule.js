@@ -99,7 +99,6 @@ const actions = {
         state.highlightVisible = !state.highlightVisible
     },
     updateClusterNumber({state}, number) {
-        console.log("update!")
         state.clusterNumber = number
     },
     toggleClusterVisible({state}) {

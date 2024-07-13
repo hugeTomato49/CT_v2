@@ -123,8 +123,6 @@ export default {
                 })
                 heightCollection[align_id] = maxHeight;
             })
-            console.log("check alignHeightCollection")
-            console.log(heightCollection)
             return heightCollection;
         });
 

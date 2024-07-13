@@ -11,6 +11,7 @@ const state = {
     originalTree : [],
     selectionTree : [], 
     seriesCollection: [],
+    // dataset: 'PV',
     dataset: 'Stock',
     levels: {
       'PV':['Transformer', 'Converter', 'Line'],
@@ -123,12 +124,12 @@ const actions = {
         commit('UPDATE_SELECTION_TREE', updatedSelectionTree);
     },
     updateTimeRange({state, commit, dispatch}, newTimeRange) {
-      if(state.dataset == 'PV'){
-        newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
-      }
-      else if(state.dataset == 'Stock'){
-        newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
-      }
+      // if(state.dataset == 'PV'){
+      //   newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
+      // }
+      // else if(state.dataset == 'Stock'){
+      //   newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
+      // }
       // console.log("check newTimeRange")
       // console.log(newTimeRange)
 
@@ -241,7 +242,7 @@ const actions = {
     mergeTrees({state, commit, rootState}, obj){
       merge_trees({state, commit, rootState}, obj)
     },
-    deleteNodes({state, commit, rootState}, deleteIds){
+    deleteNodes({state}, deleteIds){
       let selectionTree = cloneDeep(state.selectionTree)
       selectionTree = selectionTree.filter(node => !deleteIds.includes(node.id))
       const id = deleteIds[0]

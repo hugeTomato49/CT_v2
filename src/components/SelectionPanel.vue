@@ -62,8 +62,6 @@ export default {
       headerContainer.value = document.querySelector("#headerContainer");
       width.value = headerContainer.value.offsetWidth;
       height.value = headerContainer.value.offsetHeight;
-      console.log("height is ", height.value)
-      // height.value = 700;
     });
 
     return {

@@ -11,8 +11,8 @@ export const merge_trees = ({state, commit, rootState}, obj) => {
     let seriesCollection = cloneDeep(state.seriesCollection)
     let coordinateCollection = cloneDeep(rootState.scatterPlot.coordinateCollection)
 
-    console.log("check coordinateCollection")
-    console.log(coordinateCollection)
+    // console.log("check coordinateCollection")
+    // console.log(coordinateCollection)
 
     //update originalTree, selectionTree, seriesCollection, coordinateCollection
     const original_parent_node = originalTree.find(node => node.children_id.includes(id2))

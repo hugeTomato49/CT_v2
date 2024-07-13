@@ -82,7 +82,7 @@ export default {
     const store = useStore();
     const inputValue = ref(1);
     watchEffect(() => {
-      console.log("input value is", inputValue.value)
+      // console.log("input value is", inputValue.value)
       store.dispatch("scatterPlot/updateClusterNumber", inputValue.value)
     })
 

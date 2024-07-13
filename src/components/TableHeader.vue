@@ -497,7 +497,7 @@ export default {
       const filteredSelectedCircleIds = selectedCircleIds.filter((id) =>
         isIdInSelectionTree(id, selectionTree.value)
       );
-      console.log("Filtered selected circles:", filteredSelectedCircleIds);
+      // console.log("Filtered selected circles:", filteredSelectedCircleIds)
       const hasAnySelectedNodeChildren = filteredSelectedCircleIds.some((id) =>
         lassoHasChildren(id, selectionTree.value)
       );

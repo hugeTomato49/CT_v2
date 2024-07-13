@@ -57,6 +57,7 @@ export default {
     },
     setup(props) {
         const store = useStore()
+        const dataset = computed(() => store.getters["tree/dataset"])
         const selectionTree = computed(() => store.getters["tree/selectionTree"])
         const level_id_list = computed(() => store.getters["tree/level_id_list"])
         const colorBar = computed(() => store.getters["tree/colorBar"])
@@ -67,7 +68,17 @@ export default {
         const timeRange = computed(() => store.getters['tree/timeRange'])
         
         const xScale = computed(() => store.getters['size/xScale'])
-        const yScale = computed(() => store.getters['size/yScale'][props.level - 1])
+        const yScale = computed(() => {
+            if(dataset.value == 'PV'){
+                return store.getters['size/yScale'][props.level - 1]   
+            }
+            else{
+                const max = Math.max(...props.seriesData.map(item => item.value))
+                const min = Math.min(...props.seriesData.map(item => item.value))
+                return d3.scaleLinear().domain([min,max]).range([cardHeight.value-2,2])
+            }
+            
+        })
 
         const originalTree = computed(() => store.getters["tree/originalTree"])
         const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"])

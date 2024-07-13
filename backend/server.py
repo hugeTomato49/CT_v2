@@ -212,7 +212,7 @@ def getGroupedCoordinateCollection():
     # print(origin_collection)
     tmp_result = origin_collection["coordinateCollection"][str(level)]
 
-    grouped_Tree = constructGT(Tree_path, tmp_result, level, n=2)
+    grouped_Tree = constructGT(Tree_path, tmp_result, level, n=5)
     grouped_Points = getGroupedPoints(grouped_Tree, tmp_result, level)
     for i in range(max_level+1, level, -1):
         collection[i] = origin_collection["coordinateCollection"][str(i-1)]
