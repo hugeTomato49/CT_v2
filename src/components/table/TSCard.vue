@@ -10,9 +10,9 @@
                 :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
                 id="cardContainer">
                 <svg class="w-full h-full bg-stone-100">
-                    <text x="5" y="12" class="node-name text-ms">{{ node_name }}</text>
+                    <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
                     <g ref="brushRef"></g>
-                    <path :stroke="colorBar[level - 1]" fill="none" stroke-width="2"
+                    <path :stroke="themeColor" fill="none" stroke-width="2"
                         :d="generatePath(seriesData, xScale, yScale)">
                     </path>
                 </svg>
@@ -58,9 +58,9 @@ export default {
     setup(props) {
         const store = useStore()
         const dataset = computed(() => store.getters["tree/dataset"])
+        const themeColor = computed(() => store.getters["color/themeColor"])
         const selectionTree = computed(() => store.getters["tree/selectionTree"])
         const level_id_list = computed(() => store.getters["tree/level_id_list"])
-        const colorBar = computed(() => store.getters["tree/colorBar"])
         const rowHeight = computed(() => store.getters['size/rowHeight'])
         const cardHeight = computed(() => store.getters['size/cardHeight'])
         const cardWidth = computed(() => store.getters['size/cardWidth'])
@@ -217,7 +217,7 @@ export default {
             yScale,
             generatePath,
             brushRef,
-            colorBar,
+            themeColor,
             fold,
             unfold,
             selectionTree,
@@ -254,7 +254,6 @@ export default {
 
 .node-name {
     font-size: 6px;
-    fill: #4B99D0;
     font-family: "Inter", sans-serif;
     font-optical-sizing: auto;
     font-weight: 600;

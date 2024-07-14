@@ -4,8 +4,7 @@
             <div  class="h-120px w-full " >
                 <svg class="w-full h-full " id="svg-container" @contextmenu.prevent="toggleZoom">
                     <g ref="brushRef"></g>
-                    <path v-for="(d, index) in paths" :key="index" :stroke="colorBar[index % colorBar.length]"
-                        fill="none" stroke-width="3" :d="d"></path>
+                    <path v-for="(d, index) in paths" :key="index" :stroke="colorBar[index % colorBar.length]" fill="none" stroke-width="3" :d="d"></path>
                 </svg>
             </div>
         </div>
@@ -27,7 +26,7 @@ export default {
         const store = useStore();
         const brushRef = ref(null);
         const isZoomed = ref(false);
-        const themeColor = computed(() => store.getters["tree/themeColor"])
+        const  themeColor = computed(() => store.getters["tree/themeColor"])
         const dataset = computed(() => store.getters["tree/dataset"])
         const zoomVisiable = computed(() => store.getters["time/zoomVisiable"])
         const seriesCollection = computed(

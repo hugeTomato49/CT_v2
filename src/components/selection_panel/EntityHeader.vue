@@ -3,7 +3,7 @@
     class="w-1/3 h-full flex justify-center"
   >
     <div class="w-1/2 h-full name flex mt-1">
-      <div class="text-[#4B99D0] ml-6">{{ entityName }}</div>
+      <div class="ml-6" :style="{ color: themeColor }">{{ entityName }}</div>
     </div>
     <div class="w-1/2 h-full mt-1 flex flex-row">
       <svg class="w-full h-full" viewBox="0 0 16 16" >
@@ -33,7 +33,7 @@ export default {
   props: ["entityName", "number", 'entityVisiable'],
   setup(props) {
     const store = useStore();
-    const themeColor = computed(() => store.getters["tree/themeColor"]);
+    const themeColor = computed(() => store.getters["color/themeColor"]);
     
     return { themeColor,};
   },

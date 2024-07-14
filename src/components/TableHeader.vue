@@ -15,7 +15,7 @@
             :style="{
               width:
                 headerContainer?.offsetWidth * columnPercentage - 30 + 'px',
-              backgroundColor: colorBar[index],
+              backgroundColor: themeColor,
             }"
           >
             <div class="ml-2 text-ms font-serif text-center text-white title">
@@ -162,7 +162,7 @@
                   :cx="circle.cx"
                   :cy="circle.cy"
                   :r="circle.r"
-                  :fill="colorBar[index]"
+                  :fill="themeColor"
                   :fill-opacity="circle.fillOpacity"
                   :stroke="circle.stroke"
                   :stroke-width="circle.strokeWidth"
@@ -188,7 +188,7 @@
                 :cx="circle.cx"
                 :cy="circle.cy"
                 :r="circle.r"
-                :fill="colorBar[index]"
+                :fill="themeColor"
                 :fill-opacity="clusterVisible ? 0.05 : circle.fillOpacity"
                 :stroke="clusterVisible ? 'none' : circle.stroke"
                 :stroke-width="circle.strokeWidth"
@@ -213,7 +213,7 @@
                 :cx="circle.cx"
                 :cy="circle.cy"
                 :r="circle.r"
-                :fill="colorBar[index]"
+                :fill="themeColor"
                 :fill-opacity="clusterVisible ? 0.05 : circle.fillOpacity"
                 :stroke="clusterVisible ? 'none' : circle.stroke"
                 :stroke-width="circle.strokeWidth"
@@ -273,8 +273,8 @@ export default {
       () => store.getters["scatterPlot/linkVisible"]
     );
 
-    const colorBar = computed(() => store.getters["tree/colorBar"]);
     const dataset = computed(() => store.getters["tree/dataset"]);
+    const themeColor = computed(() => store.getters["color/themeColor"]);
     const originalTree = computed(() => store.getters["tree/originalTree"]);
     const selectionTree = computed(() => store.getters["tree/selectionTree"]);
     const levels = computed(() => store.getters["tree/levels"]);
@@ -565,7 +565,7 @@ export default {
       plotContainer,
       level_id_list,
       level_name_list,
-      colorBar,
+      themeColor,
       plot_X_Scale,
       plot_Y_Scale,
       coordinateCollection,

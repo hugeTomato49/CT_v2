@@ -11,9 +11,10 @@ import { useStore } from "vuex";
 
 export default {
   setup() {
-    const store = useStore();
-    const originalTree = computed(() => store.getters["tree/originalTree"]);
-    const selectionTree = computed(() => store.getters["tree/selectionTree"]);
+    const store = useStore()
+    const themeColor = computed(() => store.getters["color/themeColor"])
+    const originalTree = computed(() => store.getters["tree/originalTree"])
+    const selectionTree = computed(() => store.getters["tree/selectionTree"])
     const flag = ref(0);
     const width = ref(0);
     const height = ref(0);
@@ -105,7 +106,7 @@ export default {
           const inSelectionTree =
             selectionTree.value.some((node) => node.id === d.data.id) &&
             selectionTree.value.some((node) => node.id === d.parent.data.id);
-          return inSelectionTree ? "#4B99D0" : "#ccc";
+          return inSelectionTree ? themeColor.value : "#ccc";
         })
         .attr("stroke-width", function (d) {
           // 检查当前线条连接的节点是否都在 selectionTree 中
@@ -131,7 +132,7 @@ export default {
           const inSelectionTree =
             selectionTree.value.some((node) => node.id === d.data.id) &&
             selectionTree.value.some((node) => node.id === d.parent.data.id);
-          return inSelectionTree ? "#4B99D0" : "#DFDFDF";
+          return inSelectionTree ? themeColor.value : "#DFDFDF";
         })
         .attr("stroke", "none")
         .style("stroke-width", 0.1)

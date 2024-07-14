@@ -36,7 +36,7 @@ export default {
         const store = useStore();
         const brushRef = ref(null);
         const isZoomed = ref(false);
-        const themeColor = computed(() => store.getters["tree/themeColor"]);
+        const themeColor = computed(() => store.getters["color/themeColor"]);
         const dataset = computed(() => store.getters["tree/dataset"]);
         const seriesCollection = computed(
             () => store.getters["tree/seriesCollection"]

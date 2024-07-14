@@ -6,6 +6,7 @@ import scatterPlotModule from "./scatterPlotModule"
 import alignModule from "./alignModule"
 import selectionModule from "./selectionModule"
 import timeModule from "./timeModule"
+import colorModule from "./colorModule"
 
 const store = createStore({
     modules: {
@@ -15,7 +16,8 @@ const store = createStore({
         scatterPlot: scatterPlotModule,
         align: alignModule,
         selection: selectionModule,
-        time: timeModule
+        time: timeModule,
+        color: colorModule
     }
 })
 

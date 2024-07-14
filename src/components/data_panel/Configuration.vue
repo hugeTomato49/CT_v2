@@ -1,23 +1,23 @@
 <template>
   <div class="container w-full h-full p-2">
     <div class="data-set w-full h-1/3 mb-2">
-      <div class="title text-lg  text-[#4B99D0] text-center">
+      <div class="title text-lg text-center" :style="{ color: themeColor }">
         <div class="text-base">DataSet</div>
         <div class="border-solid border-1 border-light-800 mt-2"></div>
       </div>
       <div class="flex flex-row w-full h-1/2 justify-around py-1 justify-center items-center">
-        <div class="name text-sm text-[#4B99D0] cursor-pointer">PV</div>
-        <div class="name text-sm text-[#DFDFDF] cursor-pointer">Stock Market</div>
+        <div class="name text-sm cursor-pointer" :style="{ color: themeColor }">PV</div>
+        <div class="name text-sm text-[#DFDFDF] cursor-pointer" >Stock Market</div>
       </div>
       <!-- dataSet 内容 -->
     </div>
     <div class="title configuration w-full h-1/2 flex-column">
-      <div class="w-full text-lg text-[#4B99D0] text-center" >
+      <div class="w-full text-lg text-center" :style="{ color: themeColor }">
         <div class="text-base">Configuration</div>
         <div class="border-solid border-1 border-light-800 mt-2"></div>
       </div>
       <div class="flex flex-row w-full mt-1 justify-center items-center">
-        <div class="w-1/10 text-[#4B99D0] text-sm">K</div>
+        <div class="w-1/10 text-sm" :style="{ color: themeColor }">K</div>
         <div class="w-4/5 ml-2">
           <a-row>
             <a-col :span="11">
@@ -86,8 +86,7 @@ export default {
       store.dispatch("scatterPlot/updateClusterNumber", inputValue.value)
     })
 
-    const themeColor = computed(() => store.getters["tree/themeColor"])
-
+    const themeColor = computed(() => store.getters["color/themeColor"])
     const linkVisible = computed(() => store.getters["scatterPlot/linkVisible"])
     const highlightVisible = computed(() => store.getters["scatterPlot/highlightVisible"])
     const clusterVisible = computed(() => store.getters["scatterPlot/clusterVisible"])

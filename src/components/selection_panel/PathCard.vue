@@ -3,7 +3,7 @@
     <div
       class="w-full py-2 px-5 entityCard"
       :style="{
-        'background-color': related ? '#4B99D0' : 'rgba(245, 245, 245, 0.6)',
+        'background-color': related ? themeColor : 'rgba(245, 245, 245, 0.6)',
       }"
     >
       <div class="w-full flex flex-col">
@@ -128,10 +128,7 @@ export default {
     const seriesData_list = ref([]);
 
     const store = useStore();
-    const themeColor = computed(() =>
-      props.related ? "#FFFFFF" : store.getters["tree/themeColor"]
-    );
-
+    const themeColor = computed(() => props.related ? "#FFFFFF" : store.getters["color/themeColor"]);
     const selectionTree = computed(() => store.getters["tree/selectionTree"]);
     const originalTree = computed(() => store.getters["tree/originalTree"]);
     const timeRange = computed(() => store.getters["tree/timeRange"]);

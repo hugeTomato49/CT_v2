@@ -13,7 +13,7 @@ export default {
     props: ['number'],
     setup() {
         const store = useStore()
-        const themeColor = computed(() => store.getters["tree/themeColor"])
+        const themeColor = computed(() => store.getters["color/themeColor"])
         return {
             themeColor
         }

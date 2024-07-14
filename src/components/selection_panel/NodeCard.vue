@@ -90,7 +90,7 @@ export default {
 
     //store
     const store = useStore()
-    const themeColor = computed(() => store.getters["tree/themeColor"])
+    const themeColor = computed(() => store.getters["color/themeColor"])
     const levels = computed(() => store.getters["tree/levels"])
     const dataset = computed(() => store.getters["tree/dataset"])
     const description = computed(() => store.getters["tree/description"])

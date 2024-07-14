@@ -82,7 +82,7 @@ export default {
         const seriesCollection = computed(() => store.getters["tree/seriesCollection"])
         const selectionTree =computed(() => store.getters["tree/selectionTree"])
         const level_id_list = computed(() => store.getters["tree/level_id_list"])
-        const themeColor = computed(() => store.getters["tree/themeColor"])
+        const themeColor = computed(() => store.getters["color/themeColor"])
 
         const configureShow = ref(false)
         const foldState = ref(false)

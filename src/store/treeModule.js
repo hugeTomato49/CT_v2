@@ -11,8 +11,8 @@ const state = {
     originalTree : [],
     selectionTree : [], 
     seriesCollection: [],
-    // dataset: 'PV',
-    dataset: 'Stock',
+    dataset: 'PV',
+    // dataset: 'Stock',
     levels: {
       'PV':['Transformer', 'Converter', 'Line'],
       'Stock':['Index','Sector','Stock'],
@@ -20,9 +20,7 @@ const state = {
     description: ['-kw/h', '-kw/h', '-mA', '-mA'],
     level_id_list: [],
     timeRange: [],
-    colorBar: ["#4B99D0", "#4B99D0", "#4B99D0","#4B99D0", "#4B99D0","#4B99D0"],
     groupState: false,
-    themeColor: "#4B99D0"
 }
 
 const mutations = {
@@ -62,12 +60,8 @@ const actions = {
     getPVTree({state, dispatch, commit}) {
         axios.get('/api/PVTree').then((response) => {
             commit('UPDATE_ORIGINAL_TREE', response.data.PV_Tree)
-            // console.log("CHECK")
-            // console.log(response.data.PV_Tree)
             dispatch('addToSelectionTree',cloneDeep(state.originalTree.slice(0,1)))
             dispatch("time/updateSD", response.data.SD, {root: true})
-            // console.log("check SD")
-            // console.log(response.data.SD)
         })
     },
     updateSelectionTree({state, commit, dispatch}, currentSelectionTree){
@@ -124,15 +118,12 @@ const actions = {
         commit('UPDATE_SELECTION_TREE', updatedSelectionTree);
     },
     updateTimeRange({state, commit, dispatch}, newTimeRange) {
-      // if(state.dataset == 'PV'){
-      //   newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
-      // }
-      // else if(state.dataset == 'Stock'){
-      //   newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
-      // }
-      // console.log("check newTimeRange")
-      // console.log(newTimeRange)
-
+      if(state.dataset == 'PV'){
+        newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
+      }
+      else if(state.dataset == 'Stock'){
+        newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
+      }
       commit('UPDATE_TIME_RANGE', newTimeRange)
       dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
       dispatch('scatterPlot/getCoordinateCollection',null, {root:true})
@@ -261,9 +252,7 @@ const getters = {
     level_id_list: state => state.level_id_list,
     description: state => state.description,
     timeRange: state => state.timeRange,
-    colorBar: state => state.colorBar,
     groupState: state => state.groupState,
-    themeColor: state => state.themeColor
 }
 
 const treeModule  = {
