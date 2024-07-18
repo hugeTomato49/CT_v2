@@ -1,13 +1,11 @@
 <template>
     <a-dropdown :trigger="['contextmenu']">
         <div :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" 
-            @mouseover="handleMouseOver(node_id)"
+            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
             @mouseout="handleMouseOut(node_id)"
             @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
             @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
-            <div 
-                :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+            <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
                 id="cardContainer">
                 <svg class="w-full h-full bg-stone-100">
                     <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
@@ -18,6 +16,7 @@
                 </svg>
             </div>
         </div>
+        
         <template #overlay>
             <div>
                 <a-menu class="bg-black">
@@ -29,6 +28,9 @@
             </div>
         </template>
     </a-dropdown>
+    <div id="app">
+            <HorizonChart :data="seriesData" :bands="4" :width="350" :height="175" />
+        </div>
 
 </template>
 
@@ -45,6 +47,8 @@ import { calculateSeriesAverage } from "../../computation/basicComputation"
 import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
 import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
+import HorizonChart from './HorizonChart.vue';
+
 
 export default {
     name: 'TSCard',
@@ -54,6 +58,7 @@ export default {
         'a-menu': Menu,
         'a-menu-item': Menu.Item,
         DownOutlined,
+        HorizonChart
     },
     setup(props) {
         const store = useStore()
@@ -66,18 +71,25 @@ export default {
         const cardWidth = computed(() => store.getters['size/cardWidth'])
 
         const timeRange = computed(() => store.getters['tree/timeRange'])
-        
+
+        const chartData = [
+        { date: new Date(2020, 0, 1), value: 30 },
+        { date: new Date(2020, 1, 1), value: 50 },
+        { date: new Date(2020, 2, 1), value: 100 },
+        // 更多数据点...
+      ]
+
         const xScale = computed(() => store.getters['size/xScale'])
         const yScale = computed(() => {
-            if(dataset.value == 'PV'){
-                return store.getters['size/yScale'][props.level - 1]   
+            if (dataset.value == 'PV') {
+                return store.getters['size/yScale'][props.level - 1]
             }
-            else{
+            else {
                 const max = Math.max(...props.seriesData.map(item => item.value))
                 const min = Math.min(...props.seriesData.map(item => item.value))
-                return d3.scaleLinear().domain([min,max]).range([cardHeight.value-2,2])
+                return d3.scaleLinear().domain([min, max]).range([cardHeight.value - 2, 2])
             }
-            
+
         })
 
         const originalTree = computed(() => store.getters["tree/originalTree"])
@@ -94,7 +106,7 @@ export default {
         const averageValue = ref(0)
 
         watchEffect(() => {
-            if(timeRange.value.length > []){
+            if (timeRange.value.length > []) {
                 averageValue.value = calculateSeriesAverage(props.seriesData)
             }
         })
@@ -137,9 +149,9 @@ export default {
         }
 
         const handleMouseOver = (id) => {
-            if(highlightVisible.value){
+            if (highlightVisible.value) {
                 if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
-                deHighlightEmphasizeCards()
+                    deHighlightEmphasizeCards()
                 }
                 const id_list = findChildrenIds(id, originalTree.value)
                 highlightNodes(id_list)
@@ -151,19 +163,19 @@ export default {
                         plot_X_Scale.value,
                         plot_Y_Scale.value,
                         columnWidth.value
-                ))
+                    ))
             }
         };
 
         const handleMouseOut = (id) => {
-            if(highlightVisible.value){
+            if (highlightVisible.value) {
                 if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
-                highlightEmphaizeCards()
+                    highlightEmphaizeCards()
                 }
                 const id_list = findChildrenIds(id, originalTree.value)
                 deHighlightNodes(id_list)
                 store.dispatch('scatterPlot/updateBezierPaths', [])
-            }   
+            }
         }
 
         const onClickNode = () => {
@@ -231,7 +243,8 @@ export default {
             onClickPath,
             onClickLayer,
             onClickTree,
-            averageValue
+            averageValue,
+            chartData
         }
     }
 }

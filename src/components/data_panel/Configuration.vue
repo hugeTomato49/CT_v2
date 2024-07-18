@@ -133,7 +133,7 @@
       </div>
     </div>
     <!-- raw -->
-    <div class="flex flex-row w-full mt-2">
+    <div class="flex flex-row w-full ">
       <div class="w-1/12 h-full  flex">
         <font-awesome-icon :icon="['fas', 'database']" :style="{ color: themeColor }" size="lg" class="mt-[0.4em]" />
       </div>
