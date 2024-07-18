@@ -92,6 +92,7 @@ def Standardize(TS):
 
     # (subtract the mean and divide by the standard deviation)
     df['value'] = (df['value'] - df['value'].mean()) / df['value'].std()
+    # df['value'] = (df['value'] - df['value'].min()) / (df['value'].max() - df['value'].min())
 
     result = df.to_json(orient='records', date_format='iso')
     

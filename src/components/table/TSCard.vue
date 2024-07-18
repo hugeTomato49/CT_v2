@@ -76,8 +76,7 @@ export default {
                 const max = Math.max(...props.seriesData.map(item => item.value))
                 const min = Math.min(...props.seriesData.map(item => item.value))
                 return d3.scaleLinear().domain([min,max]).range([cardHeight.value-2,2])
-            }
-            
+            }   
         })
 
         const originalTree = computed(() => store.getters["tree/originalTree"])
