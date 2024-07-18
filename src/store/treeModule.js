@@ -11,8 +11,8 @@ const state = {
     originalTree : [],
     selectionTree : [], 
     seriesCollection: [],
-    dataset: 'PV',
-    // dataset: 'Stock',
+    // dataset: 'PV',
+    dataset: 'Stock',
     levels: {
       'PV':['Transformer', 'Converter', 'Line'],
       'Stock':['Index','Sector','Stock'],
