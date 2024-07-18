@@ -138,7 +138,7 @@ export default {
         .style("stroke-width", 0.1)
         .attr("id", (d) => "treeCircle-" + d.data.id); // 设置每个 circle 的 ID，例如 "treeCircle-0",
     };
-    return { chart, originalTree };
+    return { chart, originalTree,convertedTree };
   },
 };
 </script>

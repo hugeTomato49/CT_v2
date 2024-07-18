@@ -7,8 +7,13 @@ import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css'
 
+// varlet
+import Varlet from '@varlet/ui'
+import '@varlet/ui/es/style'
+
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 import { 
     faNetworkWired, 
     faRoute, 
@@ -30,7 +35,15 @@ import {
     faEyeSlash,
     faDrawPolygon,
     faChartSimple,
-    faCodeMerge
+    faCodeMerge,
+    faShareNodes,
+    faCalendarDays,
+    faCubes,
+    faPalette,
+    faQuestion,
+    faQuestionCircle,
+    faPenRuler,
+    faDatabase,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -54,7 +67,15 @@ library.add(
     faEyeSlash,
     faDrawPolygon,
     faChartSimple,
-    faCodeMerge
+    faCodeMerge,
+    faShareNodes,
+    faCalendarDays,
+    faCubes,
+    faPalette,
+    faQuestionCircle,
+    faQuestion,
+    faPenRuler,
+    faDatabase
 )
 
 const app = createApp(App)
@@ -62,6 +83,7 @@ app
 .use(PerfectScrollbar)
 .use(store)
 .use(Antd)
+.use(Varlet)
 .component('font-awesome-icon', FontAwesomeIcon)
 .mount("#app")
 
