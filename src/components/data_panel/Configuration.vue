@@ -1,18 +1,18 @@
 <template>
   <div class="container w-full h-full p-2 flex flex-col justify-between" id="configContainer">
     <!-- select bar of data set -->
-    <div class="w-full h-1/14 name text-[1.2em] text-[#9E9E9E]  ">
+    <div class="w-full h-1/14 name text-[1em] text-[#9E9E9E]  ">
       DATA VIEWER
     </div>
     <div class="w-full h-1/8 ">
-      <var-select :hint="false" v-model="dataSet" text-color="#ABABAB" style="--select-label-font-size: 1.1em">
+      <var-select :hint="false" v-model="dataSet" text-color="#ABABAB" style="--select-label-font-size: 0.8em">
         <var-option v-for="(item, index) in dataSetOptions" :key="index" :label="item"
           style="--option-font-size: 1.1em" />
       </var-select>
     </div>
 
     <!-- info of node and level -->
-    <div class="flex flex-row w-full h-1/8  justify-center items-center">
+    <div class="flex flex-row w-full h-1/8  justify-center items-center mt-4">
       <div class="flex flex-row w-1/2 h-full items-center">
         <div class="w-1/6 h-full  flex items-center"> 
           <font-awesome-icon :icon="['fas', 'share-nodes']" :style="{ color: themeColor }" size="xl" class="" />
@@ -41,7 +41,7 @@
       </div>
     </div>
     <!-- info of data -->
-    <div class="flex flex-row w-full h-1/5 mt-2 ">
+    <div class="flex flex-row w-full h-1/5 mt-3">
       <div class="flex flex-row w-full h-full">
         <div class="w-1/12 h-full  flex ">
           <font-awesome-icon :icon="['fas', 'calendar-days']" size="lg" :style="{ color: themeColor }"
@@ -59,7 +59,7 @@
                   --field-decorator-standard-normal-margin-bottom: 0px;
                   --field-decorator-standard-normal-margin-top: -10px;
                   --input-input-height: 80%;
-                  --input-input-font-size: 0.9em;
+                  --input-input-font-size: 0.8em;
                   --field-decorator-line-focus-size: 0px;
                   --field-decorator-line-size: 0px;
                   --field-decorator-placeholder-size: 80%;
@@ -69,14 +69,14 @@
             <div class="black-line w-full"></div>
           </div>
           <!-- end time -->
-          <div class="flex flex-col w-full h-full pl-[1em] ">
+          <div class="flex flex-col w-full h-full pl-[1em] mt-1">
             <div class="node_number h-1/5">end time</div>
             <div class="w-full h-3/5">
               <var-input v-model="end_time" :text-color=themeColor placeholder="2023-06-01" :hint="false" style="
                 --field-decorator-standard-normal-margin-bottom: 0px;
                 --field-decorator-standard-normal-margin-top: -10px;
                 --input-input-height: 80%;
-                --input-input-font-size: 0.9em;
+                --input-input-font-size: 0.8em;
                 --field-decorator-line-focus-size: 0px;
                 --field-decorator-line-size: 0px;
                 --field-decorator-placeholder-size: 80%;
@@ -113,7 +113,7 @@
       </div>
     </div> -->
     <!-- daily -->
-    <div class="flex flex-row w-full mt-1 ">
+    <div class="flex flex-row w-full mt-5">
       <div class="w-1/12 h-full  flex ">
         <font-awesome-icon :icon="['fas', 'pen-ruler']" :style="{ color: themeColor }" size="lg" class="mt-[0.4em]" />
       </div>
@@ -123,7 +123,7 @@
           <var-select :hint="false" text-color="#ababab" v-model="daily_content" style="
           --field-decorator-blur-color: #ffffff;
           --field-decorator-focus-color: #ffffff;
-          --select-label-font-size: 0.9em;
+          --select-label-font-size: 0.6em;
             ">
             <var-option v-for="(item, index) in daily_options" :key="index" :label="item"
               style="---option-font-size: 0.6em" />
@@ -133,7 +133,7 @@
       </div>
     </div>
     <!-- raw -->
-    <div class="flex flex-row w-full mt-2">
+    <div class="flex flex-row w-full">
       <div class="w-1/12 h-full  flex">
         <font-awesome-icon :icon="['fas', 'database']" :style="{ color: themeColor }" size="lg" class="mt-[0.4em]" />
       </div>
@@ -143,7 +143,7 @@
           <var-select :hint="false" text-color="#ababab" v-model="raw_content" style="
           --field-decorator-blur-color: #ffffff;
           --field-decorator-focus-color: #ffffff;
-          --select-label-font-size: 0.9em;
+          --select-label-font-size: 0.6em;
             ">
             <var-option v-for="(item, index) in raw_options" :key="index" :label="item"
               style="" />
@@ -256,7 +256,7 @@ export default {
 }
 :root {
   --select-font-family: 'Inter', sans-serif;
-  --select-font-weight: 600;
+  --select-font-weight: 500;
   --select-font-style: "semibold";
   --select-font-variation-settings: "slnt" 0;
 }
@@ -272,7 +272,7 @@ export default {
 .var-input__input {
   font-family: 'Inter', sans-serif;
   font-optical-sizing: auto;
-  font-weight: 600;
+  font-weight: 400;
   font-style: "semibold";
   font-variation-settings: "slnt" 0;
 }
@@ -281,14 +281,14 @@ export default {
   font-size: 10px;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 600;
+  font-weight: 400;
   font-style: "semibold";
   font-variation-settings: "slnt" 0;
   color: #ababab;
 }
 
 .black-line {
-  border-width: 0.08em;
+  border-width: 0.04em;
   background-color: #ababab;
 }
 </style>
