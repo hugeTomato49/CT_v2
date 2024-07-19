@@ -188,27 +188,6 @@ export default {
     });
 
     const themeColor = computed(() => store.getters["color/themeColor"]);
-    const linkVisible = computed(
-      () => store.getters["scatterPlot/linkVisible"]
-    );
-    const highlightVisible = computed(
-      () => store.getters["scatterPlot/highlightVisible"]
-    );
-    const clusterVisible = computed(
-      () => store.getters["scatterPlot/clusterVisible"]
-    );
-
-    const toggleLinkVisible = () => {
-      store.dispatch("scatterPlot/toggleLinkVisible");
-    };
-
-    const toggleHighlightVisible = () => {
-      store.dispatch("scatterPlot/toggleHighlightVisible");
-    };
-
-    const toggleClusterVisible = () => {
-      store.dispatch("scatterPlot/toggleClusterVisible");
-    };
 
     // get some size
     onMounted(() => {
@@ -221,12 +200,6 @@ export default {
     return {
       inputValue,
       themeColor,
-      linkVisible,
-      toggleLinkVisible,
-      highlightVisible,
-      toggleHighlightVisible,
-      toggleClusterVisible,
-      clusterVisible,
       dataSet,
       dataSetOptions,
       start_time,
