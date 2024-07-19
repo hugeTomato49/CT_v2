@@ -200,11 +200,10 @@ export default {
             const levelList = paths.length > 0 ? findLevelList(selectionTree.value, paths[0]) : [];
             paths.forEach((path) => {
                 const pathEntity = {
-                    type: 'Path', // 用于识别实体类型
-                    path, // 当前路径
-                    levelList, // 与此路径相关的级别列表
+                    type: 'Path', 
+                    path, 
+                    levelList, 
                 };
-                // 将路径实体添加到 Vuex store
                 store.dispatch('selection/addEntity', pathEntity);
             });
         }
@@ -215,15 +214,14 @@ export default {
 
         const onClickTree = () => {
             console.log(`Click on Tree`);
-            const subtree = buildSubtree(selectionTree.value, props.node_id); // 构建子树
-            const path = getSubtreeIds(subtree); // 获取子树的所有节点ID列表
+            const subtree = buildSubtree(selectionTree.value, props.node_id); 
+            const path = getSubtreeIds(subtree); 
             const levelList = findLevelList(selectionTree.value, path);
             const treeEntity = {
-                type: 'Tree', // 用于识别实体类型
-                path, // 当前路径
-                levelList, // 与此路径相关的级别列表
+                type: 'Tree', 
+                path, 
+                levelList, 
             };
-            // 将路径实体添加到 Vuex store
             store.dispatch('selection/addEntity', treeEntity);
         }
 
