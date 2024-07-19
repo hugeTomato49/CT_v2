@@ -7,6 +7,7 @@ import alignModule from "./alignModule"
 import selectionModule from "./selectionModule"
 import timeModule from "./timeModule"
 import colorModule from "./colorModule"
+import cardModule from "./cardModule"
 
 const store = createStore({
     modules: {
@@ -17,7 +18,8 @@ const store = createStore({
         align: alignModule,
         selection: selectionModule,
         time: timeModule,
-        color: colorModule
+        color: colorModule,
+        card: cardModule,
     }
 })
 

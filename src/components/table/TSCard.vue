@@ -1,36 +1,48 @@
 <template>
-    <a-dropdown :trigger="['contextmenu']">
-        <div :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
-            @mouseout="handleMouseOut(node_id)"
-            @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
-            @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
-            <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-                id="cardContainer">
-                <svg class="w-full h-full bg-stone-100">
-                    <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
-                    <g ref="brushRef"></g>
-                    <path :stroke="themeColor" fill="none" stroke-width="2"
-                        :d="generatePath(seriesData, xScale, yScale)">
-                    </path>
-                </svg>
-            </div>
+    <div class=" relative overflow-visible">
+        <div v-if="selectCheck" class="selectCheck absolute ">
+            <font-awesome-icon :icon="['fas', 'circle-check']" size="lg" style="color: #F24E1E;" />
         </div>
-        
-        <template #overlay>
-            <div>
-                <a-menu class="bg-black">
-                    <a-menu-item key="1" @click="onClickNode">Node</a-menu-item>
-                    <a-menu-item key="2" @click="onClickPath">Path</a-menu-item>
-                    <a-menu-item key="3" @click="onClickLayer">Layer</a-menu-item>
-                    <a-menu-item key="3" @click="onClickTree">Tree</a-menu-item>
-                </a-menu>
-            </div>
-        </template>
-    </a-dropdown>
-    <div id="app">
-            <HorizonChart :data="seriesData" :bands="4" :width="350" :height="175" />
+        <!-- <div class="selectDeny absolute">
+            <font-awesome-icon :icon="['fas', 'circle']" size="lg" style="color: #F24E1E;" />
+        </div> -->
+
+        <div id="app" v-if="chartType === 'horizon chart'">
+            <HorizonChart :data="seriesData" :bands="4" :height="rowHeight" />
         </div>
+        <a-dropdown :trigger="['contextmenu']">
+            <div v-if="chartType === 'line chart'"
+                :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+                :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
+                @mouseout="handleMouseOut(node_id)"
+                @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
+                @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
+                <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+                    id="cardContainer">
+                    <svg class="w-full h-full bg-stone-100">
+                        <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
+                        <g ref="brushRef"></g>
+                        <path :stroke="themeColor" fill="none" stroke-width="2"
+                            :d="generatePath(seriesData, xScale, yScale)">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+            <template #overlay>
+                <div>
+                    <a-menu class="bg-black">
+                        <a-menu-item key="1" @click="onClickNode">Node</a-menu-item>
+                        <a-menu-item key="2" @click="onClickPath">Path</a-menu-item>
+                        <a-menu-item key="3" @click="onClickLayer">Layer</a-menu-item>
+                        <a-menu-item key="3" @click="onClickTree">Tree</a-menu-item>
+                    </a-menu>
+                </div>
+            </template>
+
+        </a-dropdown>
+    </div>
+
+
 
 </template>
 
@@ -48,6 +60,7 @@ import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findCh
 import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
 import HorizonChart from './HorizonChart.vue';
+import { height } from '@fortawesome/free-regular-svg-icons/faAddressBook';
 
 
 export default {
@@ -72,12 +85,11 @@ export default {
 
         const timeRange = computed(() => store.getters['tree/timeRange'])
 
-        const chartData = [
-        { date: new Date(2020, 0, 1), value: 30 },
-        { date: new Date(2020, 1, 1), value: 50 },
-        { date: new Date(2020, 2, 1), value: 100 },
-        // 更多数据点...
-      ]
+        const chartType = computed(() => store.getters['card/chartType'])
+        const checkCollection = computed(() => store.getters["card/selectCheck"])
+        const selectCheck = computed(() => {
+            console.log("check is", checkCollection)
+        })
 
         const xScale = computed(() => store.getters['size/xScale'])
         const yScale = computed(() => {
@@ -89,7 +101,6 @@ export default {
                 const min = Math.min(...props.seriesData.map(item => item.value))
                 return d3.scaleLinear().domain([min, max]).range([cardHeight.value - 2, 2])
             }
-
         })
 
         const originalTree = computed(() => store.getters["tree/originalTree"])
@@ -179,7 +190,7 @@ export default {
         }
 
         const onClickNode = () => {
-            console.log(`Click on Node `, props.node_id);
+            // store.dispatch("section/updateSelectCheck", props.node_id);
             store.dispatch("selection/addEntity", { type: 'Node', id: props.node_id, level: props.level });
         }
 
@@ -244,7 +255,8 @@ export default {
             onClickLayer,
             onClickTree,
             averageValue,
-            chartData
+            chartType,
+            selectCheck
         }
     }
 }
@@ -273,6 +285,26 @@ export default {
     font-style: "semibold italic";
     font-variation-settings:
         "slnt" 0;
+
+}
+
+.selectCheck {
+    position: absolute;
+    top: 20%;
+    left: 97%;
+    transform: translate(-50%, -50%);
+    z-index: 40;
+    /* 确保这个值高于其他内容 */
+
+}
+
+.selectDeny {
+    position: absolute;
+    top: 50%;
+    left: 98%;
+    transform: translate(-50%, -50%);
+    z-index: 40;
+    /* 确保这个值高于其他内容 */
 
 }
 </style>

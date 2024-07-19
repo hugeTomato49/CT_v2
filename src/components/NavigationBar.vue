@@ -26,8 +26,32 @@
             "
           />
         </div> -->
+        <!-- chart -->
+        <div class="ml-10 name text-[0.9em] text-[#FFFFFF] cursor-pointer">chart</div>
+        <div class="w-[7em] h-4/5 ml-4  mb-[0.5em]  flex items-center">
+          <var-select
+            :hint="false"
+            v-model="chart"
+            text-color="#FFFFFF"
+            style="
+              --select-label-font-size: 0.8em;
+              --field-decorator-blur-color: #ffffff;
+              --field-decorator-focus-color: #ffffff;
+              --field-decorator-standard-normal-margin-bottom: -0.em;
+            "
+            class="w-full "
+            @change="toggleChartType"
+          >
+            <var-option
+              v-for="(item, index) in chartOptions"
+              :key="index"
+              :label="item"
+              style="---option-font-size: 0.6em"
+            />
+          </var-select>
+        </div>
         <!-- Scale -->
-        <div class="ml-10 name text-[1.1em] text-[#FFFFFF] cursor-pointer">Scale</div>
+        <div class="ml-10 name text-[0.9em] text-[#FFFFFF] cursor-pointer">Scale</div>
         <div class="w-[7em] h-4/5 ml-4  mb-[0.5em]  flex items-center">
           <var-select
             :hint="false"
@@ -51,7 +75,7 @@
         </div>
         <!-- Link -->
         <div class="flex flex-row ml-5 items-center">
-          <div class="mr-4 name text-[1.1em] text-[#FFFFFF] cursor-pointer">Link</div>
+          <div class="mr-4 name text-[0.9em] text-[#FFFFFF] cursor-pointer">Link</div>
           <var-switch
             variant
             v-model="link_switch"
@@ -60,7 +84,7 @@
               --switch-track-active-background: #ffffff;
               --switch-variant-handle-background: #3182bd;
               --switch-variant-handle-active-background: #3182bd;
-              --switch-variant-width: 3em;
+              --switch-variant-width: 2.9em;
               --switch-variant-height: 1.5em;
               --switch-variant-handle-width: 1.1em;
               --switch-variant-handle-height: 1.1em;
@@ -70,7 +94,7 @@
         <!-- 这里的color属性不是很好用变量，暂时直接赋值-->
         <!-- HL -->
         <div class="flex flex-row ml-5 items-center">
-          <div class="mr-4 name text-[1.1em] text-[#FFFFFF] cursor-pointer">HL</div>
+          <div class="mr-4 name text-[0.9em] text-[#FFFFFF] cursor-pointer">HL</div>
           <var-switch
             variant
             :size="xs"
@@ -80,7 +104,7 @@
               --switch-track-active-background: #ffffff;
               --switch-variant-handle-background: #3182bd;
               --switch-variant-handle-active-background: #3182bd;
-              --switch-variant-width: 3em;
+              --switch-variant-width: 2.9em;
               --switch-variant-height: 1.5em;
               --switch-variant-handle-width: 1.1em;
               --switch-variant-handle-height: 1.1em;
@@ -92,14 +116,14 @@
         <div class="ml-8">
           <font-awesome-icon
             :icon="['fas', 'palette']"
-            size="xl"
+            size="lg"
             style="color: #ffffff"
           />
         </div>
         <!-- question -->
         <div class="ml-5 mr-5">
           <font-awesome-icon
-            size="xl"
+            size="lg"
             :icon="['fas', 'question-circle']"
             style="color: #ffffff"
           />
@@ -130,9 +154,16 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
       );
       const cluster_value = ref("5");
       const placement = ref("by level");
-      const placementOptions = ["by level", "nothing"];
+      const placementOptions = ["by level", "by card"];
+      const chart = ref("line chart");
+      const chartOptions = ["line chart", "horizon chart"];
       const link_switch = ref(false);
       const HL_switch = ref(false);
+
+      const toggleChartType = () => {
+        store.dispatch("card/updateChartType",chart.value)
+        console.log("chart is ",chart.value)
+      }
 
       const toggleLinkVisible = () => {
         store.dispatch("scatterPlot/toggleLinkVisible");
@@ -160,6 +191,9 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
         highlightVisible,
         toggleHighlightVisible,
         toggleLinkVisible,
+        toggleChartType,
+        chart,
+        chartOptions
       };
     },
   };

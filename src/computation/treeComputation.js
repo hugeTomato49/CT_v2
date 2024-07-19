@@ -78,7 +78,7 @@ export const calculateCircles = (level_id_list, coordinateCollection, plot_X_Sca
                     strokeWidth: hasNode(selectionTree, coordinate.id)  ? 2 : 0,
                     fillOpacity: ifEmphasize(selectionTree, coordinate.id, level_id, level_id_list) 
                         ? 1.0
-                        : hasNode(selectionTree, coordinate.id) ? 0.3 : 0.05
+                        : hasNode(selectionTree, coordinate.id) ? 0.3 : 0.10
                 }));
                 initialCirclesData[level_id] = circles;
             }

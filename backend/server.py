@@ -13,7 +13,8 @@ from compute.TSfuncCal import Standardize
 app = Flask(__name__)
 
 # PV_data_folder_path = "data/PV"
-PV_data_folder_path = "data/Stock"
+# PV_data_folder_path = "data/Stock"
+PV_data_folder_path = "data/Tour"
 PV_tree_file_name = "PV_Tree.json"
 PV_tree_grouped_file_name = "PV_Tree_grouped.json"
 collection_json_path = os.path.join(os.path.dirname(__file__), 'tmp/origin_coordinateCollection.json')
@@ -113,7 +114,7 @@ def getSeriesCollection():
                 data_folder_path = list(child_matching_node["node_name"].split("-"))[-2]
                 data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_folder_path, data_file_name)
                 with open(data_file_path, 'r') as file:
-                    if dataset == "Stock":
+                    if dataset == 'Stock':
                         d = json.load(file)["data"]
                         seriesData_list.append(Standardize(d))
                         priceData_list.append(d)
@@ -122,7 +123,7 @@ def getSeriesCollection():
 
             object['seriesData'] = getAverageSeriesData(seriesData_list)
             object['seriesData_copy'] = object['seriesData']
-            if dataset == "Stock":
+            if dataset == 'Stock':
                 object['price'] = getAverageSeriesData(priceData_list)
         collection.append(object)
     
@@ -166,7 +167,7 @@ def getCoordinateCollection():
             if node["id"] == 1:
                 data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_file_name)
                 with open(data_file_path, 'r') as file:
-                    if dataset == "Stock":
+                    if dataset == 'Stock':
                         object[node["id"]] = filterDataByTimeRange(Standardize(json.load(file)["data"]), timeRange)
                     else:
                         object[node["id"]] = filterDataByTimeRange(json.load(file)["data"], timeRange)
@@ -174,7 +175,7 @@ def getCoordinateCollection():
                 data_folder_path = list(node["node_name"].split("-"))[-2]
                 data_file_path = os.path.join(os.path.dirname(__file__),PV_data_folder_path, data_folder_path, data_file_name)
                 with open(data_file_path, 'r') as file:
-                    if dataset == "Stock":
+                    if dataset == 'Stock':
                         object[node["id"]] = filterDataByTimeRange(Standardize(json.load(file)["data"]), timeRange)
                     else:
                         object[node["id"]] = filterDataByTimeRange(json.load(file)["data"], timeRange)
@@ -212,7 +213,7 @@ def getGroupedCoordinateCollection():
     # print(origin_collection)
     tmp_result = origin_collection["coordinateCollection"][str(level)]
 
-    grouped_Tree = constructGT(Tree_path, tmp_result, level, n=5)
+    grouped_Tree = constructGT(Tree_path, tmp_result, level, n=3)
     grouped_Points = getGroupedPoints(grouped_Tree, tmp_result, level)
     for i in range(max_level+1, level, -1):
         collection[i] = origin_collection["coordinateCollection"][str(i-1)]

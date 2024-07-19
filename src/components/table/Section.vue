@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full flex flex-col">
+    <div class="w-full flex flex-col overflow-visible">
         <TSCard
         v-for = "(id,index) in node_id_list.filter(id => (!foldState || ifEmphasize(selectionTree, id, level_id, level_id_list)))"
         :key = "id"

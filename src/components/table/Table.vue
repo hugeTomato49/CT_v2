@@ -1,23 +1,23 @@
 <template>
-        <div class="w-full h-full rounded-md flex flex-row tableContainer" id="tableContainer">
+        <div class="w-full h-full rounded-md flex flex-row tableContainer overflow-visible" id="tableContainer">
             <div 
             v-for="(level_id, index) in level_id_list"
             :key="level_id"
             class="flex flex-row h-full "
             >
                 <div 
-                class="h-full flex flex-col border-1 rounded-md overflow overflow-scroll"
+                class="h-full flex flex-col border-1 rounded-md overflow overflow-scroll overflow-visible"
                 :style="{
                 width: tableContainer?.offsetWidth * columnPercentage - 30 + 'px'
                 }">
                     <div 
-                    class="w-full flex flex-col"
+                    class="w-full flex flex-col overflow-visible h-full"
                     v-if = "level_id >= alignLevel"
                     v-for="(align_id, index) in alignID"
                     :key="align_id"
                     >
                         <div 
-                        class="w-full h-full flex flex-col"
+                        class="w-full h-full flex flex-col overflow-visible"
                         :style="{ height: heightForEachAlignID[align_id] + 'px' }"
                         >
                             <Section

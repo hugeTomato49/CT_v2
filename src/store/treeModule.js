@@ -122,8 +122,11 @@ const actions = {
         newTimeRange = [new Date('2022-12-15'), new Date('2022-12-29')]
       }
       else if(state.dataset == 'Stock'){
-        newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
+        // newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
+        newTimeRange = [new Date('2010-01-01'), new Date('2016-10-01')]
       }
+      console.log("newTimeRange")
+      console.log(newTimeRange)
       commit('UPDATE_TIME_RANGE', newTimeRange)
       dispatch('filterSeriesCollectionByTimeRange', newTimeRange)
       dispatch('scatterPlot/getCoordinateCollection',null, {root:true})
