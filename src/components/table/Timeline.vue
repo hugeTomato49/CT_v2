@@ -121,20 +121,6 @@ export default {
             );
         });
 
-        // const yScale = computed(() => {
-        //   if (SD_Data.value.length > 0) {
-        //     const scale = d3
-        //       .scaleLinear()
-        //       .domain([0, Math.max(...SD_Data.value.map((item) => item.Value))])
-        //       .range([height.value, 0]);
-        //     console.log("check scale");
-        //     console.log(scale(0));
-        //     return scale;
-        //   } else {
-        //     return d3.scaleLinear().domain([0, 0]).range([0, 0]);
-        //   }
-        // });
-
         const barWidth = computed(() => {
             if (SD_Data.value.length > 0) {
                 console.log("check width");

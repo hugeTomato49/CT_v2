@@ -26,6 +26,30 @@
             "
           />
         </div> -->
+        <!-- chart -->
+        <div class="ml-10 name text-[0.9em] text-[#FFFFFF] cursor-pointer">chart</div>
+        <div class="w-[7em] h-4/5 ml-4  mb-[0.5em]  flex items-center">
+          <var-select
+            :hint="false"
+            v-model="chart"
+            text-color="#FFFFFF"
+            style="
+              --select-label-font-size: 0.8em;
+              --field-decorator-blur-color: #ffffff;
+              --field-decorator-focus-color: #ffffff;
+              --field-decorator-standard-normal-margin-bottom: -0.em;
+            "
+            class="w-full "
+            @change="toggleChartType"
+          >
+            <var-option
+              v-for="(item, index) in chartOptions"
+              :key="index"
+              :label="item"
+              style="---option-font-size: 0.6em"
+            />
+          </var-select>
+        </div>
         <!-- Scale -->
         <div class="ml-10 name text-[0.9em] text-[#FFFFFF] cursor-pointer">Scale</div>
         <div class="w-[7em] h-4/5 ml-4  mb-[0.5em]  flex items-center">
@@ -131,8 +155,15 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
       const cluster_value = ref("5");
       const placement = ref("by level");
       const placementOptions = ["by level", "by card"];
+      const chart = ref("line chart");
+      const chartOptions = ["line chart", "horizon chart"];
       const link_switch = ref(false);
       const HL_switch = ref(false);
+
+      const toggleChartType = () => {
+        store.dispatch("card/updateChartType",chart.value)
+        console.log("chart is ",chart.value)
+      }
 
       const toggleLinkVisible = () => {
         store.dispatch("scatterPlot/toggleLinkVisible");
@@ -160,6 +191,9 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
         highlightVisible,
         toggleHighlightVisible,
         toggleLinkVisible,
+        toggleChartType,
+        chart,
+        chartOptions
       };
     },
   };

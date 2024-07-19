@@ -44,6 +44,7 @@ import {
     faQuestionCircle,
     faPenRuler,
     faDatabase,
+    faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -75,7 +76,8 @@ library.add(
     faQuestionCircle,
     faQuestion,
     faPenRuler,
-    faDatabase
+    faDatabase,
+    faCircleCheck,
 )
 
 const app = createApp(App)

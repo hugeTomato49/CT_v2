@@ -1,34 +1,48 @@
 <template>
-    <a-dropdown :trigger="['contextmenu']">
-        <div :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" 
-            @mouseover="handleMouseOver(node_id)"
-            @mouseout="handleMouseOut(node_id)"
-            @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
-            @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
-            <div 
-                :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-                id="cardContainer">
-                <svg class="w-full h-full bg-stone-100">
-                    <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
-                    <g ref="brushRef"></g>
-                    <path :stroke="themeColor" fill="none" stroke-width="2"
-                        :d="generatePath(seriesData, xScale, yScale)">
-                    </path>
-                </svg>
-            </div>
+    <div class=" relative overflow-visible">
+        <div v-if="selectCheck" class="selectCheck absolute ">
+            <font-awesome-icon :icon="['fas', 'circle-check']" size="lg" style="color: #F24E1E;" />
         </div>
-        <template #overlay>
-            <div>
-                <a-menu class="bg-black">
-                    <a-menu-item key="1" @click="onClickNode">Node</a-menu-item>
-                    <a-menu-item key="2" @click="onClickPath">Path</a-menu-item>
-                    <a-menu-item key="3" @click="onClickLayer">Layer</a-menu-item>
-                    <a-menu-item key="3" @click="onClickTree">Tree</a-menu-item>
-                </a-menu>
+        <!-- <div class="selectDeny absolute">
+            <font-awesome-icon :icon="['fas', 'circle']" size="lg" style="color: #F24E1E;" />
+        </div> -->
+
+        <div id="app" v-if="chartType === 'horizon chart'">
+            <HorizonChart :data="seriesData" :bands="4" :height="rowHeight" />
+        </div>
+        <a-dropdown :trigger="['contextmenu']">
+            <div v-if="chartType === 'line chart'"
+                :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+                :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
+                @mouseout="handleMouseOut(node_id)"
+                @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
+                @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
+                <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+                    id="cardContainer">
+                    <svg class="w-full h-full bg-stone-100">
+                        <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
+                        <g ref="brushRef"></g>
+                        <path :stroke="themeColor" fill="none" stroke-width="2"
+                            :d="generatePath(seriesData, xScale, yScale)">
+                        </path>
+                    </svg>
+                </div>
             </div>
-        </template>
-    </a-dropdown>
+            <template #overlay>
+                <div>
+                    <a-menu class="bg-black">
+                        <a-menu-item key="1" @click="onClickNode">Node</a-menu-item>
+                        <a-menu-item key="2" @click="onClickPath">Path</a-menu-item>
+                        <a-menu-item key="3" @click="onClickLayer">Layer</a-menu-item>
+                        <a-menu-item key="3" @click="onClickTree">Tree</a-menu-item>
+                    </a-menu>
+                </div>
+            </template>
+
+        </a-dropdown>
+    </div>
+
+
 
 </template>
 
@@ -45,6 +59,9 @@ import { calculateSeriesAverage } from "../../computation/basicComputation"
 import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
 import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
+import HorizonChart from './HorizonChart.vue';
+import { height } from '@fortawesome/free-regular-svg-icons/faAddressBook';
+
 
 export default {
     name: 'TSCard',
@@ -54,6 +71,7 @@ export default {
         'a-menu': Menu,
         'a-menu-item': Menu.Item,
         DownOutlined,
+        HorizonChart
     },
     setup(props) {
         const store = useStore()
@@ -66,17 +84,23 @@ export default {
         const cardWidth = computed(() => store.getters['size/cardWidth'])
 
         const timeRange = computed(() => store.getters['tree/timeRange'])
-        
+
+        const chartType = computed(() => store.getters['card/chartType'])
+        const checkCollection = computed(() => store.getters["card/selectCheck"])
+        const selectCheck = computed(() => {
+            console.log("check is", checkCollection)
+        })
+
         const xScale = computed(() => store.getters['size/xScale'])
         const yScale = computed(() => {
-            if(dataset.value == 'PV'){
-                return store.getters['size/yScale'][props.level - 1]   
+            if (dataset.value == 'PV') {
+                return store.getters['size/yScale'][props.level - 1]
             }
-            else{
+            else {
                 const max = Math.max(...props.seriesData.map(item => item.value))
                 const min = Math.min(...props.seriesData.map(item => item.value))
-                return d3.scaleLinear().domain([min,max]).range([cardHeight.value-2,2])
-            }   
+                return d3.scaleLinear().domain([min, max]).range([cardHeight.value - 2, 2])
+            }
         })
 
         const originalTree = computed(() => store.getters["tree/originalTree"])
@@ -93,7 +117,7 @@ export default {
         const averageValue = ref(0)
 
         watchEffect(() => {
-            if(timeRange.value.length > []){
+            if (timeRange.value.length > []) {
                 averageValue.value = calculateSeriesAverage(props.seriesData)
             }
         })
@@ -136,9 +160,9 @@ export default {
         }
 
         const handleMouseOver = (id) => {
-            if(highlightVisible.value){
+            if (highlightVisible.value) {
                 if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
-                deHighlightEmphasizeCards()
+                    deHighlightEmphasizeCards()
                 }
                 const id_list = findChildrenIds(id, originalTree.value)
                 highlightNodes(id_list)
@@ -150,23 +174,23 @@ export default {
                         plot_X_Scale.value,
                         plot_Y_Scale.value,
                         columnWidth.value
-                ))
+                    ))
             }
         };
 
         const handleMouseOut = (id) => {
-            if(highlightVisible.value){
+            if (highlightVisible.value) {
                 if (ifEmphasize(selectionTree.value, id, props.level, level_id_list.value)) {
-                highlightEmphaizeCards()
+                    highlightEmphaizeCards()
                 }
                 const id_list = findChildrenIds(id, originalTree.value)
                 deHighlightNodes(id_list)
                 store.dispatch('scatterPlot/updateBezierPaths', [])
-            }   
+            }
         }
 
         const onClickNode = () => {
-            console.log(`Click on Node `, props.node_id);
+            // store.dispatch("section/updateSelectCheck", props.node_id);
             store.dispatch("selection/addEntity", { type: 'Node', id: props.node_id, level: props.level });
         }
 
@@ -176,11 +200,10 @@ export default {
             const levelList = paths.length > 0 ? findLevelList(selectionTree.value, paths[0]) : [];
             paths.forEach((path) => {
                 const pathEntity = {
-                    type: 'Path', // 用于识别实体类型
-                    path, // 当前路径
-                    levelList, // 与此路径相关的级别列表
+                    type: 'Path', 
+                    path, 
+                    levelList, 
                 };
-                // 将路径实体添加到 Vuex store
                 store.dispatch('selection/addEntity', pathEntity);
             });
         }
@@ -191,15 +214,14 @@ export default {
 
         const onClickTree = () => {
             console.log(`Click on Tree`);
-            const subtree = buildSubtree(selectionTree.value, props.node_id); // 构建子树
-            const path = getSubtreeIds(subtree); // 获取子树的所有节点ID列表
+            const subtree = buildSubtree(selectionTree.value, props.node_id); 
+            const path = getSubtreeIds(subtree); 
             const levelList = findLevelList(selectionTree.value, path);
             const treeEntity = {
-                type: 'Tree', // 用于识别实体类型
-                path, // 当前路径
-                levelList, // 与此路径相关的级别列表
+                type: 'Tree', 
+                path, 
+                levelList, 
             };
-            // 将路径实体添加到 Vuex store
             store.dispatch('selection/addEntity', treeEntity);
         }
 
@@ -230,7 +252,9 @@ export default {
             onClickPath,
             onClickLayer,
             onClickTree,
-            averageValue
+            averageValue,
+            chartType,
+            selectCheck
         }
     }
 }
@@ -259,6 +283,26 @@ export default {
     font-style: "semibold italic";
     font-variation-settings:
         "slnt" 0;
+
+}
+
+.selectCheck {
+    position: absolute;
+    top: 20%;
+    left: 97%;
+    transform: translate(-50%, -50%);
+    z-index: 40;
+    /* 确保这个值高于其他内容 */
+
+}
+
+.selectDeny {
+    position: absolute;
+    top: 50%;
+    left: 98%;
+    transform: translate(-50%, -50%);
+    z-index: 40;
+    /* 确保这个值高于其他内容 */
 
 }
 </style>
