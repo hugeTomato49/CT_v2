@@ -79,9 +79,6 @@ export default {
         const rowHeight = computed(() => store.getters["size/rowHeight"])
 
 
-
-
-
         const groupLevelByParentId = (level_id, tree, align_id, alignLevel) => {
             //alignLevel只可能是1或2
             if(alignLevel == 1 || level_id < alignLevel){
@@ -143,7 +140,7 @@ export default {
             tableContainer,
             groupLevelByParentId,
             findNodesByParentId,
-            heightForEachAlignID
+            heightForEachAlignID,
         }
     }
 }

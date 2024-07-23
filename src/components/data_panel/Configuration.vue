@@ -14,11 +14,11 @@
     <!-- info of node and level -->
     <div class="flex flex-row w-full h-1/8  justify-center items-center mt-4">
       <div class="flex flex-row w-1/2 h-full items-center">
-        <div class="w-1/6 h-full  flex items-center"> 
+        <div class="w-1/6 h-full  flex items-center">
           <font-awesome-icon :icon="['fas', 'share-nodes']" :style="{ color: themeColor }" size="xl" class="" />
         </div>
         <div class="ml-[1em] flex flex-col w-2/3 h-full justify-center items-center">
-          <div class="name text-[#3182BD] text-[1.1em] ">456</div>
+          <div class="name text-[#3182BD] text-[1.1em] ">{{ node_numbers }}</div>
           <div class="w-full h-1/5 flex flex-row justify-between">
             <div class="black-line w-1/3 mt-[0.3em]"></div>
             <div class="node_number text-[#ABABAB]">node</div>
@@ -27,11 +27,11 @@
         </div>
       </div>
       <div class="flex flex-row w-1/2 h-full ml-2 items-center">
-        <div class="w-1/6 h-full  flex items-center"> 
+        <div class="w-1/6 h-full  flex items-center">
           <font-awesome-icon :icon="['fas', 'layer-group']" size="lg" :style="{ color: themeColor }" class="mt-1" />
         </div>
         <div class="ml-[1em] flex flex-col w-2/3 h-full justify-center items-center">
-          <div class="name text-[#3182BD] text-[1.1em] ">3</div>
+          <div class="name text-[#3182BD] text-[1.1em] ">{{ levels_length }}</div>
           <div class="w-full h-1/5 flex flex-row justify-between">
             <div class="black-line w-1/3 mt-[0.3em]"></div>
             <div class="node_number text-[#ABABAB]">level </div>
@@ -45,9 +45,9 @@
       <div class="flex flex-row w-full h-full">
         <div class="w-1/12 h-full  flex ">
           <font-awesome-icon :icon="['fas', 'calendar-days']" size="lg" :style="{ color: themeColor }"
-          class="mt-[0.3em]" />
+            class="mt-[0.3em]" />
         </div>
-        
+
         <div class="flex flex-col w-11/12">
           <!-- start time and line -->
 
@@ -55,7 +55,8 @@
             <div class="node_number h-1/5">start time</div>
 
             <div class="w-full h-3/5 ">
-                <var-input class="name" :text-color=themeColor v-model="start_time" placeholder="2023-01-01" :hint="false" style="
+              <var-input class="name" :text-color=themeColor v-model="start_time" :placeholder="start_time_place" :hint="false"
+                style="
                   --field-decorator-standard-normal-margin-bottom: 0px;
                   --field-decorator-standard-normal-margin-top: -10px;
                   --input-input-height: 80%;
@@ -63,8 +64,7 @@
                   --field-decorator-line-focus-size: 0px;
                   --field-decorator-line-size: 0px;
                   --field-decorator-placeholder-size: 80%;
-                "
-                :style="{ color: themeColor }" />
+                " :style="{ color: themeColor }" />
             </div>
             <div class="black-line w-full"></div>
           </div>
@@ -72,7 +72,7 @@
           <div class="flex flex-col w-full h-full pl-[1em] mt-1">
             <div class="node_number h-1/5">end time</div>
             <div class="w-full h-3/5">
-              <var-input v-model="end_time" :text-color=themeColor placeholder="2023-06-01" :hint="false" style="
+              <var-input v-model="end_time" :text-color=themeColor :placeholder="end_time_place" :hint="false" style="
                 --field-decorator-standard-normal-margin-bottom: 0px;
                 --field-decorator-standard-normal-margin-top: -10px;
                 --input-input-height: 80%;
@@ -117,7 +117,7 @@
       <div class="w-1/12 h-full  flex ">
         <font-awesome-icon :icon="['fas', 'pen-ruler']" :style="{ color: themeColor }" size="lg" class="mt-[0.4em]" />
       </div>
-      
+
       <div class="flex flex-col w-11/12 h-full pl-[1em]">
         <div class="w-full h-3/5">
           <var-select :hint="false" text-color="#ababab" v-model="daily_content" style="
@@ -137,7 +137,7 @@
       <div class="w-1/12 h-full  flex">
         <font-awesome-icon :icon="['fas', 'database']" :style="{ color: themeColor }" size="lg" class="mt-[0.4em]" />
       </div>
-      
+
       <div class="flex flex-col w-11/12 h-full pl-[1em]">
         <div class="w-full h-3/5">
           <var-select :hint="false" text-color="#ababab" v-model="raw_content" style="
@@ -145,8 +145,7 @@
           --field-decorator-focus-color: #ffffff;
           --select-label-font-size: 0.6em;
             ">
-            <var-option v-for="(item, index) in raw_options" :key="index" :label="item"
-              style="" />
+            <var-option v-for="(item, index) in raw_options" :key="index" :label="item" style="" />
           </var-select>
         </div>
         <div class=" w-full black-line mt-[0.3em]"></div>
@@ -181,6 +180,19 @@ export default {
     const layer_name = ref("")
     const raw_content = ref("raw");
     const raw_options = ["raw", "z-normalization"]
+    const originalTree = computed(() => store.getters["tree/originalTree"])
+    const levels_length = computed(() => {
+      return store.getters["tree/levels"].Stock.length
+    })
+    const node_numbers = computed(() => {
+      return originalTree.value.length;
+    })
+    const start_time_place = computed(() => {
+      return store.getters["time/wholeTimeRange"].Stock[0]
+    })
+    const end_time_place = computed(() => {
+      return store.getters["time/wholeTimeRange"].Stock[1]
+    })
 
     watchEffect(() => {
       // console.log("input value is", inputValue.value)
@@ -236,7 +248,11 @@ export default {
       end_time,
       daily_content,
       daily_options,
-      layer_name
+      layer_name,
+      node_numbers,
+      levels_length,
+      start_time_place,
+      end_time_place
     };
   },
 };
@@ -244,8 +260,6 @@ export default {
 
 
 <style>
-
-
 .name {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
@@ -254,6 +268,7 @@ export default {
   font-variation-settings: "slnt" 0;
   color: themeColor;
 }
+
 :root {
   --select-font-family: 'Inter', sans-serif;
   --select-font-weight: 500;
@@ -272,7 +287,7 @@ export default {
 .var-input__input {
   font-family: 'Inter', sans-serif;
   font-optical-sizing: auto;
-  font-weight: 400;
+  font-weight: 600;
   font-style: "semibold";
   font-variation-settings: "slnt" 0;
 }

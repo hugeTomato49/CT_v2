@@ -1,57 +1,36 @@
 <template>
-    <div class="w-full flex flex-col overflow-visible">
+    <div class="w-full flex flex-col relative overflow-visible">
+
         <TSCard
-        v-for = "(id,index) in node_id_list.filter(id => (!foldState || ifEmphasize(selectionTree, id, level_id, level_id_list)))"
-        :key = "id"
-        :seriesData = findSeriesData(id)
-        :level = "level_id"
-        :node_id = "id"
-        :node_name = findNodeName(id)
-        :groupedNode = groupedNodeFlag(id)
-        />
-        <div 
-        class="w-full p-0.8 py-0"
-        v-show="level_id > alignLevel"
-        >
+            v-for="(id, index) in node_id_list.filter(id => (!foldState || ifEmphasize(selectionTree, id, level_id, level_id_list)))"
+            :key="id" :seriesData=findSeriesData(id) :level="level_id" :node_id="id" :node_name=findNodeName(id)
+            :groupedNode=groupedNodeFlag(id)   />
+        <!-- <div class="">
+            <SelectionIcon
+                v-for="(id, index) in node_id_list.filter(id => (!foldState || ifEmphasize(selectionTree, id, level_id, level_id_list)))"
+                :key="id" :node_id="id" :index="index" :checkCollection="checkCollection">
+            </SelectionIcon>
+        </div> -->
+        <div class="w-full p-0.8 py-0" v-show="level_id > alignLevel">
             <div class="w-full flex flex-col">
-                <div 
-                class="w-full h-27px flex flex-row justify-center items-center"
-                v-if="configureShow"
-                >
+                <div class="w-full h-27px flex flex-row justify-center items-center" v-if="configureShow">
                     <div v-if="foldState">
-                        <CircleIcon
-                        :number = "hideSeriesNumber"
-                        />
+                        <CircleIcon :number="hideSeriesNumber" />
 
                     </div>
                     <div class="flex-1"></div>
-                    <div 
-                    class="flex flex-row"
-                    v-if="!foldState"
-                    >
-                        <ConfigureButton 
-                        class="mr-1"
-                        buttonName='sort'
-                        @click="sortSection()"
-                         />
-                         <ConfigureButton 
-                         buttonName='hide'
-                         @click="toggleFoldState()"
-                         />
+                    <div class="flex flex-row" v-if="!foldState">
+                        <ConfigureButton class="mr-1" buttonName='sort' @click="sortSection()" />
+                        <ConfigureButton buttonName='hide' @click="toggleFoldState()" />
                     </div>
-                    <div 
-                    class="flex flex-row"
-                    v-else-if="foldState"
-                    >
-                         <ConfigureButton 
-                         buttonName='unfold'
-                         @click="toggleFoldState()"
-                         />
+                    <div class="flex flex-row" v-else-if="foldState">
+                        <ConfigureButton buttonName='unfold' @click="toggleFoldState()" />
                     </div>
                 </div>
                 <div class="w-full h-4px cursor-pointer mt-4px" @click="toggleConfigureShow()">
                     <svg class="w-full h-full">
-                        <line x1="0" y1="0" x2="100%" y2="0" :stroke="themeColor" stroke-width="2px" stroke-dasharray="8,8" >
+                        <line x1="0" y1="0" x2="100%" y2="0" :stroke="themeColor" stroke-width="2px"
+                            stroke-dasharray="8,8">
                         </line>
                     </svg>
                 </div>
@@ -63,49 +42,52 @@
 
 <script>
 import TSCard from './TSCard.vue'
+import SelectionIcon from './SelectionIcon.vue';
 import ConfigureButton from './ConfigureButton.vue'
 import CircleIcon from './CircleIcon.vue'
 import { useStore } from 'vuex'
-import { computed,ref } from 'vue' 
+import { computed, ref } from 'vue'
 import { ifEmphasize } from '../../computation/treeComputation'
 
 export default {
     name: 'Section',
-    props: ['node_id_list', 'level_id'],
+    props: ['node_id_list', 'level_id', 'checkCollection'],
     components: {
         TSCard,
         ConfigureButton,
-        CircleIcon
+        CircleIcon,
+        SelectionIcon
     },
     setup(props) {
         const store = useStore()
         const seriesCollection = computed(() => store.getters["tree/seriesCollection"])
-        const selectionTree =computed(() => store.getters["tree/selectionTree"])
+        const selectionTree = computed(() => store.getters["tree/selectionTree"])
         const level_id_list = computed(() => store.getters["tree/level_id_list"])
         const themeColor = computed(() => store.getters["color/themeColor"])
+
 
         const configureShow = ref(false)
         const foldState = ref(false)
 
         const alignState = computed(() => store.getters["align/alignState"])
         const alignLevel = computed(() => store.getters["align/alignLevel"])
-  
+
         const findSeriesData = (id) => {
-            return seriesCollection.value.find(node => node.id ==id)?.seriesData??[]
+            return seriesCollection.value.find(node => node.id == id)?.seriesData ?? []
         }
 
         const findNodeName = (id) => {
-            return seriesCollection.value.find(node => node.id ==id)?.node_name??""
+            return seriesCollection.value.find(node => node.id == id)?.node_name ?? ""
         }
 
         const groupedNodeFlag = (id) => {
-            const attribute = selectionTree.value.find(node => node.id == id)?.attribute??""
-            if(attribute.includes("group")) {
+            const attribute = selectionTree.value.find(node => node.id == id)?.attribute ?? ""
+            if (attribute.includes("group")) {
                 return true
             }
             else {
                 return false
-            }    
+            }
         }
 
         const toggleConfigureShow = () => {
@@ -118,7 +100,7 @@ export default {
         }
 
         const sortSection = () => {
-            store.dispatch("tree/sortSelectionTree", {"id_list":props.node_id_list, "mode":'asc'})
+            store.dispatch("tree/sortSelectionTree", { "id_list": props.node_id_list, "mode": 'asc' })
 
         }
 
@@ -128,7 +110,7 @@ export default {
         })
 
 
-        
+
 
         return {
             themeColor,
@@ -146,7 +128,8 @@ export default {
             toggleFoldState,
             sortSection,
             ifEmphasize,
-            hideSeriesNumber
+            hideSeriesNumber,
+            // checkCollection
         }
 
     }
@@ -155,9 +138,23 @@ export default {
 </script>
 
 <style>
+.selectCheck {
+    position: absolute;
+    top: 20%;
+    left: 97%;
+    transform: translate(-50%, -50%);
+    z-index: 40;
+    /* 确保这个值高于其他内容 */
 
+}
+
+.selectDeny {
+    position: absolute;
+    top: 50%;
+    left: 98%;
+    transform: translate(-50%, -50%);
+    z-index: 40;
+    /* 确保这个值高于其他内容 */
+
+}
 </style>
-
-
-
-

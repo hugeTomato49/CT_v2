@@ -97,7 +97,6 @@
           <div class="mr-4 name text-[0.9em] text-[#FFFFFF] cursor-pointer">HL</div>
           <var-switch
             variant
-            :size="xs"
             v-model="HL_switch"
             @click="toggleHighlightVisible"
             style="

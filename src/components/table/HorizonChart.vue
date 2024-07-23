@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { width } from '@fortawesome/free-regular-svg-icons/faAddressBook';
 import * as d3 from 'd3';
 import { onMounted, ref, watch } from 'vue';
 
@@ -11,7 +12,8 @@ export default {
     props: {
         data: Array,
         bands: Number,
-        height: Number
+        height: Number,
+        width:Number
     },
     setup(props) {
         const chart = ref(null);
@@ -24,13 +26,11 @@ export default {
                 "#4292c6", "#2171b5", "#08519c", "#08306b"
             ];
 
-            const marginTop = 15;
-            const marginRight = 10;
+            const marginTop = 10; //margin between each horizon card
             const marginBottom = 0;
-            const marginLeft = 10;
-            const width = 500;
-            const size = props.height; // height of each band
-            const padding = 1;
+            const width = props.width;//the value of cardWidth
+            const size = props.height-10; // height of each band
+            const padding = 0;
 
             // Calculate height based on the number of data points
             const height = size + marginTop + marginBottom;
@@ -59,7 +59,7 @@ export default {
                 .attr("width", width)
                 .attr("height", height)
                 .attr("viewBox", [0, 0, width, height])
-                .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif;");
+                .attr("style", "max-width: 100%; height: auto; ");
 
             // Create a G element for the data
             const g = svg.append("g")
@@ -87,13 +87,6 @@ export default {
                 .attr("xlink:href", `${new URL(`#${uid}-path`, location)}`)
                 .attr("fill", (_, i) => colors[i])
                 .attr("transform", (_, i) => `translate(0,${i * size})`);
-
-            // Add the horizontal axis
-            // svg.append("g")
-            //   .attr("transform", `translate(0,${marginTop})`)
-            //   .call(d3.axisTop(x).ticks(width / 80).tickSizeOuter(0))
-            //   .call(g => g.selectAll(".tick").filter(d => x(d) < marginLeft || x(d) >= width - marginRight).remove())
-            //   .call(g => g.select(".domain").remove());
 
             chart.value.appendChild(svg.node());
         };

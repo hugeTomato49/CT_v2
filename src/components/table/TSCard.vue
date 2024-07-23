@@ -1,14 +1,18 @@
 <template>
-    <div class=" relative overflow-visible">
-        <div v-if="selectCheck" class="selectCheck absolute ">
+    <div class=" relative overflow-visible ">
+
+        <div v-if="checkCollection.includes(node_id) && !deleteCollection.includes(node_id)"
+            class="selectCheck absolute " @click="toggleIcon()">
             <font-awesome-icon :icon="['fas', 'circle-check']" size="lg" style="color: #F24E1E;" />
         </div>
-        <!-- <div class="selectDeny absolute">
-            <font-awesome-icon :icon="['fas', 'circle']" size="lg" style="color: #F24E1E;" />
-        </div> -->
+
+        <div v-if="deleteCollection.includes(node_id)" class="selectCheck absolute" @click="toggleIcon()">
+            <!-- <font-awesome-icon :icon="['fas', 'circle']" size="lg" style="color: #F24E1E;" /> -->
+            <font-awesome-icon :icon="['fas', 'circle-xmark']" size="lg" style="color: #F24E1E;" />
+        </div>
 
         <div id="app" v-if="chartType === 'horizon chart'">
-            <HorizonChart :data="seriesData" :bands="4" :height="rowHeight" />
+            <HorizonChart :data="seriesData" :bands="4" :height="rowHeight" :width="cardWidth" />
         </div>
         <a-dropdown :trigger="['contextmenu']">
             <div v-if="chartType === 'line chart'"
@@ -33,13 +37,18 @@
                     <a-menu class="bg-black">
                         <a-menu-item key="1" @click="onClickNode">Node</a-menu-item>
                         <a-menu-item key="2" @click="onClickPath">Path</a-menu-item>
-                        <a-menu-item key="3" @click="onClickLayer">Layer</a-menu-item>
                         <a-menu-item key="3" @click="onClickTree">Tree</a-menu-item>
                     </a-menu>
                 </div>
             </template>
 
         </a-dropdown>
+        <div v-if="completeButton" class="w-full h-8 flex flex-row-reverse items-center" style="cursor: pointer;" @click="toggleComplete">
+            <div
+                class="flex flex-row w-18 h-6 rounded-xl border-2 border-[#F24E1E] mr-1 items-center name text-[0.8em]  text-[#F24E1E] justify-center hover:border-red-500">
+                <div>complete</div>
+            </div>
+        </div>
     </div>
 
 
@@ -49,7 +58,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { ref, computed, onMounted, watchEffect } from 'vue'
+import { ref, computed, onMounted, watchEffect, watch, nextTick } from 'vue'
 import * as d3 from 'd3'
 import { Dropdown, Menu } from 'ant-design-vue'
 import { DownOutlined } from '@ant-design/icons-vue'
@@ -60,18 +69,21 @@ import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findCh
 import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
 import HorizonChart from './HorizonChart.vue';
-import { height } from '@fortawesome/free-regular-svg-icons/faAddressBook';
+import SelectionIcon from './SelectionIcon.vue';
+import { height, width } from '@fortawesome/free-regular-svg-icons/faAddressBook';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 
 export default {
     name: 'TSCard',
-    props: ['seriesData', 'level', 'node_id', 'node_name', 'groupedNode'],
+    props: ['seriesData', 'level', 'node_id', 'node_name', 'groupedNode',],
     components: {
         'a-dropdown': Dropdown,
         'a-menu': Menu,
         'a-menu-item': Menu.Item,
         DownOutlined,
-        HorizonChart
+        HorizonChart,
+        SelectionIcon
     },
     setup(props) {
         const store = useStore()
@@ -86,10 +98,10 @@ export default {
         const timeRange = computed(() => store.getters['tree/timeRange'])
 
         const chartType = computed(() => store.getters['card/chartType'])
-        const checkCollection = computed(() => store.getters["card/selectCheck"])
-        const selectCheck = computed(() => {
-            console.log("check is", checkCollection)
-        })
+        const checkCollection = computed(() => { return store.getters["card/selectCheck"] })
+        const deleteCollection = computed(() => { return store.getters["card/deleteCheck"] })
+        const selectCheck = ref(false)
+        const completeButton = ref(false)
 
         const xScale = computed(() => store.getters['size/xScale'])
         const yScale = computed(() => {
@@ -106,13 +118,11 @@ export default {
         const originalTree = computed(() => store.getters["tree/originalTree"])
         const plot_X_Scale = computed(() => store.getters["scatterPlot/plot_X_Scale"])
         const plot_Y_Scale = computed(() => store.getters["scatterPlot/plot_Y_Scale"])
-        const coordinateCollection = computed(() => store.getters["scatterPlot/coordinateCollection"])
+        const coordinateCollection = computed(() => {
+            return store.getters["scatterPlot/coordinateCollection"]
+        })
         const columnWidth = computed(() => store.getters["scatterPlot/columnWidth"])
-
         const highlightVisible = computed(() => store.getters["scatterPlot/highlightVisible"])
-
-
-
         const brushRef = ref(null)
         const averageValue = ref(0)
 
@@ -189,22 +199,40 @@ export default {
             }
         }
 
-        const onClickNode = () => {
-            // store.dispatch("section/updateSelectCheck", props.node_id);
-            store.dispatch("selection/addEntity", { type: 'Node', id: props.node_id, level: props.level });
+        const toggleIcon = () => {
+            store.dispatch("card/updateDeleteCheck", props.node_id);
         }
-
-        const onClickPath = () => {
-            console.log(`Click on Path`);
+        
+        const toggleComplete = () => {
+            completeButton.value = false
             const paths = findPath(props.node_id, selectionTree.value);
             const levelList = paths.length > 0 ? findLevelList(selectionTree.value, paths[0]) : [];
             paths.forEach((path) => {
                 const pathEntity = {
-                    type: 'Path', 
-                    path, 
-                    levelList, 
+                    type: 'Path',
+                    path,
+                    levelList,
                 };
                 store.dispatch('selection/addEntity', pathEntity);
+            });
+            store.dispatch("card/resetCheck");
+        }
+ 
+        const onClickNode = () => {
+            console.log("id is ", props.node_id)
+            store.dispatch("selection/addEntity", { type: 'Node', id: props.node_id, level: props.level });
+
+        }
+
+        const onClickPath = () => {
+            console.log(`Click on Path`);
+            completeButton.value = true
+            const paths = findPath(props.node_id, selectionTree.value);
+            const levelList = paths.length > 0 ? findLevelList(selectionTree.value, paths[0]) : [];
+            paths.forEach((path) => {
+                path.forEach((item) => {
+                    store.dispatch('card/updateSelectCheck', item);
+                })
             });
         }
 
@@ -214,13 +242,13 @@ export default {
 
         const onClickTree = () => {
             console.log(`Click on Tree`);
-            const subtree = buildSubtree(selectionTree.value, props.node_id); 
-            const path = getSubtreeIds(subtree); 
+            const subtree = buildSubtree(selectionTree.value, props.node_id);
+            const path = getSubtreeIds(subtree);
             const levelList = findLevelList(selectionTree.value, path);
             const treeEntity = {
-                type: 'Tree', 
-                path, 
-                levelList, 
+                type: 'Tree',
+                path,
+                levelList,
             };
             store.dispatch('selection/addEntity', treeEntity);
         }
@@ -254,7 +282,14 @@ export default {
             onClickTree,
             averageValue,
             chartType,
-            selectCheck
+            selectCheck,
+            cardWidth,
+            cardHeight,
+            completeButton,
+            toggleIcon,
+            checkCollection,
+            deleteCollection,
+            toggleComplete
         }
     }
 }
@@ -292,16 +327,18 @@ export default {
     left: 97%;
     transform: translate(-50%, -50%);
     z-index: 40;
+    cursor: pointer;
     /* 确保这个值高于其他内容 */
 
 }
 
 .selectDeny {
     position: absolute;
-    top: 50%;
-    left: 98%;
+    top: 20%;
+    left: 97%;
     transform: translate(-50%, -50%);
     z-index: 40;
+    cursor: pointer;
     /* 确保这个值高于其他内容 */
 
 }

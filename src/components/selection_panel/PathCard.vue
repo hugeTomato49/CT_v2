@@ -132,6 +132,7 @@ export default {
     const selectionTree = computed(() => store.getters["tree/selectionTree"]);
     const originalTree = computed(() => store.getters["tree/originalTree"]);
     const timeRange = computed(() => store.getters["tree/timeRange"]);
+    const deleteCollection = computed(() => { return store.getters["card/deleteCheck_copy"] })
 
     const deletePathEntity = () => {
       // console.log("delete is ", props.entityID)
@@ -139,7 +140,6 @@ export default {
     };
 
     const deletePath = (id) => {
-      // 调用 Vuex 中的删除路径的 action 方法
 
       const deleteItem = { entityID: props.entityID, id: id };
       // console.log("delete id is", deleteItem)
@@ -176,10 +176,13 @@ export default {
     };
     watch([xScale, () => props.id_list], ([newXScale, newIdList]) => {
       let seriesId = 0;
+      const updatedPath = newIdList.filter(item => !deleteCollection.value.includes(item));
+      console.log("delete is", deleteCollection.value)
+      console.log("updatedPath is", updatedPath)
       if (newXScale !== null) {
         const list = [];
         updateYScales();
-        newIdList.forEach((id) => {
+        updatedPath.forEach((id) => {
           // 使用新的id列表
           let obj = {};
           obj["seriesId"] = seriesId;
@@ -193,8 +196,8 @@ export default {
         });
         seriesData_list.value = list;
 
-        console.log("check data");
-        console.log(list);
+        // console.log("check data");
+        // console.log(list);
       }
     });
 
