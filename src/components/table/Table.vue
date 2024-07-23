@@ -11,7 +11,7 @@
                 width: tableContainer?.offsetWidth * columnPercentage - 30 + 'px'
                 }">
                     <div 
-                    class="w-full flex flex-col overflow-visible h-full"
+                    class="w-full flex flex-col overflow-visible"
                     v-if = "level_id >= alignLevel"
                     v-for="(align_id, index) in alignID"
                     :key="align_id"
@@ -123,6 +123,8 @@ export default {
                 })
                 heightCollection[align_id] = maxHeight;
             })
+            console.log("check heightCollection")
+            console.log(heightCollection)
             return heightCollection;
         });
 

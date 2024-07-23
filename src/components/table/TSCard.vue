@@ -1,48 +1,26 @@
 <template>
     <div class=" relative overflow-visible">
-        <div v-if="selectCheck" class="selectCheck absolute ">
-            <font-awesome-icon :icon="['fas', 'circle-check']" size="lg" style="color: #F24E1E;" />
-        </div>
-        <!-- <div class="selectDeny absolute">
-            <font-awesome-icon :icon="['fas', 'circle']" size="lg" style="color: #F24E1E;" />
-        </div> -->
-
-        <div id="app" v-if="chartType === 'horizon chart'">
+        <!-- <div id="app" v-if="chartType === 'horizon chart'">
             <HorizonChart :data="seriesData" :bands="4" :height="rowHeight" />
+        </div> -->
+        <div
+            :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
+            @mouseout="handleMouseOut(node_id)"
+            @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
+            @dblclick="filterCurrentCard(node_id)" 
+        >
+            <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]" id="cardContainer">
+                <svg class="w-full h-full bg-stone-100">
+                    <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
+                    <g ref="brushRef"></g>
+                    <path :stroke="themeColor" fill="none" stroke-width="2"
+                        :d="generatePath(seriesData, xScale, yScale)">
+                    </path>
+                </svg>
+            </div>                         
         </div>
-        <a-dropdown :trigger="['contextmenu']">
-            <div v-if="chartType === 'line chart'"
-                :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-                :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
-                @mouseout="handleMouseOut(node_id)"
-                @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
-                @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
-                <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-                    id="cardContainer">
-                    <svg class="w-full h-full bg-stone-100">
-                        <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
-                        <g ref="brushRef"></g>
-                        <path :stroke="themeColor" fill="none" stroke-width="2"
-                            :d="generatePath(seriesData, xScale, yScale)">
-                        </path>
-                    </svg>
-                </div>
-            </div>
-            <template #overlay>
-                <div>
-                    <a-menu class="bg-black">
-                        <a-menu-item key="1" @click="onClickNode">Node</a-menu-item>
-                        <a-menu-item key="2" @click="onClickPath">Path</a-menu-item>
-                        <a-menu-item key="3" @click="onClickLayer">Layer</a-menu-item>
-                        <a-menu-item key="3" @click="onClickTree">Tree</a-menu-item>
-                    </a-menu>
-                </div>
-            </template>
-
-        </a-dropdown>
     </div>
-
-
 
 </template>
 
@@ -51,8 +29,6 @@
 import { useStore } from 'vuex';
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import * as d3 from 'd3'
-import { Dropdown, Menu } from 'ant-design-vue'
-import { DownOutlined } from '@ant-design/icons-vue'
 import { generatePath } from "../../generator/generator"
 import { findPath, findLevelList, buildSubtree, getSubtreeIds } from "../../select/entitySelection"
 import { calculateSeriesAverage } from "../../computation/basicComputation"
@@ -60,17 +36,13 @@ import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findCh
 import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
 import HorizonChart from './HorizonChart.vue';
-import { height } from '@fortawesome/free-regular-svg-icons/faAddressBook';
+
 
 
 export default {
     name: 'TSCard',
     props: ['seriesData', 'level', 'node_id', 'node_name', 'groupedNode'],
     components: {
-        'a-dropdown': Dropdown,
-        'a-menu': Menu,
-        'a-menu-item': Menu.Item,
-        DownOutlined,
         HorizonChart
     },
     setup(props) {
@@ -86,10 +58,6 @@ export default {
         const timeRange = computed(() => store.getters['tree/timeRange'])
 
         const chartType = computed(() => store.getters['card/chartType'])
-        const checkCollection = computed(() => store.getters["card/selectCheck"])
-        const selectCheck = computed(() => {
-            console.log("check is", checkCollection)
-        })
 
         const xScale = computed(() => store.getters['size/xScale'])
         const yScale = computed(() => {
@@ -110,8 +78,6 @@ export default {
         const columnWidth = computed(() => store.getters["scatterPlot/columnWidth"])
 
         const highlightVisible = computed(() => store.getters["scatterPlot/highlightVisible"])
-
-
 
         const brushRef = ref(null)
         const averageValue = ref(0)
@@ -195,7 +161,7 @@ export default {
         }
 
         const onClickPath = () => {
-            console.log(`Click on Path`);
+            // console.log(`Click on Path`);
             const paths = findPath(props.node_id, selectionTree.value);
             const levelList = paths.length > 0 ? findLevelList(selectionTree.value, paths[0]) : [];
             paths.forEach((path) => {
@@ -208,12 +174,8 @@ export default {
             });
         }
 
-        const onClickLayer = () => {
-            console.log(`Click on Layer`);
-        }
-
         const onClickTree = () => {
-            console.log(`Click on Tree`);
+            // console.log(`Click on Tree`);
             const subtree = buildSubtree(selectionTree.value, props.node_id); 
             const path = getSubtreeIds(subtree); 
             const levelList = findLevelList(selectionTree.value, path);
@@ -250,11 +212,9 @@ export default {
             handleMouseOut,
             onClickNode,
             onClickPath,
-            onClickLayer,
             onClickTree,
             averageValue,
-            chartType,
-            selectCheck
+            chartType
         }
     }
 }
@@ -286,23 +246,4 @@ export default {
 
 }
 
-.selectCheck {
-    position: absolute;
-    top: 20%;
-    left: 97%;
-    transform: translate(-50%, -50%);
-    z-index: 40;
-    /* 确保这个值高于其他内容 */
-
-}
-
-.selectDeny {
-    position: absolute;
-    top: 50%;
-    left: 98%;
-    transform: translate(-50%, -50%);
-    z-index: 40;
-    /* 确保这个值高于其他内容 */
-
-}
 </style>
