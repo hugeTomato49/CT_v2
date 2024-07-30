@@ -22,7 +22,7 @@
         </div>
         <div class="w-full max-h-[10em] overflow overflow-scroll">
           <div v-for="(id, index) in seriesData_list.map((series) => series.id)" :key="id"
-            class="w-full h-[4.4em] flex flex-row" :style="{ 'border-bottom': '1px solid' + themeColor }">
+            class="w-full h-[4.4em] flex flex-row" :style="{ 'border-bottom': '1px solid' + '#ABABAB' }">
             <div class="w-full h-[4em] flex flex-col mt-[0.6em]">
               <div class="w-1/7 h-[0.4em] flex flex-row items-center meta "
                 :style="{ color: themeColor }">
