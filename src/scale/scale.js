@@ -107,5 +107,5 @@ export const getXScale = (data, width) => {
 export const getYScale = (max, min, height) => {
     return d3.scaleLinear()
     .domain([min, max])
-    .range([height-1, 5])
+    .range([height, 7])
 }

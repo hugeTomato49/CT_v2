@@ -3,14 +3,8 @@
 
         <TSCard
             v-for="(id, index) in node_id_list.filter(id => (!foldState || ifEmphasize(selectionTree, id, level_id, level_id_list)))"
-            :key="id" :seriesData=findSeriesData(id) :level="level_id" :node_id="id" :node_name=findNodeName(id)
+            :key="id" :seriesData=findSeriesData(id) :level="level_id" :node_id="id" :node_name=findNodeName(id) :index="index"
             :groupedNode=groupedNodeFlag(id)   />
-        <!-- <div class="">
-            <SelectionIcon
-                v-for="(id, index) in node_id_list.filter(id => (!foldState || ifEmphasize(selectionTree, id, level_id, level_id_list)))"
-                :key="id" :node_id="id" :index="index" :checkCollection="checkCollection">
-            </SelectionIcon>
-        </div> -->
         <div class="w-full p-0.8 py-0" v-show="level_id > alignLevel">
             <div class="w-full flex flex-col">
                 <div class="w-full h-27px flex flex-row justify-center items-center" v-if="configureShow">

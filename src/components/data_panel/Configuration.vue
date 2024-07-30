@@ -2,7 +2,7 @@
   <div class="container w-full h-full p-2 flex flex-col justify-between" id="configContainer">
     <!-- select bar of data set -->
     <div class="w-full h-1/14 name text-[1em] text-[#9E9E9E]  ">
-      DATA VIEWER
+      DATA VIEW
     </div>
     <div class="w-full h-1/8 ">
       <var-select :hint="false" v-model="dataSet" text-color="#ABABAB" style="--select-label-font-size: 0.8em">
@@ -200,27 +200,6 @@ export default {
     });
 
     const themeColor = computed(() => store.getters["color/themeColor"]);
-    const linkVisible = computed(
-      () => store.getters["scatterPlot/linkVisible"]
-    );
-    const highlightVisible = computed(
-      () => store.getters["scatterPlot/highlightVisible"]
-    );
-    const clusterVisible = computed(
-      () => store.getters["scatterPlot/clusterVisible"]
-    );
-
-    const toggleLinkVisible = () => {
-      store.dispatch("scatterPlot/toggleLinkVisible");
-    };
-
-    const toggleHighlightVisible = () => {
-      store.dispatch("scatterPlot/toggleHighlightVisible");
-    };
-
-    const toggleClusterVisible = () => {
-      store.dispatch("scatterPlot/toggleClusterVisible");
-    };
 
     // get some size
     onMounted(() => {
@@ -233,12 +212,6 @@ export default {
     return {
       inputValue,
       themeColor,
-      linkVisible,
-      toggleLinkVisible,
-      highlightVisible,
-      toggleHighlightVisible,
-      toggleClusterVisible,
-      clusterVisible,
       dataSet,
       dataSetOptions,
       start_time,

@@ -45,6 +45,8 @@ import {
     faPenRuler,
     faDatabase,
     faCircleCheck,
+    faCaretRight,
+    faCaretDown,
 
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -79,7 +81,9 @@ library.add(
     faPenRuler,
     faDatabase,
     faCircleCheck,
-    faCircleXmark
+    faCircleXmark,
+    faCaretRight,
+    faCaretDown,
 )
 
 const app = createApp(App)

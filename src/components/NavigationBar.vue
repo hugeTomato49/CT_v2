@@ -27,7 +27,7 @@
           />
         </div> -->
         <!-- chart -->
-        <div class="ml-10 name text-[0.9em] text-[#FFFFFF] cursor-pointer">chart</div>
+        <div class="ml-10 name text-[0.9em] text-[#FFFFFF] cursor-pointer">Chart</div>
         <div class="w-[7em] h-4/5 ml-4  mb-[0.5em]  flex items-center">
           <var-select
             :hint="false"

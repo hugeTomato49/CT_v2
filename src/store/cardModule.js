@@ -1,5 +1,3 @@
-
-
 const state = {
     chartType: 'line chart',
     selectCheck:[],
@@ -10,10 +8,7 @@ const state = {
 const mutations = {
     UPDATE_CHART_TYPE(state, payload) {
         state.chartType = payload
-    },
-    UPDATE_SELECT_CHECK(state, payload) {
-        state.chartType = payload
-    },
+    }
 }
 
 const actions = {

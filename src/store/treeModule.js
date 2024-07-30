@@ -15,7 +15,8 @@ const state = {
     dataset: 'Stock',
     levels: {
       'PV':['Transformer', 'Converter', 'Line'],
-      'Stock':['Index','Sector','Stock'],
+      // 'Stock':['Index','Sector','Stock'],
+      'Stock':['Country','State','Region']
     },
     description: ['-kw/h', '-kw/h', '-mA', '-mA'],
     level_id_list: [],

@@ -1,58 +1,29 @@
 <template>
-    <div class=" relative overflow-visible ">
-
-        <div v-if="checkCollection.includes(node_id) && !deleteCollection.includes(node_id)"
-            class="selectCheck absolute " @click="toggleIcon()">
-            <font-awesome-icon :icon="['fas', 'circle-check']" size="lg" style="color: #F24E1E;" />
-        </div>
-
-        <div v-if="deleteCollection.includes(node_id)" class="selectCheck absolute" @click="toggleIcon()">
-            <!-- <font-awesome-icon :icon="['fas', 'circle']" size="lg" style="color: #F24E1E;" /> -->
-            <font-awesome-icon :icon="['fas', 'circle-xmark']" size="lg" style="color: #F24E1E;" />
-        </div>
-
-        <div id="app" v-if="chartType === 'horizon chart'">
-            <HorizonChart :data="seriesData" :bands="4" :height="rowHeight" :width="cardWidth" />
-        </div>
-        <a-dropdown :trigger="['contextmenu']">
-            <div v-if="chartType === 'line chart'"
-                :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-                :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
-                @mouseout="handleMouseOut(node_id)"
-                @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
-                @dblclick="filterCurrentCard(node_id)" @contextmenu.prevent>
-                <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-                    id="cardContainer">
-                    <svg class="w-full h-full bg-stone-100">
-                        <text x="5" y="12" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
-                        <g ref="brushRef"></g>
+    <div class=" relative overflow-visible">
+        <div :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
+            @mouseout="handleMouseOut(node_id)"
+            @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
+            @dblclick="filterCurrentCard(node_id)">
+            <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+                id="cardContainer" class="relative" @contextmenu.prevent="showMenu">
+                <svg class="w-full h-full bg-stone-100" ref="svgContainer">
+                    <text x="5" y="5" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
+                    <g v-if="chartType === 'line chart'">
                         <path :stroke="themeColor" fill="none" stroke-width="2"
                             :d="generatePath(seriesData, xScale, yScale)">
                         </path>
-                    </svg>
-                </div>
-            </div>
-            <template #overlay>
-                <div>
-                    <a-menu class="bg-black">
-                        <a-menu-item key="1" @click="onClickNode">Node</a-menu-item>
-                        <a-menu-item key="2" @click="onClickPath">Path</a-menu-item>
-                        <a-menu-item key="3" @click="onClickTree">Tree</a-menu-item>
-                    </a-menu>
-                </div>
-            </template>
-
-        </a-dropdown>
-        <div v-if="completeButton" class="w-full h-8 flex flex-row-reverse items-center" style="cursor: pointer;" @click="toggleComplete">
-            <div
-                class="flex flex-row w-18 h-6 rounded-xl border-2 border-[#F24E1E] mr-1 items-center name text-[0.8em]  text-[#F24E1E] justify-center hover:border-red-500">
-                <div>complete</div>
+                    </g>
+                    <g ref="brushRef"></g>
+                </svg>
+                <HorizonChart :data="seriesData" :bands="4" :height="cardHeight" :width="cardWidth"
+                    :svgContainer="svgContainer" :chartType="chartType" />
             </div>
         </div>
+        <div class="absolute">
+            <CardMenu :menuItems="menuItems"  ref="menuComponent" :node_id="node_id" :level="level" :index="index"/>
+        </div>
     </div>
-
-
-
 </template>
 
 
@@ -60,30 +31,20 @@
 import { useStore } from 'vuex';
 import { ref, computed, onMounted, watchEffect, watch, nextTick } from 'vue'
 import * as d3 from 'd3'
-import { Dropdown, Menu } from 'ant-design-vue'
-import { DownOutlined } from '@ant-design/icons-vue'
 import { generatePath } from "../../generator/generator"
-import { findPath, findLevelList, buildSubtree, getSubtreeIds } from "../../select/entitySelection"
 import { calculateSeriesAverage } from "../../computation/basicComputation"
 import { hasChildren, ifEmphasize, findAllRelatedNodeIds, highlightLinks, findChildrenIds } from '../../computation/treeComputation'
 import { highlightNodes, deHighlightNodes, highlightEmphaizeCards, deHighlightEmphasizeCards } from "../../highlight/highlight"
 
 import HorizonChart from './HorizonChart.vue';
-import SelectionIcon from './SelectionIcon.vue';
-import { height, width } from '@fortawesome/free-regular-svg-icons/faAddressBook';
-import { faL } from '@fortawesome/free-solid-svg-icons';
-
+import CardMenu from './CardMenu.vue';
 
 export default {
     name: 'TSCard',
-    props: ['seriesData', 'level', 'node_id', 'node_name', 'groupedNode',],
+    props: ['seriesData', 'level', 'node_id', 'node_name', 'groupedNode', 'index'],
     components: {
-        'a-dropdown': Dropdown,
-        'a-menu': Menu,
-        'a-menu-item': Menu.Item,
-        DownOutlined,
         HorizonChart,
-        SelectionIcon
+        CardMenu
     },
     setup(props) {
         const store = useStore()
@@ -98,20 +59,19 @@ export default {
         const timeRange = computed(() => store.getters['tree/timeRange'])
 
         const chartType = computed(() => store.getters['card/chartType'])
-        const checkCollection = computed(() => { return store.getters["card/selectCheck"] })
-        const deleteCollection = computed(() => { return store.getters["card/deleteCheck"] })
-        const selectCheck = ref(false)
-        const completeButton = ref(false)
+        const svgContainer = ref(null);
+        const chart = ref(null);
 
         const xScale = computed(() => store.getters['size/xScale'])
         const yScale = computed(() => {
             if (dataset.value == 'PV') {
+                console.log("dataset is PV")
                 return store.getters['size/yScale'][props.level - 1]
             }
             else {
                 const max = Math.max(...props.seriesData.map(item => item.value))
                 const min = Math.min(...props.seriesData.map(item => item.value))
-                return d3.scaleLinear().domain([min, max]).range([cardHeight.value - 2, 2])
+                return d3.scaleLinear().domain([min, max]).range([cardHeight.value, 7])
             }
         })
 
@@ -126,6 +86,9 @@ export default {
         const brushRef = ref(null)
         const averageValue = ref(0)
 
+        const menuItems = ref(['node', 'layer', 'path', 'tree']);
+        const menuComponent = ref(null);
+
         watchEffect(() => {
             if (timeRange.value.length > []) {
                 averageValue.value = calculateSeriesAverage(props.seriesData)
@@ -137,8 +100,6 @@ export default {
                 .extent([[0, 0], [cardWidth.value, cardHeight.value]])
                 .on('end', brushed)
             d3.select(brushRef.value).call(brush);
-
-            // Store the brush for later use
             brushRef.value.brush = brush;
         };
 
@@ -199,59 +160,18 @@ export default {
             }
         }
 
-        const toggleIcon = () => {
-            store.dispatch("card/updateDeleteCheck", props.node_id);
-        }
-        
-        const toggleComplete = () => {
-            completeButton.value = false
-            const paths = findPath(props.node_id, selectionTree.value);
-            const levelList = paths.length > 0 ? findLevelList(selectionTree.value, paths[0]) : [];
-            paths.forEach((path) => {
-                const pathEntity = {
-                    type: 'Path',
-                    path,
-                    levelList,
-                };
-                store.dispatch('selection/addEntity', pathEntity);
+        const showMenu = (event) => {
+            if (menuComponent.value) {
+                menuComponent.value.showMenu(event);
+            }
+        };
+        const moveBrushToEnd = () => {
+            nextTick(() => {
+                if (brushRef.value) {
+                    svgContainer.value.appendChild(brushRef.value);
+                }
             });
-            store.dispatch("card/resetCheck");
-        }
- 
-        const onClickNode = () => {
-            console.log("id is ", props.node_id)
-            store.dispatch("selection/addEntity", { type: 'Node', id: props.node_id, level: props.level });
-
-        }
-
-        const onClickPath = () => {
-            console.log(`Click on Path`);
-            completeButton.value = true
-            const paths = findPath(props.node_id, selectionTree.value);
-            const levelList = paths.length > 0 ? findLevelList(selectionTree.value, paths[0]) : [];
-            paths.forEach((path) => {
-                path.forEach((item) => {
-                    store.dispatch('card/updateSelectCheck', item);
-                })
-            });
-        }
-
-        const onClickLayer = () => {
-            console.log(`Click on Layer`);
-        }
-
-        const onClickTree = () => {
-            console.log(`Click on Tree`);
-            const subtree = buildSubtree(selectionTree.value, props.node_id);
-            const path = getSubtreeIds(subtree);
-            const levelList = findLevelList(selectionTree.value, path);
-            const treeEntity = {
-                type: 'Tree',
-                path,
-                levelList,
-            };
-            store.dispatch('selection/addEntity', treeEntity);
-        }
+        };
 
         onMounted(() => {
             cardContainer.value = document.querySelector("#cardContainer")
@@ -259,6 +179,9 @@ export default {
             store.dispatch('size/updateCardHeight', cardContainer.value?.offsetHeight)
             setupBrush()
         })
+        watch([() => props.seriesData, chartType], () => {
+            moveBrushToEnd();
+        });
 
         return {
             rowHeight,
@@ -276,20 +199,15 @@ export default {
             filterCurrentCard,
             handleMouseOver,
             handleMouseOut,
-            onClickNode,
-            onClickPath,
-            onClickLayer,
-            onClickTree,
             averageValue,
             chartType,
-            selectCheck,
             cardWidth,
             cardHeight,
-            completeButton,
-            toggleIcon,
-            checkCollection,
-            deleteCollection,
-            toggleComplete
+            svgContainer,
+            chart,
+            menuComponent,
+            menuItems,
+            showMenu
         }
     }
 }
@@ -318,28 +236,6 @@ export default {
     font-style: "semibold italic";
     font-variation-settings:
         "slnt" 0;
-
-}
-
-.selectCheck {
-    position: absolute;
-    top: 20%;
-    left: 97%;
-    transform: translate(-50%, -50%);
-    z-index: 40;
-    cursor: pointer;
-    /* 确保这个值高于其他内容 */
-
-}
-
-.selectDeny {
-    position: absolute;
-    top: 20%;
-    left: 97%;
-    transform: translate(-50%, -50%);
-    z-index: 40;
-    cursor: pointer;
-    /* 确保这个值高于其他内容 */
 
 }
 </style>

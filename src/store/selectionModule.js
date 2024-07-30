@@ -1,9 +1,13 @@
+import { faL } from "@fortawesome/free-solid-svg-icons";
 import { ifEmphasize } from "../computation/treeComputation"
 
 const state = {
     //list of obj: [{entityID: 1, type: "tree", "id_list": [], "level_list": []}, {entityID: 2, type: "node", "id": 1, "level":1}]
     entityCollection: [],
     entityID: 1,
+    nodeVisiable:false,
+    pathVisiable:false,
+    treeVisiable:false
 }
 
 const mutations = {
@@ -47,7 +51,7 @@ const actions = {
             state.entityCollection[index].path = state.entityCollection[index].path.filter(item => item !== deleteItem.id)
 
             console.log("level index is", levelIndex)
-            state.entityCollection[index].levelList.splice(levelIndex, 1)
+            // state.entityCollection[index].levelList.splice(levelIndex, 1)
         }
         // console.log("entity collectino is", state.entityCollection)
     },
@@ -62,7 +66,11 @@ const actions = {
     }
 }
 const getters = {
+    entityID: state => state.entityID,
     entityCollection: state => state.entityCollection,
+    nodeVisiable: state => state.nodeVisiable,
+    pathVisiable: state => state.pathVisiable,
+    treeVisiable: state => state.treeVisiable
 }
 
 const selectionModule = {
