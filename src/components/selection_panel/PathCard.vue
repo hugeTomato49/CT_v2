@@ -1,3 +1,5 @@
+<!-- 由于循环的原因，这个card的width设置暂时有些问题，但不影响界面，后续有时间需要完善 -->
+
 <template>
   <div class="w-full round-md py-[0.5em]">
     <div class="w-full py-[0.1em] px-[1.5em] entityCard" :style="{
@@ -47,12 +49,12 @@
                   <HorizonChart :data="
                       seriesData_list.find((series) => series.id == id)
                         .data
-                  " :bands="4" height=50 width=480 :svgContainer="svgRefs[index]"
+                  " :bands="4" height=50 width=500 :svgContainer="svgRefs[index]"
                     :chartType="chartType" />
                 </div>
               </div>
             </div>
-            <div class="w-1/7 pl-[1em] h-[4em] pt-[0.5em] justify-center flex  items-center ">
+            <div class="w-1/10 pl-[1em] h-[4em] pt-[0.5em] justify-center flex  items-center ">
               <font-awesome-icon :icon="['fas', 'trash-can']" @click="deletePath(id)" class="delete-icon cursor-pointer"
                 size="lg" />
             </div>
@@ -182,7 +184,7 @@ export default {
         xScale.value = d3
           .scaleTime()
           .domain(store.getters["size/xScale"].domain())
-          .range([0, width.value]);
+          .range([0, width.value /10 *9]);
         const timeRange = store.getters["tree/timeRange"];
       }
       if (store.getters["size/yScale"].length > 0) {

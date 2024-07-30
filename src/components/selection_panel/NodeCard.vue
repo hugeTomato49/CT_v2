@@ -30,12 +30,12 @@
                   </g>
 
                 </svg>
-                <HorizonChart :data="seriesData" :bands="4" height=50 width=480 :svgContainer="svgContainer"
+                <HorizonChart :data="seriesData" :bands="4" height=50 width=500 :svgContainer="svgContainer"
                   :chartType="chartType" />
               </div>
             </div>
           </div>
-          <div class="w-1/7 pl-[1em]  h-[4em] pt-[0.5em] justify-center flex  items-center">
+          <div class="w-1/10 pl-[1em]  h-[4em] pt-[0.5em] justify-center flex  items-center ">
             <font-awesome-icon :icon="['fas', 'trash-can']" class="delete-icon cursor-pointer"
               @click="deleteNodeEntity" size="lg"/>
           </div>
