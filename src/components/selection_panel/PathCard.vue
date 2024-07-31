@@ -21,8 +21,10 @@
           </div>
         </div>
         <div class="w-full max-h-[10em] overflow overflow-scroll">
-          <div v-for="(id, index) in seriesData_list.map((series) => series.id)" :key="id"
-            class="w-full h-[4.4em] flex flex-row" :style="{ 'border-bottom': '1px solid' + '#ABABAB' }">
+          <div 
+          v-for="(id, index) in seriesData_list.map((series) => series.id)" 
+          :key="id"
+          class="w-full h-[4.4em] flex flex-row" :style="{ 'border-bottom': index !== seriesData_list.length - 1 ? '1px solid #ABABAB' : 'none' }">
             <div class="w-full h-[4em] flex flex-col mt-[0.6em]">
               <div class="w-1/7 h-[0.4em] flex flex-row items-center meta "
                 :style="{ color: themeColor }">
@@ -135,18 +137,13 @@ export default {
           const max = Math.max(...seriesData.data.map(item => item.value));
           const min = Math.min(...seriesData.data.map(item => item.value));
 
-          yScale_list.value[index] = d3.scaleLinear()
-            .domain([min, max])
-            .range([height.value - 10, 7]);
+          yScale_list.value[index] = d3.scaleLinear().domain([min, max]).range([height.value - 10, 7]);
         });
       }
       else {
         if (store.getters["size/yScale"].length > 0) {
           yScale_list.value = props.level_list.map((level) =>
-            d3
-              .scaleLinear()
-              .domain(store.getters["size/yScale"][level - 1].domain())
-              .range([height.value - 10, 7])
+            d3.scaleLinear().domain(store.getters["size/yScale"][level - 1].domain()).range([height.value - 10, 7])
           );
         }
       }

@@ -163,8 +163,6 @@ export default {
   components: {
     "a-slider": Slider,
     "a-input-numer": InputNumber,
-    // 'a-row':Slider,
-    // 'a-col':Slider
   },
   setup() {
     const store = useStore();
@@ -172,9 +170,9 @@ export default {
     const configHeight = ref(0)
     const inputValue = ref(1);
     const dataSet = ref("photovoltaic");
-    const dataSetOptions = ["photovoltaic", " stock market"];
+    const dataSetOptions = ["Photovoltaic", " Stock Market", "Tourism"];
     const daily_content = ref("daily")
-    const daily_options = ["hourly", "daily", "weekly"];
+    const daily_options = ["hourly", "daily", "weekly", "quarterly"];
     const start_time = ref("");
     const end_time = ref("");
     const layer_name = ref("")
@@ -206,7 +204,6 @@ export default {
       configContainer.value = document.querySelector('#configContainer');
       configHeight.value = configContainer.value.offsetHeight;
       configContainer.value.style.fontSize = `${configHeight / 300}px`;
-      console.log("size is ", configHeight.value)
     })
 
     return {

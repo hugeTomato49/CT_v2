@@ -1,14 +1,17 @@
 <template>
     <div class=" relative overflow-visible">
-        <div :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
-            :id="'card' + node_id" :style="{ height: rowHeight + 'px' }" @mouseover="handleMouseOver(node_id)"
-            @mouseout="handleMouseOut(node_id)"
-            @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
-            @dblclick="filterCurrentCard(node_id)">
+        <div 
+        :class="['w-full p-0.8 hover:opacity-100', { 'opacity-40': !ifEmphasize(selectionTree, node_id, level, level_id_list) }, { 'emphasizeCard': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
+        :id="'card' + node_id" 
+        :style="{ height: rowHeight + 'px' }" 
+        @mouseover="handleMouseOver(node_id)"
+        @mouseout="handleMouseOut(node_id)"
+        @click="!hasChildren(selectionTree, node_id) ? unfold(node_id) : fold(node_id)"
+        @dblclick="filterCurrentCard(node_id)">
             <div :class="['w-full h-full card ', { 'emphasize-effect': ifEmphasize(selectionTree, node_id, level, level_id_list) }]"
                 id="cardContainer" class="relative" @contextmenu.prevent="showMenu">
                 <svg class="w-full h-full bg-stone-100" ref="svgContainer">
-                    <text x="5" y="5" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
+                    <text x="2" y="7" class="node-name text-ms" :fill="themeColor">{{ node_name }}</text>
                     <g v-if="chartType === 'line chart'">
                         <path :stroke="themeColor" fill="none" stroke-width="2"
                             :d="generatePath(seriesData, xScale, yScale)">
