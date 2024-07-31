@@ -17,7 +17,7 @@
                     :key="align_id"
                     >
                         <div 
-                        class="w-full h-full flex flex-col overflow-visible"
+                        class="w-full h-full flex flex-col"
                         :style="{ height: heightForEachAlignID[align_id] + 'px' }"
                         >
                             <Section
@@ -77,9 +77,6 @@ export default {
         const alignLevel = computed(() => store.getters["align/alignLevel"])
         const alignState = computed(() => store.getters["align/alignState"])
         const rowHeight = computed(() => store.getters["size/rowHeight"])
-
-
-
 
 
         const groupLevelByParentId = (level_id, tree, align_id, alignLevel) => {
@@ -145,7 +142,7 @@ export default {
             tableContainer,
             groupLevelByParentId,
             findNodesByParentId,
-            heightForEachAlignID
+            heightForEachAlignID,
         }
     }
 }

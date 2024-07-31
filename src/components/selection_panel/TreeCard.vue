@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full p-2 pt-0 round-md pb-3">
+    <div class="w-full px-2  round-md pb-3">
         <div class="w-full py-2 px-5 entityCard" :style="{'background-color': related ?  themeColor : 'rgba(245, 245, 245, 0.6)' }">
             <div class="w-full flex flex-col">
                 <div class="w-full h-30px flex flex-row items-center" :style="{ 'border-bottom': '1px solid' + themeColor }" id="treeTitleContainer">
