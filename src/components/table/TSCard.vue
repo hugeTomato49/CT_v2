@@ -21,9 +21,7 @@
             </div>                         
         </div>
     </div>
-
 </template>
-
 
 <script>
 import { useStore } from 'vuex';
