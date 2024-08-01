@@ -93,7 +93,7 @@ export default {
 <style scoped>
 .menu-container {
     position: relative;
-    display: inline-block;
+    /* display: inline-block; */
     height: auto;
 }
 

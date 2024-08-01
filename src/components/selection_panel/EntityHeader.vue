@@ -37,6 +37,17 @@ export default {
     const iconColor = computed(() => (isClicked.value ? themeColor.value : '#888888'));
     const textColor = computed(() => (isClicked.value ? themeColor.value : '#888888'));
     const numberColor = computed(() => (isClicked.value ? themeColor.value : '#888888'));
+    onMounted(() => {
+      if(props.entityName === "node"){
+        store.dispatch("selection/updateNodeVisiable", isClicked.value);
+      }
+      if(props.entityName === "path"){
+        store.dispatch("selection/updatePathVisiable", isClicked.value);
+      }
+      if(props.entityName === "tree"){
+        store.dispatch("selection/updateTreeVisiable", isClicked.value);
+      }
+    })
     return { themeColor, iconType, iconColor, textColor, numberColor, toggleIcon };
   },
 };

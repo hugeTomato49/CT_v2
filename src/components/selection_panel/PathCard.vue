@@ -1,7 +1,7 @@
 <!-- 由于循环的原因，这个card的width设置暂时有些问题，但不影响界面，后续有时间需要完善 -->
 
 <template>
-  <div class="w-full round-md py-[0.5em]">
+  <div class="w-full round-md py-[0.5em] "  id="pathContainer">
     <div class="w-full py-[0.1em] px-[1.5em] entityCard" :style="{
       'background-color': related ? themeColor : 'rgba(245, 245, 245, 0.6)',
     }">
@@ -20,16 +20,15 @@
               @click="deletePathEntity" />
           </div>
         </div>
-        <div class="w-full max-h-[10em] overflow overflow-scroll">
+        <div class="w-full max-h-[10em] overflow overflow-scroll ">
           <div v-for="(id, index) in seriesData_list.map((series) => series.id)" :key="id"
             class="w-full h-[4.4em] flex flex-row" :style="{ 'border-bottom': '1px solid' + '#ABABAB' }">
-            <div class="w-full h-[4em] flex flex-col mt-[0.4em]">
-              <div class="w-1/7 h-[0.4em] flex flex-row items-center meta "
-                :style="{ color: themeColor }">
+            <div class="w-full h-[4em] flex flex-col mt-[0.2em]">
+              <div class="w-1/7 h-[0.4em] flex flex-row items-center meta " :style="{ color: themeColor }">
                 <div>{{ getCategoryBySeriesId(id) }}</div>
               </div>
               <div class="w-full h-[3.6em] flex flex-row justify-center mt-[0.2em] ">
-                <div class="w-full h-full " id="seriesContainer">
+                <div class="w-full h-full " :id="'unique-id-' + id">
                   <svg class="w-full h-full" :ref="el => setSvgRef(el, index)">
                     <g v-if="chartType === 'line chart'">
                       <path :stroke="themeColor" fill="none" stroke-width="2.5" :d="generateSelectedPath(
@@ -46,10 +45,9 @@
                     </g>
 
                   </svg>
-                  <HorizonChart :data="
-                      seriesData_list.find((series) => series.id == id)
-                        .data
-                  " :bands="4" :height="height" :width="width" :svgContainer="svgRefs[index]"
+                  <HorizonChart :data="seriesData_list.find((series) => series.id == id)
+                    .data
+                    " :bands="4" :height="height" :width="width" :svgContainer="svgRefs[index]"
                     :chartType="chartType" />
                 </div>
               </div>
@@ -84,8 +82,10 @@ export default {
   setup(props) {
     const titleContainer = ref(null);
     const seriesContainer = ref(null)
-    const width = computed(() => store.getters['selection/entityWidth']);
-    const height = computed(() => store.getters['selection/entityHeight']) 
+    // const width = computed(() => store.getters['selection/entityWidth']);
+    // const height = computed(() => store.getters['selection/entityHeight']) 
+    const width = ref(0);
+    const height = ref(0)
 
 
     const xScale = ref(null);
@@ -138,7 +138,7 @@ export default {
 
           yScale_list.value[index] = d3.scaleLinear()
             .domain([min, max])
-            .range([height.value, 7]);
+            .range([height.value - 5 , 7]);
         });
       }
       else {
@@ -147,7 +147,7 @@ export default {
             d3
               .scaleLinear()
               .domain(store.getters["size/yScale"][level - 1].domain())
-              .range([height.value , 7])
+              .range([height.value - 5 , 7])
           );
         }
       }
@@ -180,6 +180,18 @@ export default {
     onMounted(() => {
       titleContainer.value = document.querySelector("#pathTitleContainer");
       // width.value = (titleContainer.value.offsetWidth ) ;
+      seriesContainer.value = document.querySelector("#pathContainer");
+      if (store.getters['selection/entityHeight'] !== 0) {
+        width.value = store.getters['selection/entityWidth']
+        height.value = store.getters['selection/entityHeight'] 
+      }
+      else {
+        width.value = seriesContainer.value.offsetWidth - 98;
+        height.value = seriesContainer.value.offsetHeight + 10;
+        store.dispatch('selection/updateEntityHeight', height.value)
+        store.dispatch('selection/updateEntityWidth', width.value)
+      }
+
 
       if (store.getters["size/xScale"].length > 0) {
         xScale.value = d3

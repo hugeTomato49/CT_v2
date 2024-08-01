@@ -412,11 +412,14 @@ export default {
       const obj = {id1 : 9, id2: 12}
       store.dispatch("tree/mergeTrees", obj)
     }
-
-
     const createLayers = (level_id) => {
-      const obj = { dataset: dataset.value, level_id: level_id };
+      console.log("level id is ",level_id)
+      if(level_id === 3) {
+        const obj = { dataset: dataset.value, level_id: level_id };
       store.dispatch("tree/addLayer", obj);
+      }
+      else if (level_id === 4){
+      }
     };
 
     const filterCurrentNode = (id) => {

@@ -18,6 +18,7 @@ const state = {
       'PV':['Transformer', 'Converter', 'Line'],
       // 'Stock':['Index','Sector','Stock'],
       'Stock':['Country','State','Region']
+      //Region_Year
     },
     description: ['-kw/h', '-kw/h', '-mA', '-mA'],
     level_id_list: [],
@@ -126,7 +127,7 @@ const actions = {
       }
       else if(state.dataset == 'Stock'){
         // newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
-        newTimeRange = [new Date('2010-01-01'), new Date('2016-10-01')]
+        newTimeRange = [new Date('2009-10-01'), new Date('2016-10-01')]
       }
       console.log("newTimeRange")
       console.log(newTimeRange)

@@ -8,8 +8,8 @@ const state = {
     nodeVisiable:false,
     pathVisiable:false,
     treeVisiable:false,
-    entityHeight:Number,
-    entityWidth:Number
+    entityHeight:0,
+    entityWidth:0
 }
 
 const mutations = {

@@ -36,8 +36,8 @@
             </div>
           </div>
           <div class="w-1/10 pl-[1em]  h-[4em] pt-[0.5em] justify-center flex  items-center ">
-            <font-awesome-icon :icon="['fas', 'trash-can']" class="delete-icon cursor-pointer"
-              @click="deleteNodeEntity" size="lg"/>
+            <font-awesome-icon :icon="['fas', 'trash-can']" class="delete-icon cursor-pointer" @click="deleteNodeEntity"
+              size="lg" />
           </div>
         </div>
       </div>
@@ -66,6 +66,8 @@ export default {
     const seriesContainer = ref(null)
     const width = ref(0)
     const height = ref(0)
+    // const width = computed(() => store.getters['selection/entityWidth']);
+    // const height = computed(() => store.getters['selection/entityHeight']) 
     const xScale = ref(null)
     const yScale = ref(null)
     const seriesData = ref([])
@@ -105,10 +107,16 @@ export default {
 
     onMounted(() => {
       seriesContainer.value = document.querySelector("#seriesContainer");
-      width.value = seriesContainer.value.offsetWidth;
-      height.value = seriesContainer.value.offsetHeight;
-      store.dispatch('selection/updateEntityHeight',height.value)
-      store.dispatch('selection/updateEntityWidth',width.value)
+      if (store.getters['selection/entityHeight'] !== 0) {
+        width.value = store.getters['selection/entityWidth']
+        height.value = store.getters['selection/entityHeight']
+      }
+      else {
+        width.value = seriesContainer.value.offsetWidth;
+        height.value = seriesContainer.value.offsetHeight;
+        store.dispatch('selection/updateEntityHeight', height.value)
+        store.dispatch('selection/updateEntityWidth', width.value)
+      }
 
       if (store.getters["tree/seriesCollection"].length > 0) {
         seriesData.value = cloneDeep(
@@ -135,7 +143,7 @@ export default {
         else {
           const max = Math.max(...seriesData.value.map(item => item.value))
           const min = Math.min(...seriesData.value.map(item => item.value))
-          yScale.value = d3.scaleLinear().domain([min, max]).range([height.value , 7])
+          yScale.value = d3.scaleLinear().domain([min, max]).range([height.value - 5, 7])
         }
 
 
