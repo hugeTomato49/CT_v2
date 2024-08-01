@@ -4,6 +4,7 @@ import { transformData, filterDataByTimeRange, calculateSeriesAverage, calculate
 import { merge_trees } from "../computation/treeManipulation"
 import { updateSelectionFromOriginal, addLevels, updateSeriesCollection } from "../update/updateTree"
 import { addPlotScale, addYScale } from "../update/updateScale"
+import {year_data} from "../year_layer_data/PV_Tree_grouped_yearly"
 
 
 
@@ -22,6 +23,7 @@ const state = {
     level_id_list: [],
     timeRange: [],
     groupState: false,
+    year_data
 }
 
 const mutations = {
@@ -257,6 +259,7 @@ const getters = {
     description: state => state.description,
     timeRange: state => state.timeRange,
     groupState: state => state.groupState,
+    year_tree: state => state.year_tree
 }
 
 const treeModule  = {

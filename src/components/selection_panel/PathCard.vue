@@ -23,7 +23,7 @@
         <div class="w-full max-h-[10em] overflow overflow-scroll">
           <div v-for="(id, index) in seriesData_list.map((series) => series.id)" :key="id"
             class="w-full h-[4.4em] flex flex-row" :style="{ 'border-bottom': '1px solid' + '#ABABAB' }">
-            <div class="w-full h-[4em] flex flex-col mt-[0.6em]">
+            <div class="w-full h-[4em] flex flex-col mt-[0.4em]">
               <div class="w-1/7 h-[0.4em] flex flex-row items-center meta "
                 :style="{ color: themeColor }">
                 <div>{{ getCategoryBySeriesId(id) }}</div>
@@ -49,7 +49,7 @@
                   <HorizonChart :data="
                       seriesData_list.find((series) => series.id == id)
                         .data
-                  " :bands="4" height=50 width=500 :svgContainer="svgRefs[index]"
+                  " :bands="4" :height="height" :width="width" :svgContainer="svgRefs[index]"
                     :chartType="chartType" />
                 </div>
               </div>
@@ -74,6 +74,7 @@ import { generateSelectedPath } from "../../generator/generator";
 import { calculatePearsonCorrelation } from "../../select/entitySelection";
 import * as d3 from "d3";
 import { size } from "lodash";
+import { width } from "@fortawesome/free-regular-svg-icons/faAddressBook";
 export default {
   name: "PathCard",
   props: ["id_list", "level_list", "related", "entityID"],
@@ -83,9 +84,9 @@ export default {
   setup(props) {
     const titleContainer = ref(null);
     const seriesContainer = ref(null)
-    const width = ref(0);
-    const height = ref(56);
-    const horizonHeight = ref(50);
+    const width = computed(() => store.getters['selection/entityWidth']);
+    const height = computed(() => store.getters['selection/entityHeight']) 
+
 
     const xScale = ref(null);
     const yScale_list = ref([]);
@@ -137,7 +138,7 @@ export default {
 
           yScale_list.value[index] = d3.scaleLinear()
             .domain([min, max])
-            .range([height.value - 10, 7]);
+            .range([height.value, 7]);
         });
       }
       else {
@@ -146,7 +147,7 @@ export default {
             d3
               .scaleLinear()
               .domain(store.getters["size/yScale"][level - 1].domain())
-              .range([height.value - 10, 7])
+              .range([height.value , 7])
           );
         }
       }
@@ -178,13 +179,13 @@ export default {
 
     onMounted(() => {
       titleContainer.value = document.querySelector("#pathTitleContainer");
-      width.value = (titleContainer.value.offsetWidth ) ;
+      // width.value = (titleContainer.value.offsetWidth ) ;
 
       if (store.getters["size/xScale"].length > 0) {
         xScale.value = d3
           .scaleTime()
           .domain(store.getters["size/xScale"].domain())
-          .range([0, width.value /10 *9]);
+          .range([0, width.value]);
         const timeRange = store.getters["tree/timeRange"];
       }
       if (store.getters["size/yScale"].length > 0) {
@@ -214,7 +215,6 @@ export default {
       svgContainer,
       svgRefs,
       setSvgRef,
-      horizonHeight
     };
   },
 };

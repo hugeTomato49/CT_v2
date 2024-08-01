@@ -1,6 +1,6 @@
 <template>
     <div class="menu-container" @contextmenu.prevent="showMenu">
-        <ul v-if="menuVisible" class="menu-list" :style="{ top: menuPosition.y + 'px', left: menuPosition.x + 'px' }">
+        <ul v-if="menuVisible" class="menu-list">
             <li class=" text-xs" v-for="item in menuItems" :key="item" @click="handleMenuClick(item)">
                 {{ item }}
             </li>
@@ -94,7 +94,6 @@ export default {
 .menu-container {
     position: relative;
     display: inline-block;
-    
     height: auto;
 }
 

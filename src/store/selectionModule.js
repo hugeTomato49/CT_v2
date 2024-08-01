@@ -7,7 +7,9 @@ const state = {
     entityID: 1,
     nodeVisiable:false,
     pathVisiable:false,
-    treeVisiable:false
+    treeVisiable:false,
+    entityHeight:Number,
+    entityWidth:Number
 }
 
 const mutations = {
@@ -23,6 +25,12 @@ const mutations = {
     },
     SET_TREE_VISUAL(state, value) {
         state.treeVisiable = value;
+    },
+    SET_ENTITY_HEIGHT(state, value) {
+        state.entityHeight = value;
+    },
+    SET_ENTITY_WIDTH(state, value) {
+        state.entityWidth = value;
     }
 }
 
@@ -63,6 +71,12 @@ const actions = {
     },
     updateTreeVisiable({ commit }, value) {
         commit('SET_TREE_VISUAL', value);
+    },
+    updateEntityHeight({ commit }, value) {
+        commit('SET_ENTITY_HEIGHT', value);
+    },
+    updateEntityWidth({ commit }, value) {
+        commit('SET_ENTITY_WIDTH', value);
     }
 }
 const getters = {
@@ -70,7 +84,9 @@ const getters = {
     entityCollection: state => state.entityCollection,
     nodeVisiable: state => state.nodeVisiable,
     pathVisiable: state => state.pathVisiable,
-    treeVisiable: state => state.treeVisiable
+    treeVisiable: state => state.treeVisiable,
+    entityHeight: state => state.entityHeight,
+    entityWidth: state => state.entityWidth
 }
 
 const selectionModule = {
