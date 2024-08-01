@@ -16,8 +16,8 @@
           </div>
         </div>
         <div class="w-full h-full flex flex-row ">
-          <div class="w-full h-[3.8em] flex flex-col mt-[0.6em]">
-            <div class="w-1/7 h-[0.4em] flex flex-row items-center meta " :style="{ color: themeColor }">
+          <div class="w-full h-[4em] flex flex-col mt-[0.6em]">
+            <div class="w-1/7 h-[0.1em] flex flex-row items-center meta" :style="{ color: themeColor }">
               {{ getCategoryBySeriesId(id) }}
             </div>
             <div class="w-full h-[3.6em] flex flex-row  mt-[0.2em] ">
@@ -30,14 +30,14 @@
                   </g>
 
                 </svg>
-                <HorizonChart :data="seriesData" :bands="4" height=50 width=500 :svgContainer="svgContainer"
+                <HorizonChart :data="seriesData" :bands="4" :height="height" :width="width" :svgContainer="svgContainer"
                   :chartType="chartType" />
               </div>
             </div>
           </div>
           <div class="w-1/10 pl-[1em]  h-[4em] pt-[0.5em] justify-center flex  items-center ">
-            <font-awesome-icon :icon="['fas', 'trash-can']" class="delete-icon cursor-pointer"
-              @click="deleteNodeEntity" size="lg"/>
+            <font-awesome-icon :icon="['fas', 'trash-can']" class="delete-icon cursor-pointer" @click="deleteNodeEntity"
+              size="lg" />
           </div>
         </div>
       </div>
@@ -54,6 +54,7 @@ import { cloneDeep } from "lodash";
 import { generatePath } from "../../generator/generator";
 import HorizonChart from "../table/HorizonChart.vue";
 import * as d3 from "d3";
+import { height, width } from "@fortawesome/free-regular-svg-icons/faAddressBook";
 export default {
   name: "NodeCard",
   props: ["id", "level", "entityID"],
@@ -65,6 +66,8 @@ export default {
     const seriesContainer = ref(null)
     const width = ref(0)
     const height = ref(0)
+    // const width = computed(() => store.getters['selection/entityWidth']);
+    // const height = computed(() => store.getters['selection/entityHeight']) 
     const xScale = ref(null)
     const yScale = ref(null)
     const seriesData = ref([])
@@ -104,8 +107,16 @@ export default {
 
     onMounted(() => {
       seriesContainer.value = document.querySelector("#seriesContainer");
-      width.value = seriesContainer.value.offsetWidth;
-      height.value = seriesContainer.value.offsetHeight;
+      if (store.getters['selection/entityHeight'] !== 0) {
+        width.value = store.getters['selection/entityWidth']
+        height.value = store.getters['selection/entityHeight']
+      }
+      else {
+        width.value = seriesContainer.value.offsetWidth;
+        height.value = seriesContainer.value.offsetHeight;
+        store.dispatch('selection/updateEntityHeight', height.value)
+        store.dispatch('selection/updateEntityWidth', width.value)
+      }
 
       if (store.getters["tree/seriesCollection"].length > 0) {
         seriesData.value = cloneDeep(
@@ -118,7 +129,7 @@ export default {
         xScale.value = d3
           .scaleTime()
           .domain(store.getters["size/xScale"].domain())
-          .range([0, width.value - 5]);
+          .range([0, width.value]);
       }
       if (store.getters["size/yScale"].length > 0) {
         if (dataset.value === "PV") {
@@ -132,7 +143,7 @@ export default {
         else {
           const max = Math.max(...seriesData.value.map(item => item.value))
           const min = Math.min(...seriesData.value.map(item => item.value))
-          yScale.value = d3.scaleLinear().domain([min, max]).range([height.value - 10, 7])
+          yScale.value = d3.scaleLinear().domain([min, max]).range([height.value - 5, 7])
         }
 
 

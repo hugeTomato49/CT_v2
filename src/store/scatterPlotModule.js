@@ -1,5 +1,6 @@
 import axios from "axios"
 import { PLOT_Scale } from "../scale/scale";
+import yearCoordinate from "../year_layer_data/region_yearly_points.json"
 
 const state = {
     plotWidth: 0,
@@ -13,9 +14,7 @@ const state = {
     highlightVisible: false,
     clusterNumber: 5,
     clusterVisible: false,
-    
-
-
+    yearCoordinate
 }
 
 const mutations = {
@@ -118,7 +117,8 @@ const getters = {
     linkVisible: state => state.linkVisible,
     highlightVisible: state => state.highlightVisible,
     updateClusterNumber: state => state.clusterNumber,
-    clusterVisible: state => state.clusterVisible
+    clusterVisible: state => state.clusterVisible,
+    yearCoordinate: state => state.yearCoordinate
 }
 
 const scatterPlotModule = {

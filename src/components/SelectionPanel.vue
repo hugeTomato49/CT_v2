@@ -3,7 +3,7 @@
     <div class="w-full h-[1em] name text-[1em] text-[#9E9E9E]">
       SELECTION VIEW
     </div>
-    <div v-if="nodeEntities.length !== 0" class="w-full mt-[1em]">
+    <div v-if="nodeEntities.length !== 0" class="w-full mt-[1em]" id="entityContainer">
       <EntityHeader entityName="node" :number="nodeEntities.length"> </EntityHeader>
       <NodeCard v-if="nodeVisiable" v-for="entity in nodeEntities" :key="entity.id" :id="entity.id"
         :entityID="entity.entityID" :level="entity.level" />
@@ -67,6 +67,9 @@ export default {
     const treeVisiable = computed(() => store.getters["selection/treeVisiable"])
     const width = ref(0);
     const height = ref(0);
+    const entityContainer = ref();
+    const entityWidth = ref(0)
+    const entityHeight = ref(0)
 
 
     onMounted(() => {
@@ -75,6 +78,11 @@ export default {
       height.value = headerContainer.value.offsetHeight;
       headerHeight.value = headerContainer.value.offsetHeight;
       headerContainer.value.style.fontSize = `${headerHeight / 300}px`;
+      // entityContainer.value = document.querySelector("#entityContainer");
+      // entityWidth.value = entityContainer.value.offsetWidth;
+      // entityHeight.value = entityContainer.value.offsetHeight;
+      // store.dispatch('selection/updateEntityHeight',entityHeight.value)
+      // store.dispatch('selection/updateEntityWidth',entityWidth.value)
 
     });
 

@@ -23,7 +23,7 @@
                     :svgContainer="svgContainer" :chartType="chartType" />
             </div>
         </div>
-        <div class="absolute">
+        <div class="absolute top-[40%] left-[50%] ">
             <CardMenu :menuItems="menuItems"  ref="menuComponent" :node_id="node_id" :level="level" :index="index"/>
         </div>
     </div>

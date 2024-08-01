@@ -4,6 +4,7 @@ import { transformData, filterDataByTimeRange, calculateSeriesAverage, calculate
 import { merge_trees } from "../computation/treeManipulation"
 import { updateSelectionFromOriginal, addLevels, updateSeriesCollection } from "../update/updateTree"
 import { addPlotScale, addYScale } from "../update/updateScale"
+import {year_data} from "../year_layer_data/PV_Tree_grouped_yearly"
 
 
 
@@ -17,11 +18,13 @@ const state = {
       'PV':['Transformer', 'Converter', 'Line'],
       // 'Stock':['Index','Sector','Stock'],
       'Stock':['Country','State','Region']
+      //Region_Year
     },
     description: ['-kw/h', '-kw/h', '-mA', '-mA'],
     level_id_list: [],
     timeRange: [],
     groupState: false,
+    year_data
 }
 
 const mutations = {
@@ -124,7 +127,7 @@ const actions = {
       }
       else if(state.dataset == 'Stock'){
         // newTimeRange = [new Date('2023-03-10'), new Date('2023-03-18')]
-        newTimeRange = [new Date('2010-01-01'), new Date('2016-10-01')]
+        newTimeRange = [new Date('2009-10-01'), new Date('2016-10-01')]
       }
       console.log("newTimeRange")
       console.log(newTimeRange)
@@ -257,6 +260,7 @@ const getters = {
     description: state => state.description,
     timeRange: state => state.timeRange,
     groupState: state => state.groupState,
+    year_tree: state => state.year_tree
 }
 
 const treeModule  = {

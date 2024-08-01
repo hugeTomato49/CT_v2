@@ -1,7 +1,7 @@
 <!-- 由于循环的原因，这个card的width设置暂时有些问题，但不影响界面，后续有时间需要完善 -->
 
 <template>
-  <div class="w-full round-md py-[0.5em]">
+  <div class="w-full round-md py-[0.5em] " id="pathContainer">
     <div class="w-full py-[0.1em] px-[1.5em] entityCard" :style="{
       'background-color': related ? themeColor : 'rgba(245, 245, 245, 0.6)',
     }">
@@ -20,18 +20,24 @@
               @click="deletePathEntity" />
           </div>
         </div>
-        <div class="w-full max-h-[10em] overflow overflow-scroll">
+        <div class="w-full max-h-[10em] overflow overflow-scroll ">
+          <div v-for="(id, index) in seriesData_list.map((series) => series.id)" :key="id"
+            class="w-full h-[4.4em] flex flex-row"
+            :style="{ 'border-bottom': index !== seriesData_list.length - 1 ? '1px solid #ABABAB' : 'none' }">
+            <div class="w-full h-[4em] flex flex-col mt-[0.2em]">
+              <div class="w-1/7 h-[0.4em] flex flex-row items-center meta" :style="{ color: themeColor }">
+                <!-- <div class="w-full max-h-[10em] overflow overflow-scroll">
           <div 
           v-for="(id, index) in seriesData_list.map((series) => series.id)" 
           :key="id"
           class="w-full h-[4.4em] flex flex-row" :style="{ 'border-bottom': index !== seriesData_list.length - 1 ? '1px solid #ABABAB' : 'none' }">
             <div class="w-full h-[4em] flex flex-col mt-[0.6em]">
               <div class="w-1/7 h-[0.4em] flex flex-row items-center meta "
-                :style="{ color: themeColor }">
-                <div>{{ getCategoryBySeriesId(id) }}</div>
+                :style="{ color: themeColor }"> -->
+                <div class="pt-[1em]">{{ getCategoryBySeriesId(id) }}</div>
               </div>
               <div class="w-full h-[3.6em] flex flex-row justify-center mt-[0.2em] ">
-                <div class="w-full h-full " id="seriesContainer">
+                <div class="w-full h-full " :id="'unique-id-' + id">
                   <svg class="w-full h-full" :ref="el => setSvgRef(el, index)">
                     <g v-if="chartType === 'line chart'">
                       <path :stroke="themeColor" fill="none" stroke-width="2.5" :d="generateSelectedPath(
@@ -48,10 +54,9 @@
                     </g>
 
                   </svg>
-                  <HorizonChart :data="
-                      seriesData_list.find((series) => series.id == id)
-                        .data
-                  " :bands="4" height=50 width=500 :svgContainer="svgRefs[index]"
+                  <HorizonChart :data="seriesData_list.find((series) => series.id == id)
+                    .data
+                    " :bands="4" :height="height" :width="width" :svgContainer="svgRefs[index]"
                     :chartType="chartType" />
                 </div>
               </div>
@@ -76,6 +81,7 @@ import { generateSelectedPath } from "../../generator/generator";
 import { calculatePearsonCorrelation } from "../../select/entitySelection";
 import * as d3 from "d3";
 import { size } from "lodash";
+import { width } from "@fortawesome/free-regular-svg-icons/faAddressBook";
 export default {
   name: "PathCard",
   props: ["id_list", "level_list", "related", "entityID"],
@@ -85,9 +91,11 @@ export default {
   setup(props) {
     const titleContainer = ref(null);
     const seriesContainer = ref(null)
+    // const width = computed(() => store.getters['selection/entityWidth']);
+    // const height = computed(() => store.getters['selection/entityHeight']) 
     const width = ref(0);
-    const height = ref(56);
-    const horizonHeight = ref(50);
+    const height = ref(0)
+
 
     const xScale = ref(null);
     const yScale_list = ref([]);
@@ -137,13 +145,18 @@ export default {
           const max = Math.max(...seriesData.data.map(item => item.value));
           const min = Math.min(...seriesData.data.map(item => item.value));
 
-          yScale_list.value[index] = d3.scaleLinear().domain([min, max]).range([height.value - 10, 7]);
+          yScale_list.value[index] = d3.scaleLinear()
+            .domain([min, max])
+            .range([height.value - 5, 7]);
         });
       }
       else {
         if (store.getters["size/yScale"].length > 0) {
           yScale_list.value = props.level_list.map((level) =>
-            d3.scaleLinear().domain(store.getters["size/yScale"][level - 1].domain()).range([height.value - 10, 7])
+            d3
+              .scaleLinear()
+              .domain(store.getters["size/yScale"][level - 1].domain())
+              .range([height.value - 5, 7])
           );
         }
       }
@@ -175,13 +188,25 @@ export default {
 
     onMounted(() => {
       titleContainer.value = document.querySelector("#pathTitleContainer");
-      width.value = (titleContainer.value.offsetWidth ) ;
+      // width.value = (titleContainer.value.offsetWidth ) ;
+      seriesContainer.value = document.querySelector("#pathContainer");
+      if (store.getters['selection/entityHeight'] !== 0) {
+        width.value = store.getters['selection/entityWidth']
+        height.value = store.getters['selection/entityHeight']
+      }
+      else {
+        width.value = seriesContainer.value.offsetWidth - 98;
+        height.value = seriesContainer.value.offsetHeight + 10;
+        store.dispatch('selection/updateEntityHeight', height.value)
+        store.dispatch('selection/updateEntityWidth', width.value)
+      }
+
 
       if (store.getters["size/xScale"].length > 0) {
         xScale.value = d3
           .scaleTime()
           .domain(store.getters["size/xScale"].domain())
-          .range([0, width.value /10 *9]);
+          .range([0, width.value]);
         const timeRange = store.getters["tree/timeRange"];
       }
       if (store.getters["size/yScale"].length > 0) {
@@ -211,7 +236,6 @@ export default {
       svgContainer,
       svgRefs,
       setSvgRef,
-      horizonHeight
     };
   },
 };
