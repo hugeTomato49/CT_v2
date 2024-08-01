@@ -15,9 +15,9 @@
               @click="deleteNodeEntity" />
           </div>
         </div>
-        <div class="w-full h-full flex flex-row " :style="{ 'border-bottom': '0.01em solid' + '#ABABAB' }">
+        <div class="w-full h-full flex flex-row ">
           <div class="w-full h-[4em] flex flex-col mt-[0.6em]">
-            <div class="w-1/7 h-[0.4em] flex flex-row items-center meta " :style="{ color: themeColor }">
+            <div class="w-1/7 h-[0.1em] flex flex-row items-center meta" :style="{ color: themeColor }">
               {{ getCategoryBySeriesId(id) }}
             </div>
             <div class="w-full h-[3.6em] flex flex-row  mt-[0.2em] ">

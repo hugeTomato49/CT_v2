@@ -120,8 +120,6 @@
                 fill="none"
                 class="emphasizeLink cursor-pointer"
                 :id="pathObj.key"
-                @mouseover="handleMouseOverLink(pathObj.key)"
-                @mouseleave="handleMouseOutLink(pathObj.key)"
               />
               <path
                 v-for="pathObj in bezierPaths"
@@ -375,17 +373,6 @@ export default {
       store.dispatch("scatterPlot/updateBezierPaths", []);
     };
 
-    const handleMouseOverLink = (key) => {
-      deHighlightEmphasizeCards();
-      highlightNodes(key.split("-"));
-      highlightLink(key);
-    };
-
-    const handleMouseOutLink = (key) => {
-      highlightEmphaizeCards();
-      deHighlightNodes(key.split("-"));
-    };
-
     const handleNodeClick = (id) => {
       if (!hasChildren(selectionTree.value, id)) {
         store.dispatch("tree/selectNodeAndChildren", id);
@@ -580,8 +567,6 @@ export default {
       handleNodeClick,
       handleMouseOver,
       handleMouseOut,
-      handleMouseOverLink,
-      handleMouseOutLink,
       addColumn,
       sortColumn,
       mergeTrees,

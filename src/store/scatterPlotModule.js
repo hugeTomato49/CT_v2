@@ -35,6 +35,8 @@ const mutations = {
     },
     UPDATE_COORDINATE_COLLECTION(state, payload) {
         state.coordinateCollection = payload
+        console.log("COOC")
+        console.log(payload)
     },
     UPDATE_PLOT_LINK(state, nodeId) {
         if (!state.plotLinks.includes(nodeId)) {

@@ -46,7 +46,7 @@
               v-for="(item, index) in chartOptions"
               :key="index"
               :label="item"
-              style="---option-font-size: 0.6em"
+              style="---option-font-size: 0.2em"
             />
           </var-select>
         </div>
@@ -155,7 +155,7 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
       const placement = ref("by level");
       const placementOptions = ["by level", "by card"];
       const chart = ref("line chart");
-      const chartOptions = ["line chart", "horizon chart"];
+      const chartOptions = ["line chart", "horizon chart", "area chart"];
       const link_switch = ref(false);
       const HL_switch = ref(false);
 
