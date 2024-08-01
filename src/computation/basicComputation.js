@@ -21,12 +21,17 @@ export const transformData = (rawData) => {
 
 export const filterDataByTimeRange = (data,timeRange) => {
     if (timeRange.length == 2){
-        return data.filter(d => {return d.Time >= timeRange[0] && d.Time <= timeRange[1]})
+        console.log("check timeRange")
+        console.log(timeRange)
+        return data.filter(
+            d => {
+                return new Date(d.Time).setHours(0, 0, 0, 0) >= new Date(timeRange[0]).setHours(0, 0, 0, 0) && new Date(d.Time).setHours(0, 0, 0, 0) <= new Date(timeRange[1]).setHours(0, 0, 0, 0)
+            }
+        )
     }
     else {
         return data
-    }
-    
+    }   
 }
 
 export const getMax = (manySeries) => {
