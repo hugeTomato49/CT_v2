@@ -2,175 +2,73 @@
   <div class="w-full h-full">
     <div class="w-full h-full rounded-md flex flex-col" id="headerContainer">
       <div class="flex flex-row h-1/8 w-full">
-        <div
-          v-for="(level_name, index) in level_name_list"
-          :key="level_name"
-          class="flex flex-row h-full"
-          :style="{
-            width: headerContainer?.offsetWidth * columnPercentage + 'px',
-          }"
-        >
-          <div
-            class="h-full flex flex-row items-center"
-            :style="{
-              width:
-                headerContainer?.offsetWidth * columnPercentage - 30 + 'px',
-              backgroundColor: themeColor,
-            }"
-          >
+        <div v-for="(level_name, index) in level_name_list" :key="level_name" class="flex flex-row h-full" :style="{
+          width: headerContainer?.offsetWidth * columnPercentage + 'px',
+        }">
+          <div class="h-full flex flex-row items-center" :style="{
+            width:
+              headerContainer?.offsetWidth * columnPercentage - 30 + 'px',
+            backgroundColor: themeColor,
+          }">
             <div class="ml-2 text-ms font-serif text-center text-white title">
               {{ level_name }}
             </div>
             <div class="flex-1 h-full"></div>
             <div class="flex flex-row mr-1">
-              <font-awesome-icon
-                :icon="['fas', 'toggle-on']"
-                class="mr-2 cursor-pointer"
-                style="color: #ffffff"
-                @click="toggleAlign(level_id_list[index])"
-              />
-              <font-awesome-icon
-                :icon="['fas', 'code-merge']"
-                class="mr-2 cursor-pointer"
-                style="color: #ffffff"
-                @click="mergeTrees(level_id_list[index])"
-              />
-              <font-awesome-icon
-                :icon="['fas', 'arrow-up-wide-short']"
-                class="mr-2 cursor-pointer"
-                style="color: #ffffff"
-                @click="sortColumn(level_id_list[index], 'desc')"
-              />
-              <font-awesome-icon
-                :icon="['fas', 'arrow-down-short-wide']"
-                class="mr-2 cursor-pointer"
-                style="color: #ffffff"
-                @click="sortColumn(level_id_list[index], 'asc')"
-              />
-              <font-awesome-icon
-                :icon="['fas', 'draw-polygon']"
-                class="mr-2 cursor-pointer"
-                style="color: #ffffff"
-                @click="processSelectedCircles(level_id_list[index])"
-              />
-              <font-awesome-icon
-                :icon="['fas', 'layer-group']"
-                class="cursor-pointer mr-2"
-                style="color: #ffffff"
-                @click="createLayers(level_id_list[index])"
-              />
+              <font-awesome-icon :icon="['fas', 'toggle-on']" class="mr-2 cursor-pointer" style="color: #ffffff"
+                @click="toggleAlign(level_id_list[index])" />
+              <font-awesome-icon :icon="['fas', 'code-merge']" class="mr-2 cursor-pointer" style="color: #ffffff"
+                @click="mergeTrees(level_id_list[index])" />
+              <font-awesome-icon :icon="['fas', 'arrow-up-wide-short']" class="mr-2 cursor-pointer"
+                style="color: #ffffff" @click="sortColumn(level_id_list[index], 'desc')" />
+              <font-awesome-icon :icon="['fas', 'arrow-down-short-wide']" class="mr-2 cursor-pointer"
+                style="color: #ffffff" @click="sortColumn(level_id_list[index], 'asc')" />
+              <font-awesome-icon :icon="['fas', 'draw-polygon']" class="mr-2 cursor-pointer" style="color: #ffffff"
+                @click="processSelectedCircles(level_id_list[index])" />
+              <font-awesome-icon :icon="['fas', 'layer-group']" class="cursor-pointer mr-2" style="color: #ffffff"
+                @click="createLayers(level_id_list[index])" />
             </div>
           </div>
-          <div
-            class="h-full px-0.5px  cursor-pointer flex flex-row justify-center items-center"
-            :style="{ width: 30 + 'px' }"
-            
-          >
-            
+          <div class="h-full px-0.5px  cursor-pointer flex flex-row justify-center items-center"
+            :style="{ width: 30 + 'px' }">
+
           </div>
         </div>
       </div>
       <div class="w-full h-7/8 py-1" style="position: relative; z-index: 2">
         <div class="w-full h-full flex flex-row" id="plotContainer">
-          <div
-            class="h-full"
-            :style="{ width: dynamicWidth + 'px' }"
-            @mousedown="startDrawing"
-            @mousemove="drawing"
-            @mouseup="finishLine"
-            @dblclick.prevent="finishDrawing"
-          >
+          <div class="h-full" :style="{ width: dynamicWidth + 'px' }" @mousedown="startDrawing" @mousemove="drawing"
+            @mouseup="finishLine" @dblclick.prevent="finishDrawing">
             <svg class="h-full" :style="{ width: dynamicWidth + 'px' }">
-              
+
               <!-- 实时绘制的线段 -->
-              <line
-                v-if="tempEndPoint && points.length > 0"
-                :x1="points.slice(-1)[0][0]"
-                :y1="points.slice(-1)[0][1]"
-                :x2="tempEndPoint[0]"
-                :y2="tempEndPoint[1]"
-                stroke="#DF1C33"
-                style="stroke-width: 4;"
-              />
-              <polygon
-                v-if="points.length >= 3"
-                :points="pointsToString"
-                fill="red"
-                fill-opacity="0.2"
-                stroke="#DF1C33"
-                stroke-width="4"
-              />
-              <polyline :points="pointsToString" fill="none" stroke="#DF1C33" store-width="4"/>
-              <circle
-                v-for="(point, index) in points"
-                :key=point[0]
-                :cx="point[0]"
-                :cy="point[1]"
-                r="4"
-                fill="white"
-                stroke="#DF1C33"
-              />
-              <path
-                v-for="pathObj in selectNodePaths"
-                v-if="linkVisible"
-                :key="pathObj.key"
-                :d="pathObj.d"
-                stroke="rgba(243,194,18)"
-                stroke-width="2"
-                fill="none"
-                class="emphasizeLink cursor-pointer"
-                :id="pathObj.key"
-              />
-              <path
-                v-for="pathObj in bezierPaths"
-                :key="pathObj.key"
-                :d="pathObj.d"
-                stroke="rgb(243,194,18)"
-                stroke-width="2"
-                fill="none"
-                fill-opacity="0.5"
-              />
-              <g
-                v-for="(level_name, index) in level_name_list"
-                :key="level_name"
-                class="h-full"
-                :transform="
-                  'translate(' +
-                  headerContainer?.offsetWidth * columnPercentage * index +
-                  ', 0)'
-                "
-              >
-                <rect
-                  x="0"
-                  y="0"
-                  :width="headerContainer?.offsetWidth * columnPercentage - 30"
-                  height="100%"
-                  stroke="#e5e7eb"
-                  stroke-width="2"
-                  fill="none"
-                  rx="5"
-                ></rect>
-                <circle
-                  v-for="circle in circlesData[level_id_list[index]].filter(
-                    (circle) => !hasNode(selectionTree, circle.key)
-                  )"
-                  class="node cursor-pointer"
-                  :id="'node' + circle.key"
-                  :key="circle.key"
-                  :cx="circle.cx"
-                  :cy="circle.cy"
-                  :r="circle.r"
-                  :fill="themeColor"
-                  :fill-opacity="circle.fillOpacity"
-                  :stroke="circle.stroke"
-                  :stroke-width="circle.strokeWidth"
-                  @click="handleNodeClick(circle.key)"
+              <line v-if="tempEndPoint && points.length > 0" :x1="points.slice(-1)[0][0]" :y1="points.slice(-1)[0][1]"
+                :x2="tempEndPoint[0]" :y2="tempEndPoint[1]" stroke="#DF1C33" style="stroke-width: 4;" />
+              <polygon v-if="points.length >= 3" :points="pointsToString" fill="red" fill-opacity="0.2" stroke="#DF1C33"
+                stroke-width="4" />
+              <polyline :points="pointsToString" fill="none" stroke="#DF1C33" store-width="4" />
+              <circle v-for="(point, index) in points" :key=point[0] :cx="point[0]" :cy="point[1]" r="4" fill="white"
+                stroke="#DF1C33" />
+              <path v-for="pathObj in selectNodePaths" v-if="linkVisible" :key="pathObj.key" :d="pathObj.d"
+                stroke="rgba(243,194,18)" stroke-width="2" fill="none" class="emphasizeLink cursor-pointer"
+                :id="pathObj.key" />
+              <path v-for="pathObj in bezierPaths" :key="pathObj.key" :d="pathObj.d" stroke="rgb(243,194,18)"
+                stroke-width="2" fill="none" fill-opacity="0.5" />
+              <g v-for="(level_name, index) in level_name_list" :key="level_name" class="h-full" :transform="'translate(' +
+                headerContainer?.offsetWidth * columnPercentage * index +
+                ', 0)'
+                ">
+                <rect x="0" y="0" :width="headerContainer?.offsetWidth * columnPercentage - 30" height="100%"
+                  stroke="#e5e7eb" stroke-width="2" fill="none" rx="5"></rect>
+                <circle v-for="circle in circlesData[level_id_list[index]].filter(
+                  (circle) => !hasNode(selectionTree, circle.key)
+                )" class="node cursor-pointer" :id="'node' + circle.key" :key="circle.key" :cx="circle.cx"
+                  :cy="circle.cy" :r="circle.r" :fill="themeColor" :fill-opacity="circle.fillOpacity"
+                  :stroke="circle.stroke" :stroke-width="circle.strokeWidth" @click="handleNodeClick(circle.key)"
                   @dblclick="filterCurrentNode(circle.key)"
                   @mouseover="handleMouseOver(circle.key, level_id_list[index])"
-                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"
-                ></circle>
-                <circle
-                v-for="circle in circlesData[level_id_list[index]].filter(
+                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"></circle>
+                <circle v-for="circle in circlesData[level_id_list[index]].filter(
                   (circle) =>
                     hasNode(selectionTree, circle.key) &&
                     !ifEmphasize(
@@ -179,24 +77,14 @@
                       level_id_list[index],
                       level_id_list
                     )
-                )"
-                class="node cursor-pointer foldNode"
-                :id="'node' + circle.key"
-                :key="circle.key"
-                :cx="circle.cx"
-                :cy="circle.cy"
-                :r="circle.r"
-                :fill="themeColor"
-                :fill-opacity="clusterVisible ? 0.05 : circle.fillOpacity"
-                :stroke="clusterVisible ? 'none' : circle.stroke"
-                :stroke-width="circle.strokeWidth"
-                @click="handleNodeClick(circle.key)"
-                @dblclick="filterCurrentNode(circle.key)"
-                @mouseover="handleMouseOver(circle.key, level_id_list[index])"
-                @mouseout="handleMouseOut(circle.key, level_id_list[index])"
-              ></circle>
-              <circle
-                v-for="circle in circlesData[level_id_list[index]].filter(
+                )" class="node cursor-pointer foldNode" :id="'node' + circle.key" :key="circle.key" :cx="circle.cx"
+                  :cy="circle.cy" :r="circle.r" :fill="themeColor"
+                  :fill-opacity="clusterVisible ? 0.05 : circle.fillOpacity"
+                  :stroke="clusterVisible ? 'none' : circle.stroke" :stroke-width="circle.strokeWidth"
+                  @click="handleNodeClick(circle.key)" @dblclick="filterCurrentNode(circle.key)"
+                  @mouseover="handleMouseOver(circle.key, level_id_list[index])"
+                  @mouseout="handleMouseOut(circle.key, level_id_list[index])"></circle>
+                <circle v-for="circle in circlesData[level_id_list[index]].filter(
                   (circle) =>
                     ifEmphasize(
                       selectionTree,
@@ -204,22 +92,13 @@
                       level_id_list[index],
                       level_id_list
                     )
-                )"
-                class="node cursor-pointer emphasizeNode"
-                :id="'node' + circle.key"
-                :key="circle.key"
-                :cx="circle.cx"
-                :cy="circle.cy"
-                :r="circle.r"
-                :fill="themeColor"
-                :fill-opacity="clusterVisible ? 0.05 : circle.fillOpacity"
-                :stroke="clusterVisible ? 'none' : circle.stroke"
-                :stroke-width="circle.strokeWidth"
-                @mouseover="handleMouseOver(circle.key, level_id_list[index])"
-                @mouseout="handleMouseOut(circle.key, level_id_list[index])"
-                @click="handleNodeClick(circle.key)"
-                @dblclick="filterCurrentNode(circle.key)"
-              ></circle>
+                )" class="node cursor-pointer emphasizeNode" :id="'node' + circle.key" :key="circle.key"
+                  :cx="circle.cx" :cy="circle.cy" :r="circle.r" :fill="themeColor"
+                  :fill-opacity="clusterVisible ? 0.05 : circle.fillOpacity"
+                  :stroke="clusterVisible ? 'none' : circle.stroke" :stroke-width="circle.strokeWidth"
+                  @mouseover="handleMouseOver(circle.key, level_id_list[index])"
+                  @mouseout="handleMouseOut(circle.key, level_id_list[index])" @click="handleNodeClick(circle.key)"
+                  @dblclick="filterCurrentNode(circle.key)"></circle>
 
               </g>
             </svg>
@@ -346,31 +225,31 @@ export default {
     });
 
     const handleMouseOver = (id, level) => {
-      if (ifEmphasize(selectionTree.value, id, level, level_id_list.value)) {
-        deHighlightEmphasizeCards();
-      }
-      const id_list = findChildrenIds(id, originalTree.value);
-      highlightNodes(id_list);
-      store.dispatch(
-        "scatterPlot/updateBezierPaths",
-        highlightLinks(
-          id,
-          originalTree.value,
-          coordinateCollection.value,
-          plot_X_Scale.value,
-          plot_Y_Scale.value,
-          headerContainer.value.offsetWidth * columnPercentage.value
-        )
-      );
+      // if (ifEmphasize(selectionTree.value, id, level, level_id_list.value)) {
+      //   deHighlightEmphasizeCards();
+      // }
+      // const id_list = findChildrenIds(id, originalTree.value);
+      // highlightNodes(id_list);
+      // store.dispatch(
+      //   "scatterPlot/updateBezierPaths",
+      //   highlightLinks(
+      //     id,
+      //     originalTree.value,
+      //     coordinateCollection.value,
+      //     plot_X_Scale.value,
+      //     plot_Y_Scale.value,
+      //     headerContainer.value.offsetWidth * columnPercentage.value
+      //   )
+      // );
     };
 
     const handleMouseOut = (id, level) => {
-      if (ifEmphasize(selectionTree.value, id, level, level_id_list.value)) {
-        highlightEmphaizeCards();
-      }
-      const id_list = findChildrenIds(id, originalTree.value);
-      deHighlightNodes(id_list);
-      store.dispatch("scatterPlot/updateBezierPaths", []);
+      // if (ifEmphasize(selectionTree.value, id, level, level_id_list.value)) {
+      //   highlightEmphaizeCards();
+      // }
+      // const id_list = findChildrenIds(id, originalTree.value);
+      // deHighlightNodes(id_list);
+      // store.dispatch("scatterPlot/updateBezierPaths", []);
     };
 
     const handleNodeClick = (id) => {
@@ -396,16 +275,17 @@ export default {
     };
 
     const mergeTrees = (level_id) => {
-      const obj = {id1 : 9, id2: 12}
+      const obj = { id1: 9, id2: 12 }
       store.dispatch("tree/mergeTrees", obj)
     }
     const createLayers = (level_id) => {
-      console.log("level id is ",level_id)
-      if(level_id === 3) {
-        const obj = { dataset: dataset.value, level_id: level_id };
-      store.dispatch("tree/addLayer", obj);
+      const obj = { dataset: dataset.value, level_id: level_id };
+      console.log("level id is ", level_id)
+      if (level_id === 3) {
+        store.dispatch("tree/addLayer", obj);
       }
-      else if (level_id === 4){
+      else if(level_id === 4) {
+        store.dispatch("tree/addYearLayer", obj);
       }
     };
 

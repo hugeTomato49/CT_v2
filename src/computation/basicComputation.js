@@ -21,8 +21,8 @@ export const transformData = (rawData) => {
 
 export const filterDataByTimeRange = (data,timeRange) => {
     if (timeRange.length == 2){
-        console.log("check timeRange")
-        console.log(timeRange)
+        // console.log("check timeRange")
+        // console.log(timeRange)
         return data.filter(
             d => {
                 return new Date(d.Time).setHours(0, 0, 0, 0) >= new Date(timeRange[0]).setHours(0, 0, 0, 0) && new Date(d.Time).setHours(0, 0, 0, 0) <= new Date(timeRange[1]).setHours(0, 0, 0, 0)
