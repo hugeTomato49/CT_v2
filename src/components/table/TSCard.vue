@@ -130,6 +130,8 @@ export default {
             id_list.forEach(id => {
                 store.dispatch('tree/deselectNodeAndChildren', id)
             })
+            // console.log("double click id is",id)
+            
         }
 
         const handleMouseOver = (id) => {

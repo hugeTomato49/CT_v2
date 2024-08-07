@@ -1,6 +1,6 @@
 <template>
     <div v-if="zoomVisiable" class="absolute top-0 left-0 w-full h-full bg-light-300 bg-opacity-50 z-20"></div>
-    <div class="w-full h-full flex flex-col TableCss">
+    <div class="w-full h-full flex flex-col TableCss overflow overflow-x-scroll">
         <div class="w-full h-1/4">
             <TableHeader />
         </div>

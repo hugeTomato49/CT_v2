@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full p-2">
+  <div class="w-full h-full p-2 flex justify-center items-center">
     <div ref="chart" class="w-full h-full" id="TContainer"></div>
   </div>
 </template>
@@ -65,7 +65,7 @@ export default {
         .attr("width", width)
         .attr("height", height)
         .append("g")
-        .attr("transform", "translate(-80,0)");
+        .attr("transform", "translate(-60,0)");
 
       const cluster = d3.cluster().size([height, width * 1.3]);
       //console.log("oringinal tree is", originalTree.value);

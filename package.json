@@ -17,6 +17,7 @@
     "ant-design-vue": "^4.1.2",
     "axios": "^1.5.1",
     "d3": "^7.8.5",
+    "flask": "^0.2.10",
     "lodash": "^4.17.21",
     "vue": "^3.3.4",
     "vue3-perfect-scrollbar": "^1.6.1",
