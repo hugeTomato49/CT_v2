@@ -13,8 +13,8 @@ from compute.TSfuncCal import Standardize
 app = Flask(__name__)
 
 # PV_data_folder_path = "data/PV"
-PV_data_folder_path = "data/Stock"
-# PV_data_folder_path = "data/Tour"
+# PV_data_folder_path = "data/Stock"
+PV_data_folder_path = "data/Tour"
 PV_tree_file_name = "PV_Tree.json"
 PV_tree_grouped_file_name = "PV_Tree_grouped.json"
 collection_json_path = os.path.join(os.path.dirname(__file__), 'tmp/origin_coordinateCollection.json')

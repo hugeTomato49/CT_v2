@@ -51,11 +51,11 @@
           </var-select>
         </div>
         <!-- Scale -->
-        <div class="ml-10 name text-[0.9em] text-[#FFFFFF] cursor-pointer">Scale</div>
-        <div class="w-[7em] h-4/5 ml-4  mb-[0.5em]  flex items-center">
+        <div class="ml-10 name text-[0.9em] text-[#FFFFFF] cursor-pointer">K - Cluster</div>
+        <div class="w-[3em] h-4/5 ml-4  mb-[0.5em]  flex items-center">
           <var-select
             :hint="false"
-            v-model="placement"
+            v-model="K"
             text-color="#FFFFFF"
             style="
               --select-label-font-size: 0.8em;
@@ -66,7 +66,7 @@
             class="w-full "
           >
             <var-option
-              v-for="(item, index) in placementOptions"
+              v-for="(item, index) in KOptions"
               :key="index"
               :label="item"
               style="---option-font-size: 0.6em"
@@ -110,15 +110,6 @@
             "
           />
         </div>
-        
-        <!-- palette  size?-->
-        <div class="ml-8">
-          <font-awesome-icon
-            :icon="['fas', 'palette']"
-            size="lg"
-            style="color: #ffffff"
-          />
-        </div>
         <!-- question -->
         <div class="ml-5 mr-5">
           <font-awesome-icon
@@ -152,8 +143,8 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
         () => store.getters["scatterPlot/highlightVisible"]
       );
       const cluster_value = ref("5");
-      const placement = ref("by level");
-      const placementOptions = ["by level", "by card"];
+      const K = ref("5");
+      const KOptions = ["1", "2", "3", "4","5","6"];
       const chart = ref("line chart");
       const chartOptions = ["line chart", "horizon chart", "area chart"];
       const link_switch = ref(false);
@@ -182,8 +173,8 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
       return {
         themeColor,
         cluster_value,
-        placement,
-        placementOptions,
+        K,
+        KOptions,
         link_switch,
         HL_switch,
         linkVisible,

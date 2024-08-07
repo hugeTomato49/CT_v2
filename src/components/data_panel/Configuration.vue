@@ -273,7 +273,7 @@ export default {
 }
 
 .black-line {
-  border-width: 0.04em;
+  border-width: 0.02em;
   background-color: #ababab;
 }
 </style>

@@ -47,6 +47,7 @@ import {
     faCircleCheck,
     faCaretRight,
     faCaretDown,
+    faAnchor
 
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -84,6 +85,7 @@ library.add(
     faCircleXmark,
     faCaretRight,
     faCaretDown,
+    faAnchor
 )
 
 const app = createApp(App)

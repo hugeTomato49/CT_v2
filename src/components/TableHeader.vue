@@ -19,13 +19,15 @@
                 @click="toggleAlign(level_id_list[index])" />
               <font-awesome-icon :icon="['fas', 'code-merge']" class="mr-2 cursor-pointer" style="color: #ffffff"
                 @click="mergeTrees(level_id_list[index])" />
+                <font-awesome-icon :icon="['fas', 'anchor']" class="mr-2 cursor-pointer" style="color: #ffffff"
+                @click="adjustSelectionTree"/>
               <font-awesome-icon :icon="['fas', 'arrow-up-wide-short']" class="mr-2 cursor-pointer"
                 style="color: #ffffff" @click="sortColumn(level_id_list[index], 'desc')" />
               <font-awesome-icon :icon="['fas', 'arrow-down-short-wide']" class="mr-2 cursor-pointer"
                 style="color: #ffffff" @click="sortColumn(level_id_list[index], 'asc')" />
               <font-awesome-icon :icon="['fas', 'draw-polygon']" class="mr-2 cursor-pointer" style="color: #ffffff"
                 @click="processSelectedCircles(level_id_list[index])" />
-              <font-awesome-icon :icon="['fas', 'layer-group']" class="cursor-pointer mr-2" style="color: #ffffff"
+              <font-awesome-icon :icon="['fas', 'layer-group']" class="cursor-pointer mr-1" style="color: #ffffff"
                 @click="createLayers(level_id_list[index])" />
             </div>
           </div>
@@ -289,6 +291,10 @@ export default {
       }
     };
 
+    const adjustSelectionTree = () => {
+      store.dispatch("tree/adjustSelectionTree")
+    }
+
     const filterCurrentNode = (id) => {
       const currentNode = selectionTree.value.find((node) => node.id == id);
       const level = currentNode.level;
@@ -466,7 +472,8 @@ export default {
       points,
       tempEndPoint,
       processSelectedCircles,
-      clusterVisible
+      clusterVisible,
+      adjustSelectionTree
     };
   },
 };

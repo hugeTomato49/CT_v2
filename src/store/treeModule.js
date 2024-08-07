@@ -266,6 +266,12 @@ const actions = {
     parent_node.children_id = parent_node.children_id.filter(id => !deleteIds.includes(id))
     state.selectionTree = selectionTree
   },
+  adjustSelectionTree({ state, commit}) {
+    const newSelectionTree = cloneDeep(state.selectionTree)
+    const sequence = [1,5,6,3,2,4,7,8]
+    newSelectionTree.sort((a, b) => sequence.indexOf(a.id) - sequence.indexOf(b.id))
+    commit('UPDATE_SELECTION_TREE', newSelectionTree)
+  }
 }
 
 const getters = {

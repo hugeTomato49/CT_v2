@@ -47,7 +47,7 @@ export const updateSelectionFromOriginal = (oldSelectionTree, newOriginalTree, l
 export const addLevels = (levels, level_id,dataset) => {
     const levels_copy = cloneDeep(levels)
     const level_name = levels_copy[dataset][level_id - 1]
-    const grouped_level_name = "Grouped_" + level_name
+    const grouped_level_name = "Group_" + level_name
     levels_copy[dataset].splice(level_id - 1, 0, grouped_level_name)
     return levels_copy 
 }
