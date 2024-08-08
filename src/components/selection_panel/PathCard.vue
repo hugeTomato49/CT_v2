@@ -25,7 +25,7 @@
             class="w-full h-[4.4em] flex flex-row"
             :style="{ 'border-bottom': index !== seriesData_list.length - 1 ? '1px solid #ABABAB' : 'none' }">
             <div class="w-full h-[4em] flex flex-col mt-[0.2em]">
-              <div class="w-1/7 h-[0.4em] flex flex-row items-center meta" :style="{ color: themeColor }">
+              <div class="w-6/7 h-[0.4em] flex flex-row items-center meta" :style="{ color: themeColor }">
                 <!-- <div class="w-full max-h-[10em] overflow overflow-scroll">
           <div 
           v-for="(id, index) in seriesData_list.map((series) => series.id)" 
@@ -91,8 +91,6 @@ export default {
   setup(props) {
     const titleContainer = ref(null);
     const seriesContainer = ref(null)
-    // const width = computed(() => store.getters['selection/entityWidth']);
-    // const height = computed(() => store.getters['selection/entityHeight']) 
     const width = ref(0);
     const height = ref(0)
 
@@ -134,7 +132,8 @@ export default {
       const node = originalTree.value.find((node) => node.id === id);
       const nodeName = node ? node.node_name : "";
       const number = extractLastNumber(nodeName); // 提取编号
-      return `${number}`;
+      // return `${number}`;
+      return nodeName
     };
     const calculateCorrelation = (series1, series2) => {
       return calculatePearsonCorrelation(series1, series2);
@@ -151,6 +150,7 @@ export default {
         });
       }
       else {
+        console.log("update scale")
         if (store.getters["size/yScale"].length > 0) {
           yScale_list.value = props.level_list.map((level) =>
             d3

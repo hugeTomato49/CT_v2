@@ -17,7 +17,7 @@
         </div>
         <div class="w-full h-full flex flex-row ">
           <div class="w-full h-[4em] flex flex-col mt-[0.6em]">
-            <div class="w-1/7 h-[0.1em] flex flex-row items-center meta" :style="{ color: themeColor }">
+            <div class="w-6/7 h-[0.1em] flex flex-row items-center meta" :style="{ color: themeColor }">
               {{ getCategoryBySeriesId(id) }}
             </div>
             <div class="w-full h-[3.6em] flex flex-row  mt-[0.2em] ">
@@ -102,7 +102,8 @@ export default {
       const number = extractLastNumber(nodeName); // 提取编号
 
       // 组合类别名称和编号
-      return `${number}`;
+      // return `${number}`;
+      return nodeName
     };
 
     onMounted(() => {

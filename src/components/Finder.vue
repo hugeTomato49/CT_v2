@@ -9,7 +9,7 @@
                 v-for="(level_id,index) in level_id_list"
                 :key="level_id"
                 @click="showBarChart()"
-                class="cursor-pointer w-1/4 h-full"
+                class="cursor-pointer  h-full w-1/4 "
             >
                 <Timeline 
                 :barChartVisible="barChartVisible"

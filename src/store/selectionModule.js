@@ -5,11 +5,11 @@ const state = {
     //list of obj: [{entityID: 1, type: "tree", "id_list": [], "level_list": []}, {entityID: 2, type: "node", "id": 1, "level":1}]
     entityCollection: [],
     entityID: 1,
-    nodeVisiable:false,
-    pathVisiable:false,
-    treeVisiable:false,
-    entityHeight:0,
-    entityWidth:0
+    nodeVisiable: false,
+    pathVisiable: false,
+    treeVisiable: false,
+    entityHeight: 0,
+    entityWidth: 0
 }
 
 const mutations = {
@@ -49,7 +49,7 @@ const actions = {
         // console.log("index is", entityID)
         state.entityCollection = state.entityCollection.filter(entity => entity.entityID !== entityID);
     },
-    deleteIdFromEntity({ commit, state }, deleteItem) {
+    deleteIdFromEntity({ commit, state, rootState }, deleteItem) {
         const index = state.entityCollection.findIndex(entity => entity.entityID === deleteItem.entityID);
         console.log("id is", deleteItem.id)
         console.log("entity id is", deleteItem.entityID)
@@ -57,9 +57,9 @@ const actions = {
         if (index !== -1) {
             const levelIndex = state.entityCollection[index].path.findIndex(id => id === deleteItem.id);
             state.entityCollection[index].path = state.entityCollection[index].path.filter(item => item !== deleteItem.id)
-
-            console.log("level index is", levelIndex)
-            // state.entityCollection[index].levelList.splice(levelIndex, 1)
+            if (rootState.tree.dataset === "PV") {
+                state.entityCollection[index].levelList.splice(levelIndex, 1)
+            }
         }
         // console.log("entity collectino is", state.entityCollection)
     },
